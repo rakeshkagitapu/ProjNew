@@ -1,0 +1,92 @@
+﻿@using PagedList.Mvc;
+@using PagedList;
+
+@model IPagedList<SPFS.Models.SiteListViewModel>
+@{
+
+}
+<div class="container col-md-12">
+    <table class="table table-condensed table-hover">
+        <tr class="active">
+            <th>
+                <a href="#" data-sortby="@ViewData["NameSort"]" class="sortby">@Html.DisplayNameFor(model => model.First().Name)</a>
+            </th>
+            <th>
+                <a href="#" data-sortby="@ViewData["GDISORGSort"]" class="sortby">@Html.DisplayNameFor(model => model.First().Gdis_org_entity_ID)</a>
+            </th>
+            <th>
+                <a href="#" data-sortby="@ViewData["GDISPARSort"]" class="sortby"> @Html.DisplayNameFor(model => model.First().Gdis_org_Parent_ID)</a>
+            </th>
+            @*<th>
+                @Html.DisplayNameFor(model => model.First().Address)
+            </th>*@
+            <th>
+                <a href="#" data-sortby="@ViewData["CountrySort"]" class="sortby">@Html.DisplayNameFor(model => model.First().Country)</a>
+            </th>
+
+            <th>
+                <a href="#" data-sortby="@ViewData["ZipSort"]" class="sortby">@Html.DisplayNameFor(model => model.First().Postal_Code)</a>
+            </th>
+            <th class="actalign">
+                <a href="#" data-sortby="@ViewData["IsActiveSort"]" class="sortby">@Html.DisplayNameFor(model => model.First().SPFS_Active)</a>
+            </th>
+
+
+
+        </tr>
+        @if (Model.Count() == 0)
+        {
+            <tr>
+                <td colspan="6">
+                    <div class="alert alert-warning" role="alert">
+                         <strong>Warning!</strong> @SPFS.Helpers.Utilities.NO_RESULT
+                    </div>
+                    @*<div class="alert alert-warning alert-dismissible" role="alert">
+                        <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                        <strong>Warning!</strong> @SPFS.Helpers.Utilities.NO_RESULT
+                    </div>*@
+                </td>
+            </tr>
+        }
+        else
+        {
+            foreach (var item in Model)
+            {  @Html.HiddenFor(modelItem => item.SiteID)
+                <tr>
+                    <td>
+                        @Html.ActionLink(item.Name,"SiteDetails",new { SiteID = item.SiteID })
+
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Gdis_org_entity_ID)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Gdis_org_Parent_ID)
+                    </td>
+                    @*<td>
+                        @Html.DisplayFor(modelItem => item.Address)
+                    </td>*@
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Country)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Postal_Code)
+
+                       
+                    </td>
+                    <td style="text-align:center">
+                          @Html.DisplayFor(modelItem =>item.SPFS_Active)                     
+                    </td>
+
+
+                </tr>
+            }
+        }
+    </table>
+    <div id="myPager">
+        @if (Model.Count() > 0)
+        {
+            @Html.PagedListPager(Model, page => Url.Action("SearchByPage", new { page, search = Request.QueryString["search"], sortby = @ViewData["ActiveSort"], activeId = Convert.ToInt32(ViewData["ActiveId"]) }))
+        }
+    </div>
+</div>

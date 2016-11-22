@@ -1,0 +1,98 @@
+﻿@model SPFS.Models.UserSitesViewModel
+
+@{
+    ViewBag.Title = "Index";
+
+}
+
+<h2>Add Sites to Users</h2>
+<hr />
+@using (Html.BeginForm())
+{
+    <div class="row col-md-12" style="padding-top: 5px">
+
+        <div class="col-md-12">
+            <div class="form-group">
+                @Html.Label("Select User :")
+                @Html.DropDownListFor(model => model.UserID, ViewBag.Users as IEnumerable<SelectListItem>, "",
+               new { @class = "selectpicker", data_live_search = "true", data_size = "10", data_width = "30%", required = "true" })
+
+                @Html.ValidationMessageFor(model => model.UserID)
+
+            </div>
+        </div>
+    </div>
+
+    <div id="divsiteslist" class="row" style="margin-top: 5px; padding-left:25px">
+        @Html.Partial("_UserSitesList", Model)
+
+    </div>
+
+    <div id="divsitesSave" class="row col-md-12" style="padding-left: 25px;">
+        <span class="input-group-btn">
+            <button id="btnSave" type="submit" value="Save" onclick="OnBeginPostBack_Save(this)" class="btn btn-primary btn-block" style="border-radius:5px">
+                <span class="glyphicon glyphicon-floppy-save"></span>
+                <span>Save</span>
+            </button>
+        </span>
+    </div>
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        //var userId = $('#UserID').val();
+
+
+        var userId = $("#UserID option:selected").val();
+        if (userId == "") {
+            $("#btnSave").hide();
+            $("#divsiteslist").children().remove();
+        }
+
+
+        function loadSites(userId) {
+
+            $("#dlgmodal").dialog('open');
+            $('#dlgmodal span').text('Loading ...');
+            var url = '@Url.Action("GetSitesForUser", "UserSites")';
+            $.ajax({
+                type: "GET",
+                url: url,
+                data: { userId: userId },
+                success: function (data) {
+                    $("#divsiteslist").html(data);
+                },
+                complete:
+                  function (jqXHR, textStatus) {
+                      $("#dlgmodal").closest('.ui-dialog-content').dialog("close");
+                  },
+                error: function (data) {
+
+                }
+            });
+        }
+        //Will refresh
+        //$('#UserID').change(function () {
+        //    var userId = $('#UserID').val();
+        //    if (userId != "") {
+
+        //        loadSites(userId);
+        //    }
+
+        //});
+        $('#UserID').change(function () {
+            var userId = $("#UserID option:selected").val();
+            if (userId != "") {
+
+                $(this).valid();
+                loadSites(userId);
+                $("#btnSave").show();
+            }
+
+        });
+
+
+    });
+
+</script>
+

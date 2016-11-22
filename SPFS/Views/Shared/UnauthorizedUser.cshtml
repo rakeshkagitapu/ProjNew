@@ -1,0 +1,16 @@
+﻿
+@{
+    SPFS.Helpers.Utilities util = new SPFS.Helpers.Utilities();
+    Layout = "~/Views/Shared/_LayoutOther.cshtml";
+}
+<br />
+<br />
+<br />
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title" style="font-weight:bold">Unauthorized User</h3>
+    </div>
+    <div class="panel-body">
+        <h4> @util.CurrentUserName !. You are not Authorized to access SPFS. Please contact Administrator/Service Desk if you would like to access SPFS.</h4>
+    </div>
+</div>

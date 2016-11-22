@@ -1,0 +1,201 @@
+﻿@model SPFS.Models.UserViewModel
+
+@{
+    ViewBag.Title = "Register User";
+    var text = Model.SPFS_Active ? "Active" : "In Active";
+}
+
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <h2>Register User</h2>
+    <hr />
+    
+    <div class=Create>
+    <div class="form-horizontal col-md-12" style="margin-left:30px; margin-top: 10px">
+
+        <div class="row col-md-12" style="margin-top: 10px">
+            <div class="row col-md-12">
+                <div class="row col-md-8">
+                    <div class="form-group">
+                        <div class="input-group">
+                            @Html.TextBox("txtUserId", "", new { @class = "form-control", placeholder = "Search by User Name, Last name, First Name" })
+                            <span class="input-group-btn">
+                                <button id="btnSearch" type="button" value="Search From Active Directory" class="btn btn-primary ">
+                                    <span class="glyphicon glyphicon-search"></span>
+                                    <span>Search From Active Directory</span>
+                                </button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <span>
+                        @Html.Label("lblAdError", "Please fill in the Search String", new { @class = "error", style = "display: none;", id = "lblAdError" })
+                    </span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.UserName, new { @class = "control-label" })<span class="requiredSymbol">*</span>
+                        @Html.TextBoxFor(model => model.UserName, new { @class = "form-control", maxlength = "70", placeholder = "User Name", @readonly = "readonly" })
+                        @Html.ValidationMessageFor(model => model.UserName)
+                    </div>
+                </div>
+                <div class="col-md-4 col-md-offset-1">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.FirstName, new { @class = "control-label" })<span class="requiredSymbol">*</span>
+                        @Html.TextBoxFor(model => model.FirstName, new { @class = "form-control", maxlength = "70", placeholder = "First Name" })
+                        @Html.ValidationMessageFor(model => model.FirstName)
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.MiddleName, new { @class = "control-label" })
+                        @Html.TextBoxFor(model => model.MiddleName, new { @class = "form-control", maxlength = "50", placeholder = "Middle Name" })
+                        @Html.ValidationMessageFor(model => model.MiddleName)
+                    </div>
+                </div>
+                <div class="col-md-4 col-md-offset-1">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.LastName, new { @class = "control-label" })<span class="requiredSymbol">*</span>
+                        @Html.TextBoxFor(model => model.LastName, new { @class = "form-control", maxlength = "70", placeholder = "Last Name" })
+                        @Html.ValidationMessageFor(model => model.LastName)
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Email, new { @class = "control-label" })<span class="requiredSymbol">*</span>
+                        @Html.TextBoxFor(model => model.Email, new { @class = "form-control email", placeholder = "Email" })
+                        @Html.ValidationMessageFor(model => model.Email)
+                    </div>
+                </div>
+                <div class="col-md-2 col-md-offset-1">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.RoleID, new { @class = "control-label" })
+                        <span class="requiredSymbol">*</span>
+
+                        @Html.DropDownListFor(model => model.RoleID, ViewBag.Roles as IEnumerable<SelectListItem>,"--Select--", new { @class = "form-control" })
+
+                        @Html.ValidationMessageFor(model => model.RoleID)
+                    </div>
+
+
+                </div>
+                <div class="col-md-3 col-md-offset-1">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.SPFS_Active, new { @class = "control-label" })
+                        <div class="input-group">
+                            <div class="input-group-addon">
+                                @Html.CheckBoxFor(model => model.SPFS_Active, new { @class = "saccCheckbox", id = "IsActive" })
+                            </div>
+                            @Html.Label(text, new { @class = "label label-success", id = "ActiveText" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.SPFS_Active)
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>    <hr />
+        </div>
+    <div class="row col-md-12">
+        <div class="row pull-right">
+            <button type="button" class="btn btn-primary btn-sm" id="btnClear">
+                <span class="glyphicon glyphicon-remove"></span>
+                <span>Clear</span>
+            </button>
+            <a href="@Url.Action("Index")" class="btn btn-primary btn-sm">
+                <span class="glyphicon glyphicon-circle-arrow-left"></span>Back to List
+            </a>
+            <button type="submit" class="btn btn-primary btn-sm" id="btnSave">
+                <span class="glyphicon glyphicon-floppy-save"></span>
+                <span>Save</span>
+            </button>
+        </div>
+    </div>
+    <div id="DivAd" title="Select User" style="overflow: hidden;">
+        <div id="progressBar" class="progress progress-striped active" style="overflow: hidden;">
+            <div class="progress-bar" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+            </div>
+        </div>
+
+        <div id="DivResult" title="Select User" style="overflow: hidden;">
+        </div>
+    </div>
+
+
+}
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        $('#DivAd').dialog({
+            autoOpen: false,
+            width: 780,
+            height: 400,
+            resizable: false,
+            title: 'Select User',
+            modal: true,
+            open: function (event, ui) {
+
+            }
+        });
+
+        $('#btnSearch').click(function () {
+
+            if ($("#txtUserId").val() != '') {
+                $("#lblAdError").css('display', 'none');
+                $('#DivResult').children().remove();
+                $('#DivResult').html('<h5>Loading Users information from Active directory</h5>');
+                $('#progressBar').show();
+                $("#DivAd").dialog("open");
+                var userid = $('#txtUserId').val();
+                $.ajax({
+                    url: '@Url.Action("GetUsersbyLastNameFromAD", "User")',
+                    //Passes the content of an input up
+                    data: { lastName: userid },
+                    contentType: "application/json; charset=utf-8",
+                    type: 'GET',
+                    cache: false,
+                    //async: false,
+                    success: function (data) {
+                        $('#DivResult').children().remove();
+                        $('#DivResult').html(data);
+                        $('#progressBar').hide();
+                    },                    
+                        error: function (response) {
+                            alert("error") // I'm always get this.
+                        }
+                });
+            }
+            else {
+                $("#lblAdError").css('display', 'inline');
+            }       
+            });
+
+        $("input#IsActive").change(function () {
+            
+            var text = $(this).is(':checked') ? "Active" : "InActive"
+            $("#ActiveText").html(text);
+        });
+
+        //Will clear the screen.
+        $('#btnClear').click(function () {
+           
+            $(".Create").find('input:text, input:password, input:file, select, textarea').val('');
+        });
+    });
+
+</script>
+
+
+

@@ -1,0 +1,140 @@
+﻿
+@using SPFS.Models;
+
+@model IEnumerable<SPFS.Models.SiteListViewModel>
+
+@{
+    ViewBag.Title = "All Sites";
+    GeneralSearchCriteria objSearch = (GeneralSearchCriteria)TempData["SiteSearchCriteria"];
+    TempData.Keep("SiteSearchCriteria");
+}
+
+<h2>All Sites</h2>
+<hr />
+@using (Html.BeginForm())
+{
+
+    <div class="row col-md-12" style="padding-top: 5px">
+        <div class="col-md-3">
+            @Html.Label("Active")
+            @Html.DropDownList("activeId", ViewBag.ActiveList as IEnumerable<SelectListItem>, new { @class = "form-control" })
+        </div>
+        <div class="col-md-9">
+            <div class="form-group col-md-6">
+                @Html.Label("Search by")
+                <div class="input-group">
+                    @Html.TextBox("search", "", new { @class = "form-control", placeholder = "Search by Location Name, GDIS ORG ENTITY..." })
+                    <span class="input-group-btn">
+                        <button id="btnSearch" type="button" value="Search" class="btn btn-primary">
+                            <span class="glyphicon glyphicon-search"></span>
+                            <span>Search</span>
+                        </button>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container col-md-12">
+        <div class="row pull-right">
+            <a href="@Url.Action("ExportData", "Site", new { fileName = "Sites" })" class="btn btn-primary btn-sm">
+                <span class="glyphicon glyphicon-export"></span>Export
+            </a>
+
+
+        </div>
+    </div>
+
+    <div id="output" class="row" style="margin-top: 5px">
+        @Html.Partial("_SiteList", Model)
+    </div>
+
+    <div class="container col-md-12">
+        <div class="row pull-right">
+            <a href="@Url.Action("ExportData", "Site", new { fileName = "Sites" })" class="btn btn-primary btn-sm">
+                <span class="glyphicon glyphicon-export"></span>Export
+            </a>
+        </div>
+    </div>
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#activeId').focus();
+        $('#activeId').val('@objSearch.Active');
+        $('#search').val('@objSearch.SearchText');
+
+        function keypressHandler(e) {
+            if (e.which == 13) {
+                e.preventDefault(); //stops default action: submitting form
+                $(this).blur();
+                $('#btnSearch').focus().click();//give your submit an ID
+            }
+        }
+
+        $(this).keypress(keypressHandler);
+
+        //Will refresh the Sites based on Activen or InActive
+        $('#activeId').change(function () {
+            var activeId = $('#activeId').val();
+            var search = $('#search').val();
+            $.ajax({
+                url: '@Url.Action("GetSiteByActiveOrInActive", "Site")',
+                //Passes the content of an input up
+                data: { id: activeId, search: search },
+                contentType: "application/json; charset=utf-8",
+                type: 'GET',
+                cache: false,
+                async: false,
+                success: function (data) {
+                    $('#output').children().remove();
+                    $('#output').html(data);
+                }
+            });
+        });
+
+        //Will refresh the Sites based on selection on Search click.
+        $('#btnSearch').click(function () {
+            $("#dlgmodal").dialog('open');
+            $('#dlgmodal span').text('Loading ...');
+            var activeId = $('#activeId').val();
+            var search = $('#search').val();
+
+            $.ajax({
+                url: '@Url.Action("GetSiteBySearch", "Site")',
+                //Passes the content of an input up
+                data: { id: activeId, search: search },
+                contentType: "application/json; charset=utf-8",
+                type: 'GET',
+                cache: false,
+                //async: false,
+                success: function (data) {
+                    $('#output').children().remove();
+                    $('#output').append($(data));
+                    $("#dlgmodal").closest('.ui-dialog-content').dialog("close");
+                }
+            });
+        });
+
+        //Sorting
+        $(document).on("click", ".sortby", function (ev) {
+            var activeId = $('#activeId').val();
+            var search = $('#search').val();
+            var sortby = $(this).attr('data-sortBy');
+            $.ajax({
+                url: '@Url.Action("GetSitesBySort", "Site")',
+                //Passes the content of an input up
+                data: { id: activeId, search: search, sortby: sortby },
+                contentType: "application/json; charset=utf-8",
+                type: 'GET',
+                cache: false,
+                async: false,
+                success: function (data) {
+                    $('#output').children().remove();
+                    $('#output').html(data);
+                }
+            });
+        });
+
+    });
+
+</script>

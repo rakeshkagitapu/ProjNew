@@ -1,0 +1,183 @@
+﻿@using Microsoft.AspNet.Identity
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - SPFS V2</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryval")
+    @* @Scripts.Render("~/bundles/jqueryui")*@
+    @*@Scripts.Render("~/bundles/bootstrapSPFS")
+        @Scripts.Render("~/bundles/bootstrapSelect")*@
+
+</head>
+<body>
+    @*<p>@Html.Partial("_SpfsHeader") </p>*@
+    <div id="mainContainer" class="container container-with-nav">
+        <div id="divNavbarWrapper" class="navbar navbar-default navbar-static-top">
+            <div class="row" style="background-color: #1398d0">
+                <div class="navbar-header">
+
+                    @*<div class="col-md-1">
+                            <img src="~/Images/danasml.png" />
+                        </div>*@
+
+
+                    <div class="col-xs-0 ">
+                        <button type="button" class="navbar-toggle collapsed"
+                                data-toggle="collapse" data-target="#divMainNavbar"
+                                aria-expanded="false">
+                            <span class="sr-only">Toggle Navigation</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        <div class="navbar-brand">
+                            <img src="~/Images/danasmall.png" /> SPFS
+                        </div>
+                        @*<a class="navbar-brand" href="../">SPFS</a>*@
+                    </div>
+
+                </div>
+                <div id="divMainNavbar" class="navbar-collapse collapse">
+                    <div class="col-sm-10">
+                        @Html.Partial("_LoginPartial")
+                        <ul class="nav navbar-nav navbar-right" style="padding-left:5px;">
+                            <li>@Html.ActionLink("Home", "Index", "Home")</li>
+                            @if (ViewBag.ShowRatings)
+                            {
+                                <li role="presentation" class="dropdown">
+                                    <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                                        Ratings<span class="caret" />
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li>@Html.ActionLink("Ratings Manual", "Index", "Ratings", null, new { isUpload = false })</li>
+                                        <li>@Html.ActionLink("Ratings Upload", "Index", "ExcelUpload", null, new { isUpload = true })</li>
+                                    </ul>
+                                </li>
+                            }
+                            @if (ViewBag.ShowAdmin)
+                            {
+                                <li role="presentation" class="dropdown">
+                                    <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                                        Admin<span class="caret" />
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li>@Html.ActionLink("Register New User", "Create", "User")</li>
+                                        <li>@Html.ActionLink("View/Edit Existing Users", "Index1", "User")</li>
+                                        <li>@Html.ActionLink("Add Sites to User", "Index", "UserSites")</li>
+                                        <li>@Html.ActionLink("Add Users to Site", "SitesUser", "UserSites")</li>
+                                        <li>@Html.ActionLink("View/Edit Existing Suppliers", "Index", "Supplier")</li>
+                                        <li>@Html.ActionLink("View/Edit Existing Sites", "Index", "Site")</li>
+                                        <li>@Html.ActionLink("Move Ratings", "Index", "MoveRatings")</li>
+                                     
+                                        @*<li>@Html.ActionLink("Add Sites to User", "Index", "UserSites")</li>
+                                            <li>@Html.ActionLink("Add Users to Site", "SitesUser", "UserSites")</li>*@
+                                    </ul>
+                                </li>
+                            }
+                            <li style="padding-right:10px;">@Html.ActionLink("About Us", "Contact", "Home")</li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="body-content" style="padding-left:20px; padding-right:20px;">
+            <div id="divValidationSummary" class="form-horizontal" style="display: none;">
+                <div class="form-group">
+                    <div class="col-lg-12 col-md-12 col-sm-12">
+                        <div class="form-horizontal custom-validation-summary">
+                            <div class="form-group form-group-tight">
+                                <div class="col-lg-12 col-md-12 col-sm-12">
+                                    <h4 class="text-danger" style="padding-left: 11px;">
+                                        <span class="k-icon k-warning"></span>
+                                        <span style="padding: 0 0 0 4px;">Please correct the following Errors</span>
+                                    </h4>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-tight">
+                                <div class="col-lg-12 col-md-12 col-sm-12">
+                                    <ul id="listValidationErrors"></ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="k-callout k-callout-n custom-callout"></div>
+                    </div>
+                </div>
+            </div>
+            @RenderBody()
+        </div>
+    </div>
+    @Html.Partial("_SpfsFooter")
+
+    <div id="dlgmodal" class="alert-warning" style="overflow: hidden;">
+        <div class="leftimage">
+            <img src="@Url.Content("~/Images/ajax-loader.gif")" alt="Image" />
+            <span style="color: #1398d0">Loading...</span>
+        </div>
+    </div>
+
+    <div id="dlgsave" class="panel panel-default text-center" style="background-color: rgba(229, 245, 250, 0.701961); color: rgb(4, 135, 196); margin: 0; border-color: rgb(183, 225, 240);">
+        <div class="panel-body">
+            <h4>
+                <span class="glyphicon glyphicon-floppy-save" style="top: 3px;"></span>
+                <span style="padding-left: 4px;">Saving...</span>
+            </h4>
+        </div>
+    </div>
+
+    @Scripts.Render("~/bundles/bootstrap")
+
+    <script type="text/javascript">
+
+        function OnBeginPostBack_Save(sender) {
+            var form = $(sender).parents('form');
+
+            if (form.valid()) {
+                $("#dlgsave").dialog('open');
+            }
+        }
+        $(document).ready(function () {
+            $("#dlgmodal").dialog({
+                autoOpen: false,
+                resizable: false,
+                width: "auto",
+                height: "auto",
+                show: { effect: 'drop', direction: "up" },
+                modal: true,
+                draggable: true,
+                open: function (event, ui) {
+                    $(".ui-dialog-titlebar").hide();
+                    $(".ui-dialog-titlebar-close").hide();
+                }
+            });
+
+            $("#dlgsave").dialog({
+                autoOpen: false,
+                resizable: false,
+                width: "auto",
+                height: $(window).height() * 0.15,
+                show: { effect: 'drop', direction: "up" },
+                modal: true,
+                draggable: true,
+                open: function (event, ui) {
+                    $(".ui-dialog-titlebar").hide();
+                    $(".ui-dialog-titlebar-close").hide();
+                }
+            });
+        });
+
+
+    </script>
+    @RenderSection("scripts", required: false)
+
+
+</body>
+
+</html>

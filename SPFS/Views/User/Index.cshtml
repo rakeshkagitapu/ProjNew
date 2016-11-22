@@ -1,0 +1,148 @@
+﻿@using SPFS.Models;
+@model IEnumerable<UserListViewModel>
+@{
+    ViewBag.Title = "All Users";
+    GeneralSearchCriteria objSearch = (GeneralSearchCriteria)TempData["UserSearchCriteria"];
+    TempData.Keep("UserSearchCriteria");
+}
+
+<h2>All Users</h2>
+<hr />
+@using (Html.BeginForm())
+{
+    <div class="row col-md-12" style="padding-top: 5px">
+        <div class="col-md-3">
+            @Html.Label("Active")
+            @Html.DropDownList("activeId", ViewBag.ActiveList as IEnumerable<SelectListItem>, new { @class = "form-control"})
+        </div>
+        <div class="col-md-9">
+            <div class="form-group col-md-6">
+                @Html.Label("Search by")
+                <div class="input-group">
+                    @Html.TextBox("search", "", new { @class = "form-control", placeholder = "Search by User Name, first and last Name..." })
+                    <span class="input-group-btn">
+                        <button id="btnSearch" type="button" value="Search" class="btn btn-primary ">
+                            <span class="glyphicon glyphicon-search"></span>
+                            <span>Search</span>
+                        </button>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row col-md-12">
+        <div class="pull-right">
+            <a href="@Url.Action("ExportData", "User", new { fileName = "User" })" class="btn btn-primary btn-sm">
+                <span class="glyphicon glyphicon-export"></span>Export
+            </a>
+
+            <a href="@Url.Action("Create", "User")" class="btn btn-primary btn-sm">
+                <span class="glyphicon glyphicon-plus"></span>Create New
+            </a>
+        </div>
+
+    </div>
+
+        <div id="output" class="row" style="margin-top: 5px">
+            @Html.Partial("_UserList", Model)
+        </div>
+
+        <div class="row col-md-12">
+            <div class="pull-right">
+                <a href="@Url.Action("ExportData", "User", new { fileName = "User" })" class="btn btn-primary btn-sm">
+                    <span class="glyphicon glyphicon-export"></span>Export
+                </a>
+
+                @*@if (permission.IsAdd)
+                    {*@
+                <a href="@Url.Action("Create", "User")" class="btn btn-primary btn-sm">
+                    <span class="glyphicon glyphicon-plus"></span>Create New
+                </a>
+                @*}*@
+            </div>
+        </div>
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#activeId').focus();
+        $('#activeId').val('@objSearch.Active');
+        $('#search').val('@objSearch.SearchText');
+
+        function keypressHandler(e) {
+            if (e.which == 13) {
+                e.preventDefault(); //stops default action: submitting form
+                $(this).blur();
+                $('#btnSearch').focus().click();//give your submit an ID
+            }
+        }
+
+        $(this).keypress(keypressHandler);
+
+        //Will refresh
+        $('#activeId').change(function () {
+            var activeId = $('#activeId').val();
+            var search = $('#search').val();
+            $.ajax({
+                url: '@Url.Action("GetUserByActiveOrInActive", "User")',
+                //Passes the content of an input up
+                data: { id: activeId, search: search },
+                contentType: "application/json; charset=utf-8",
+                type: 'GET',
+                cache: false,
+                async: false,
+                success: function (data) {
+                    $('#output').children().remove();
+                    $('#output').html(data);
+                }
+            });
+        });
+
+        //Will refresh the Users based on selection on Search click.
+        $('#btnSearch').click(function () {
+            $("#dlgmodal").dialog('open');
+            $('#dlgmodal span').text('Loading Users...');
+            var activeId = $('#activeId').val();
+            var search = $('#search').val();
+
+            $.ajax({
+                url: '@Url.Action("GetUserBySearch", "User")',
+                //Passes the content of an input up
+                data: { id: activeId, search: search },
+                contentType: "application/json; charset=utf-8",
+                type: 'GET',
+                cache: false,
+                //async: false,
+                success: function (data) {
+                    $('#output').children().remove();
+                    $('#output').append($(data));
+                    $("#dlgmodal").closest('.ui-dialog-content').dialog("close");
+                }
+            });
+        });
+
+        //Sorting
+        $(document).on("click", ".sortby", function (ev) {
+            var activeId = $('#activeId').val();
+            var search = $('#search').val();
+            var sortby = $(this).attr('data-sortBy');
+            $.ajax({
+                url: '@Url.Action("GetUsersBySort", "User")',
+                //Passes the content of an input up
+                data: { id: activeId, search: search, sortby: sortby },
+                contentType: "application/json; charset=utf-8",
+                type: 'GET',
+                cache: false,
+                async: false,
+                success: function (data) {
+                    $('#output').children().remove();
+                    $('#output').html(data);
+                }
+            });
+        });
+
+    });
+
+</script>

@@ -1,0 +1,29 @@
+﻿@model SPFS.Models.UserSitesViewModel
+
+
+<div class="row col-md-12">
+    <div class="col-md-12 divpnlStyle">
+        <h4><br /></h4>
+    </div>
+</div>
+
+<div class="row col-md-12">
+    <div class="col-md-12" style="padding-bottom: 25px;">
+        @Html.ListBoxFor(model => model.SelectedSiteIDs, ViewBag.Sites as IEnumerable<SelectListItem>, new { @class = "form-control", id = "SelectedSiteIDs", @multiple = "multiple" })
+    </div>
+</div>
+<br/>
+
+<script type="text/javascript">
+    $(function () {
+        $("#SelectedSiteIDs").bootstrapDualListbox({
+            nonSelectedListLabel: 'Available Site(s)',
+            selectedListLabel: 'Selected Site(s)',
+            preserveSelectionOnMove: 'moved',
+            moveOnSelect: false,
+            selectorMinimalHeight: 200
+        });
+    });
+</script>
+
+

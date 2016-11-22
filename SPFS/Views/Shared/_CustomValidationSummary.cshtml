@@ -1,0 +1,42 @@
+﻿@if (!ViewData.ModelState.IsValid && ViewData.ModelState.Values.Any(v => v.Value == null && v.Errors.Any()))
+{
+    <div class="clearfix"></div>
+    <div class="form-horizontal">
+        <div class="form-group">
+            <div class="col-md-12">
+                <div class="form-horizontal custom-validation-summary">
+                    <div class="form-group form-group-tight">
+                        <div class="col-md-12">
+                            <h4 class="text-danger" style="padding-left: 11px;">
+                                <span class="k-icon k-warning"></span>
+                                <span style="padding: 0 0 0 4px;">Please correct the following Errors</span>
+                            </h4>
+                        </div>
+                    </div>
+                    <div class="form-group form-group-tight">
+                        <div class="col-md-12">
+                            <ul>
+                            @foreach (var item in ViewData.ModelState.Values.Where(v => v.Value == null && v.Errors.Any()))
+                            {
+                                foreach (var error in item.Errors)
+                                {
+                                    if (error.Exception != null)
+                                    {
+                                        <li>@error.Exception.Message</li>
+                                    }
+                                    else if (!string.IsNullOrEmpty(error.ErrorMessage))
+                                    {
+                                        <li>@error.ErrorMessage</li>
+                                    }
+                                }
+                            }
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="k-callout k-callout-n custom-callout"></div>
+            </div>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+}

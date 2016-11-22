@@ -1,0 +1,86 @@
+﻿using SPFS.Models;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Reflection;
+using System.Text;
+using System.Web;
+using System.Web.Razor;
+
+namespace SPFS.Helpers
+{
+    public static class Extensions
+    {
+
+        private static Dictionary<string, string> ExcelColumnMappings
+        {
+            get
+            {
+                return new Dictionary<string, string>() {
+                    {"ERP_Supplier_ID","ERP_Supplier_ID"},
+                    {"DUNS","DUNS"},
+                    {"CID","CID"},
+                    {"Inbound_parts","Inbound"},
+                    {"OTR","OnTime Quantity" },
+                    {"OTD","OnTime Quantity Due" },
+                    {"PFR","Premium Freight" }
+            };
+            }
+        }
+
+        public static List<T> ToList<T>(this DataTable table) where T : new()
+        {
+            IList<PropertyInfo> properties = typeof(T).GetProperties().ToList();
+            List<T> result = new List<T>();
+
+            foreach (var row in table.Rows)
+            {
+                var item = CreateItemFromRow<T>((DataRow)row, properties);
+                result.Add(item);
+            }
+
+            return result;
+        }
+
+        private static T CreateItemFromRow<T>(DataRow row, IList<PropertyInfo> properties) where T : new()
+        {
+            T item = new T();
+            List<ErrorDetails> errors = new List<ErrorDetails>();
+            PropertyInfo errorProperty = null;
+            foreach (var property in properties)
+            {
+                if (property.Name == "ErrorInformation") 
+                {
+                    errorProperty = property;
+                }
+                else
+                {
+                    var excelColumnName = ExcelColumnMappings.ContainsKey(property.Name) ? ExcelColumnMappings[property.Name] : property.Name;
+                    if (row.Table.Columns.Contains(excelColumnName))
+                    {
+                        try
+                        {
+                            property.SetValue(item, Convert.ChangeType(row[excelColumnName], property.PropertyType), null);
+                        }
+                        catch (Exception ex)
+                        {
+                            string msg = string.Empty;
+                            msg = string.Format("Failed to convert value {0} into Data Type {1}", new string[] {Convert.ToString(row[excelColumnName]),
+                                Convert.ToString( property.PropertyType )});
+                            errors.Add(new ErrorDetails { Key = property.Name, ErrorMessage = msg });
+                        }
+                    }
+                }
+
+            }
+            if (errors != null && errors.Count > 0)
+            {
+                errorProperty.SetValue(item, Convert.ChangeType(errors, errorProperty.PropertyType), null);
+            }
+            return item;
+        }
+
+
+    }
+}

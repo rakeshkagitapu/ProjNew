@@ -1,0 +1,53 @@
+﻿@using Microsoft.AspNet.Identity
+
+@if (Request.IsAuthenticated)
+{
+    using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+    {
+        SPFS.Helpers.Utilities utils = new SPFS.Helpers.Utilities();
+
+        @Html.AntiForgeryToken()
+
+        <ul class="nav navbar-nav navbar-right" style="margin-right:5px;">
+            <li role="presentation" class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                    <span class="glyphicon glyphicon-user"></span>
+                     Hello, @utils.GetCurrentUser().UserName (@utils.GetRolesForCurrentUser())
+                    <span class="caret" />
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
+                </ul>
+            </li>
+        </ul>
+    }
+}
+
+@*@if (Request.IsAuthenticated)
+{
+    <ul class="@ulClasses" style="@ulStyle">
+        <li>
+            <label class="navbar-text" style="margin-right: 5px;">
+                <span class="glyphicon glyphicon-user"></span>
+                @User.Identity.GetUserName()
+            </label>
+        </li>
+        <li>
+            <button type="button" class="btn btn-default navbar-btn control-level-permission" form="logoutForm" style="margin-right: 5px;" onclick="window.location='@Url.Action("LogOff", "Account", routeValues: null)';">
+                <span>Log Off</span>
+                <span class="glyphicon glyphicon-log-out" style="margin-left: 4px;"></span>
+            </button>
+        </li>
+    </ul>
+}
+else
+{
+    <ul class="@ulClasses" style="@ulStyle">
+        <li>
+            <button type="button" class="btn btn-default navbar-btn control-level-permission" onclick="window.location='@Url.Action("Login", "Account", routeValues: null)';">
+                <span class="glyphicon glyphicon-log-in" style="margin-right: 4px;"></span>
+                <span>Log In</span>
+            </button>
+        </li>
+    </ul>
+}*@

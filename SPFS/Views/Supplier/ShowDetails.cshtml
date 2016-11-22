@@ -1,0 +1,112 @@
+﻿
+@model SPFS.Models.SupplierListViewModel
+
+@{
+    ViewBag.Title = "Show Details";
+    var text = Model.SPFS_Active ? "Active" : "In Active";
+}
+@using (Html.BeginForm())
+{ 
+    @Html.AntiForgeryToken()
+    
+
+    <h2>Supplier Details</h2>
+
+    <div class="container">
+        <section class="well form-horizontal form-widgets col-sm-12" style="margin:10px; width:95%;">
+            <h4 class="ra-well-title">
+                Supplier : @Model.Name
+            </h4>
+            <hr />
+            <div class="form-horizontal form-widgets col-sm-12">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CID, htmlAttributes: new { @class = "control-label col-md-4" })
+                    <div class="col-md-4">
+                        <h5>@Model.CID</h5>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Duns, htmlAttributes: new { @class = "control-label col-md-4" })
+                    <div class="col-md-4">
+                        <h5>@Model.Duns</h5>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-4" })
+                    <div class="col-md-4">
+                        <h5>@Model.Name</h5>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Address, htmlAttributes: new { @class = "control-label col-md-4" })
+                    <div class="col-md-4">
+                        <h5>@Model.Address</h5>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.City, htmlAttributes: new { @class = "control-label col-md-4" })
+                    <div class="col-md-4">
+                        <h5>@Model.City</h5>
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.State, htmlAttributes: new { @class = "control-label col-md-4" })
+                    <div class="col-md-4">
+                        <h5>@Model.State</h5>
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Country, htmlAttributes: new { @class = "control-label col-md-4" })
+                    <div class="col-md-4">
+                        <h5>@Model.Country</h5>
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Postal_Code, htmlAttributes: new { @class = "control-label col-md-4" })
+                    <div class="col-md-4">
+                        <h5>@Model.Postal_Code</h5>
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.SPFS_Active, htmlAttributes: new { @class = "control-label col-md-4" })
+                    <div class="input-group">
+                        <div class="input-group-addon">
+                            @Html.CheckBoxFor(model => model.SPFS_Active, new { @class = "saccCheckbox", id = "IsActive" })
+                        </div>
+                        @Html.Label(text, new { @class = "label label-success", id = "ActiveText" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.SPFS_Active)
+
+
+                </div>
+            </div>
+        </section>
+        <div class="row col-md-12">
+            <div class="row pull-right">
+                <a href="@Url.Action("Index")" class="btn btn-primary btn-sm">
+                    <span class="glyphicon glyphicon-circle-arrow-left"></span>Back to List
+                </a>
+                <button type="submit" class="btn btn-primary btn-sm" id="btnSave">
+                    <span class="glyphicon glyphicon-floppy-save"></span>
+                    <span>Save</span>
+                </button>
+            </div>
+        </div>
+    </div>
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("input#IsActive").change(function () {
+            var text = $(this).is(':checked') ? "Active" : "InActive"
+            $("#ActiveText").html(text);
+        });
+
+
+
+    });
+
+</script>

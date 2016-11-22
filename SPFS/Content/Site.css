@@ -1,0 +1,210 @@
+﻿/*body {
+    padding-top: 0px;
+    padding-bottom: 20px;
+}*/
+html, body {
+    height: 100%;
+    background-color: white;
+    background-image: url('../Images/gradient_3.png');
+    background-repeat: repeat-x;
+}
+
+#divNavbarWrapper {
+    margin-bottom: 0px;
+    border-radius: 0px;
+}
+
+#divMainNavbar.navbar-collapse {
+    padding: 0px;
+}
+
+#mainContainer.container {
+    padding-top: 0px;
+    padding-bottom: 47px;
+    min-height: 100%;
+    background-color: #fff;
+}
+
+#divMainNavbar.navbar-collapse {
+    padding: 0px;
+}
+.navbar-header{
+    
+    margin-left:.22% !important;
+}
+.navbar-default .navbar-brand {
+    color:white;
+}
+.labelWhite
+{
+    color:white;
+}
+.navbar-default .navbar-nav > li > a
+{
+     color:white;
+}
+.navbar-default .navbar-text
+{
+     color:white;
+}
+
+.navbar-nav >li
+{
+  font-weight:bold;
+}
+/*.navbar-default .navbar-toggle .icon-bar {
+  
+   background-color:white;
+}*/
+/*.navbar-default .navbar-toggle:hover .icon-bar {
+   color: #fff;
+   background-color: #1398d0;
+}
+.navbar-default .navbar-toggle:hover, .navbar-default .navbar-toggle:focus {
+  color: #fff;
+  background-color: none;
+}*/
+
+/*@media all and (max-width:767px)*/
+.navbar-default .navbar-nav .open .dropdown-menu > li > a:hover, .navbar-default .navbar-nav .open .dropdown-menu > li > a:focus {
+   color: #fff;
+   background-color: #1398d0;
+}
+/*@media all and (max-width:767px)*/
+.navbar-default .navbar-nav .open .dropdown-menu > li > a {
+    background-color: #fff;
+    color: #1398d0;
+}
+
+
+.navbar-default .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus
+{
+    color: #1398d0;
+    background-color: white;
+    border-bottom:1px solid #1398d0;
+}
+.navbar-default .navbar-nav>.open>a, .navbar-default .navbar-nav>.open>a:hover, .navbar-default .navbar-nav>.open>a:focus {
+    color: #1398d0;
+    background-color: white;
+    /*border-bottom:1px solid #1398d0;*/
+}
+.navbar-default .navbar-nav>.dropdown>a .caret {
+    border-top-color: white;
+    border-bottom-color: white;
+}
+.navbar-default .navbar-nav > .dropdown > a:hover .caret, .navbar-default .navbar-nav > .dropdown > a:focus .caret
+{
+      border-top-color: #1398d0;
+    border-bottom-color:#1398d0;
+}
+.navbar-brand 
+{
+     font-weight: 700;
+     font-size: 24px;
+     padding:5px 5px;
+    
+}
+.navbar-default .navbar-brand:hover, .navbar-default .navbar-brand:focus
+{
+    color: white;
+    background-color: #1398d0;
+   
+}
+/* Set padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Override the default bootstrap behavior where horizontal description lists 
+   will truncate terms that are too long to fit in the left column 
+*/
+.dl-horizontal dt {
+    white-space: normal;
+}
+
+/* Set width on the form input elements since they're 100% wide by default */
+
+
+.leftimage {
+    width: 150px;
+    height: 0px;
+}
+
+
+.dropdown-menu>li>a {
+    display: block;
+    padding: 3px 20px;
+    clear: both;
+    font-weight: normal;
+    line-height: 1.428571429;
+    color: #428bca;
+    white-space: nowrap;
+}
+.field-validation-error {
+    border-radius: 0;
+    border-top: 1px solid #d9534f;
+    border-right: 1px solid #d9534f;
+    border-bottom: 1px solid #d9534f;
+    border-left: 3px solid #d9534f;
+    background-color: #fdf7f7;
+    color: #d9534f;
+    font-size: 14px;
+    margin: 7px;
+    padding: 4px 5px 4px 6px;
+    text-align: left;
+    width: auto;
+    line-height: normal;
+    position: relative;
+    display: inline-block;
+    margin-top: 13px;
+}
+
+.custom-validation-summary {
+    border-top: 1px solid #d9534f;
+    border-right: 1px solid #d9534f;
+    border-bottom: 1px solid #d9534f;
+    border-left: 3px solid #d9534f;
+    background-color: #fdf7f7;
+    /*padding: 1px 11px;*/
+}
+.requiredSymbol {
+    font-weight: bold;
+    color: #e80c4d !important;
+}
+.saccCheckbox,
+.saccCheckbox:hover {
+    cursor: pointer;
+}
+.actalign{ text-align:center;}
+.btn-primary:hover, .btn-primary:focus, .btn-primary:active, .active.btn-primary, .open .btn-primary.dropdown-toggle {
+    
+    background-color: #1398d0;
+    
+}
+
+.btn-primary {
+    
+    background-color:#1398d0;
+    
+}
+.pagination > .active > a, .pagination > .active > span, .pagination > .active > a:hover, .pagination > .active > span:hover, .pagination > .active > a:focus, .pagination > .active > span:focus {
+   
+    background-color: #1398d0;
+    border-color: #1398d0;
+}
+.panel-primary {
+  border-color: #1398d0;
+  
+}
+
+.panel-primary > .panel-heading {
+  color: #ffffff;
+  background-color: #1398d0;
+  border-color: #1398d0;
+ 
+}
+.tableheight{
+   height: 700px;
+    overflow:auto;
+}
