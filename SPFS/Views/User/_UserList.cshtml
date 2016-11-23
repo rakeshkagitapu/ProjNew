@@ -1,4 +1,4 @@
-﻿@using PagedList.Mvc;
+﻿str@using PagedList.Mvc;
 @using PagedList;
 
 
@@ -28,7 +28,7 @@
                 <a href="#" data-sortby="@ViewData["IsActiveSort"]" class="sortby">@Html.DisplayNameFor(model => model.First().SPFS_Active)</a>
             </th>
             <th>
-                @Html.DisplayName("Assigned No of Site(s)")
+                @Html.DisplayName("Assigned Site(s)")
             </th>
 
             
@@ -71,8 +71,8 @@
 
                     </td>
                     <td>
-                        @*@Html.DisplayFor(modelItem => item.UserSitesName)*@
-                         @Html.ActionLink(string.Format("{0}",item.UserSites.Count),"Index","UserSites", new { userId = item.UserID},new {@title = item.UserSitesName })
+                      @Html.ActionLink(string.Format("No of Sites :{0}", item.UserSites.Count), "Index", "UserSites", new { userId = item.UserID }, new {@title= item.UserSitesName })
+                      
                     </td>
 
                 </tr>

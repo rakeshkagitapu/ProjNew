@@ -22,10 +22,10 @@ namespace SPFS.Model
         public int CID { get; set; }
         public int Duns { get; set; }
         public int Erp_supplier_ID { get; set; }
-        public int Inbound_parts { get; set; }
-        public int OTR { get; set; }
-        public int OTD { get; set; }
-        public int PFR { get; set; }
+        public decimal Inbound_parts { get; set; }
+        public decimal OTR { get; set; }
+        public decimal OTD { get; set; }
+        public decimal PFR { get; set; }
         public System.DateTime Initial_submission_date { get; set; }
         public Nullable<bool> Temp_Upload_ { get; set; }
         public int UserID { get; set; }

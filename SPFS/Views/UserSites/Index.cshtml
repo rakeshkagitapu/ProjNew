@@ -2,7 +2,7 @@
 
 @{
     ViewBag.Title = "Index";
-
+   
 }
 
 <h2>Add Sites to Users</h2>
@@ -16,10 +16,10 @@
                 @Html.Label("Select User :")
                 @Html.DropDownListFor(model => model.UserID, ViewBag.Users as IEnumerable<SelectListItem>, "",
                new { @class = "selectpicker", data_live_search = "true", data_size = "10", data_width = "30%", required = "true" })
-
-                @Html.ValidationMessageFor(model => model.UserID)
-
-            </div>
+                
+                    @Html.ValidationMessageFor(model => model.UserID)
+               
+                </div>
         </div>
     </div>
 
@@ -27,7 +27,6 @@
         @Html.Partial("_UserSitesList", Model)
 
     </div>
-
     <div id="divsitesSave" class="row col-md-12" style="padding-left: 25px;">
         <span class="input-group-btn">
             <button id="btnSave" type="submit" value="Save" onclick="OnBeginPostBack_Save(this)" class="btn btn-primary btn-block" style="border-radius:5px">
@@ -35,14 +34,19 @@
                 <span>Save</span>
             </button>
         </span>
+        
+
     </div>
+
 }
 
 <script type="text/javascript">
+  
+
     $(document).ready(function () {
         //var userId = $('#UserID').val();
-
-
+       
+      
         var userId = $("#UserID option:selected").val();
         if (userId == "") {
             $("#btnSave").hide();
@@ -71,22 +75,34 @@
                 }
             });
         }
-        //Will refresh
-        //$('#UserID').change(function () {
-        //    var userId = $('#UserID').val();
-        //    if (userId != "") {
+       
+        //$('#btnSave').click(function () {
+        //    $("#dlgmodal").dialog('open');
+        //    $('#dlgmodal span').text('Saving ...');
 
-        //        loadSites(userId);
-        //    }
-
+        //    $.ajax({
+        //        url: $(this).attr("action"),
+        //        //Passes the content of an input up
+        //        data: $(this).serialize(),
+        //        contentType: "application/json; charset=utf-8",
+        //        type: 'POST',
+        //        cache: false,
+        //        //async: false,
+        //        success: function (data) {
+        //            $("#dlgmodal").closest('.ui-dialog-content').dialog("close");
+        //        }
+        //    });
         //});
+
+
         $('#UserID').change(function () {
             var userId = $("#UserID option:selected").val();
             if (userId != "") {
-
-                $(this).valid();
+               
+                $(this).valid();                
                 loadSites(userId);
                 $("#btnSave").show();
+
             }
 
         });

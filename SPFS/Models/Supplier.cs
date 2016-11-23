@@ -25,8 +25,7 @@ namespace SPFS.Models
         {
             get
             {
-                return Address_1 + " " + Address_2 + " " + City + " " + State;
-                //return string.Format("Address1 :{0}; Address2:{1}\n City: {2} / State: {3}",new string[] { this.Address_1.Trim(),this.Address_2.Trim(),this.City.Trim(),this.State.Trim() }); //Address_1 + " " + Address_2 + " " + City + " " + State; 
+                return string.Format("Address1 :{0}; Address2:{1}\n City: {2} / State: {3}",new string[] { this.Address_1.Trim(),this.Address_2.Trim(),this.City.Trim(),this.State.Trim() }); //Address_1 + " " + Address_2 + " " + City + " " + State; 
             }
         }
         public string City { get; set; }
@@ -39,23 +38,5 @@ namespace SPFS.Models
 
         [Display(Name = "Active")]
         public bool SPFS_Active { get; set; }
-    }
-
-    public class SupplierCacheViewModel
-    {        
-        public int CID { get; set; }
-
-        [Display(Name = "DUNS")]
-        public string Duns { get; set; }
-
-        public int ERPSupplierID { get; set; }
-
-        [Display(Name = "Supplier Name")]
-        public string Name { get; set; }
-        
-        [Display(Name = "Active")]
-        public bool SPFS_Active { get; set; }
-
-        public int SpendSupplierID { get; set; }
     }
 }

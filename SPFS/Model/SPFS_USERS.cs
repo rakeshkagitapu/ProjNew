@@ -26,15 +26,15 @@ namespace SPFS.Model
         public int RoleID { get; set; }
         public string UserName { get; set; }
         public string Email { get; set; }
-        public string First_Name { get; set; }
-        public string Last_Name { get; set; }
-        public string MiddleName { get; set; }
         public bool SPFS_Active { get; set; }
         public Nullable<System.DateTime> Active_Date { get; set; }
         public System.DateTime Created_date { get; set; }
         public string Created_by { get; set; }
         public Nullable<System.DateTime> Modified_date { get; set; }
         public string Modified_by { get; set; }
+        public string First_Name { get; set; }
+        public string Last_Name { get; set; }
+        public string MiddleName { get; set; }
     
         public virtual SPFS_ROLES SPFS_ROLES { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

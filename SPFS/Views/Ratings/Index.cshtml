@@ -1,28 +1,26 @@
 ﻿@model SPFS.Models.RatingsViewModel
 
 @{
-    ViewBag.Title = "Ratings";
+    ViewBag.Title = "Index";
+    var text = Model.isUpload ? "Data Entry" : "Excel Upload";
+
 }
 
-@*@using (Html.BeginForm(new { enctype = "multipart/form-data" }))*@
-@using (Html.BeginForm(null, null, FormMethod.Post, new { enctype = "multipart/form-data" }))
+
+<h2>Ratings</h2>
+<hr />
+@using (Html.BeginForm())
 {
-    @Html.AntiForgeryToken()
-    @Html.HiddenFor(m => m.isUpload)
-    <h2>Ratings Page</h2>
-    <hr />
-    <br />
-    <div class="row col-md-12" style="padding-top:15px">
+    <div class="form-horizontal" style="padding-top: 5px">
         <div class="col-md-6">
             <div class="form-group">
                 @Html.LabelFor(model => model.SiteID, new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
                     @Html.DropDownListFor(model => model.SiteID, ViewBag.Sites as IEnumerable<SelectListItem>, "",
-                       new { @class = "selectpicker col-md-12", data_live_search = "true", data_size = "10", required = "true" })
+               new { @class = "selectpicker col-md-12", data_live_search = "true", data_size = "10", required = "true" })
                     @Html.ValidationMessageFor(model => model.SiteID)
                 </div>
             </div>
-
         </div>
         <div class="col-md-6">
             <div class="form-group col-md-6">
@@ -32,46 +30,108 @@
                     @Html.ValidationMessageFor(model => model.Month)
                 </div>
             </div>
-            <div class="form-group form-group-tight col-md-6">
+            <div class="form-group col-md-6">
                 @Html.LabelFor(model => model.Year, new { @class = "control-label col-md-3" })
-                <div class="input-group">
+                <div class="col-md-9">
                     @Html.DropDownListFor(model => model.Year, ViewBag.Years as IEnumerable<SelectListItem>, new { @class = "form-control" })
-                    <span class="input-group-btn" title="Search">
-                        <button type="submit" value="Search" name="action:Search" class="btn btn-warning">
-                            <span class="glyphicon glyphicon-search" />
-                        </button>
-                    </span>
+                    @Html.ValidationMessageFor(model => model.Year)
                 </div>
-
             </div>
-
         </div>
 
     </div>
 
+    <div class="form-horizontal">
+        <div class="col-md-4">
+            <div class="form-group">
+                @Html.LabelFor(model => model.isUpload, new{ @class = "control-label col-md-4" })
+                <div class="col-md-8">
+                    <div class="input-group">
+                        <div class="input-group-addon">
+                            @Html.CheckBoxFor(model => model.isUpload, new { @class = "saccCheckbox", id = "DataEntry" })
+                        </div>
+                        @Html.Label(text, new { @class = "label label-success", id = "ActiveText" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.isUpload)
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="form-group form-widgets col-md-8">
+                <input id="uploadFile" name="uploadFile" type="file" />
+            </div>
+            <div class="form-group col-md-4">
+                <input type="submit" value="UploadFile" title="Upload file" onclick="return submitClicked(this);" />
+            </div>
+        </div>
+    </div>
 
+    @*<div id="divuserslist" class="row" style="margin-top: 5px; padding-left:25px">
+            @Html.Partial("_SiteUsersList", Model)
 
-    
+        </div>*@
 
 
 }
-
 <script type="text/javascript">
+
     $(document).ready(function () {
 
-        var siteId = $("#SiteID option:selected").val();
+        //$('#DivAd').dialog({
+        //    autoOpen: false,
+        //    width: 780,
+        //    height: 400,
+        //    resizable: false,
+        //    title: 'Select User',
+        //    modal: true,
+        //    open: function (event, ui) {
 
-        $('#SiteID').change(function () {
-            var siteId = $("#SiteID option:selected").val();
-            if (siteId != "") {
+        //    }
+        //});
 
-                $(this).valid();
+        @*$('#btnSearch').click(function () {
 
+            if ($("#txtUserId").val() != '') {
+                $("#lblAdError").css('display', 'none');
+                $('#DivResult').children().remove();
+                $('#DivResult').html('<h5>Loading Users information from Active directory</h5>');
+                $('#progressBar').show();
+                $("#DivAd").dialog("open");
+                var userid = $('#txtUserId').val();
+                $.ajax({
+                    url: '@Url.Action("GetUsersbyLastNameFromAD", "User")',
+                    //Passes the content of an input up
+                    data: { lastName: userid },
+                    contentType: "application/json; charset=utf-8",
+                    type: 'GET',
+                    cache: false,
+                    //async: false,
+                    success: function (data) {
+                        $('#DivResult').children().remove();
+                        $('#DivResult').html(data);
+                        $('#progressBar').hide();
+                    },
+                        error: function (response) {
+                            alert("error") // I'm always get this.
+                        }
+                });
             }
+            else {
+                $("#lblAdError").css('display', 'inline');
+            }
+            });*@
 
+        $("input#DataEntry").change(function () {
+
+            var text = $(this).is(':checked') ? "Data Entry" : "Excel Upload"
+            $("#ActiveText").html(text);
         });
 
+        //Will clear the screen.
+        $('#btnClear').click(function () {
 
+            $(".Create").find('input:text, input:password, input:file, select, textarea').val('');
+        });
     });
 
 </script>

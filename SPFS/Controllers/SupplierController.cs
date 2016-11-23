@@ -201,8 +201,8 @@ namespace SPFS.Controllers
             ViewData["NameSort"] = String.IsNullOrEmpty(sortby) || sortby.Equals("Name Asc") ? "Name desc" : "Name Asc";
             ViewData["CIDSort"] = String.IsNullOrEmpty(sortby) || sortby.Equals("CID") ? "CID desc" : "CID Asc";
             ViewData["DUNSSort"] = String.IsNullOrEmpty(sortby) || sortby.Equals("DUNS Asc") ? "DUNS desc" : "DUNS Asc";
-            ViewData["CitySort"] = String.IsNullOrEmpty(sortby) || sortby.Equals("City Asc") ? "City desc" : "City Asc";
             ViewData["CountrySort"] = String.IsNullOrEmpty(sortby) || sortby.Equals("Country Asc") ? "Country desc" : "Country Asc";
+            ViewData["ZipSort"] = String.IsNullOrEmpty(sortby) || sortby.Equals("Zip Asc") ? "Zip desc" : "Zip Asc";
             ViewData["IsActiveSort"] = String.IsNullOrEmpty(sortby) || sortby.Equals("IsActive Asc") ? "IsActive desc" : "IsActive Asc";
             ViewData["ActiveSort"] = sortby;
             switch (sortby)
@@ -225,19 +225,18 @@ namespace SPFS.Controllers
                 case "DUNS Asc":
                     suppliers = suppliers.OrderBy(s => s.Duns).ToList();
                     break;
-                case "City desc":
-                    suppliers = suppliers.OrderByDescending(s => s.City).ToList();
-                    break;
-                case "City Asc":
-                    suppliers = suppliers.OrderBy(s => s.City).ToList();
-                    break;
                 case "Country desc":
                     suppliers = suppliers.OrderByDescending(s => s.Country).ToList();
                     break;
                 case "Country Asc":
                     suppliers = suppliers.OrderBy(s => s.Country).ToList();
                     break;
-               
+                case "Zip desc":
+                    suppliers = suppliers.OrderByDescending(s => s.Postal_Code).ToList();
+                    break;
+                case "Zip Asc":
+                    suppliers = suppliers.OrderBy(s => s.Postal_Code).ToList();
+                    break;
                 case "IsActive desc":
                     suppliers = suppliers.OrderByDescending(s => s.SPFS_Active).ToList();
                     break;

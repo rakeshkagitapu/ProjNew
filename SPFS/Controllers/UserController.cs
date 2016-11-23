@@ -52,7 +52,7 @@ namespace SPFS.Controllers
             using (Repository roleRep = new Repository())
             {
                 var role = (from rol in roleRep.Context.SPFS_ROLES
-                            select new SelectListItem { Value = rol.RoleID.ToString(), Text = rol.RoleName });
+                         select new SelectListItem { Value = rol.RoleID.ToString(), Text = rol.RoleName });
                 Utilities util = new Utilities();
                 if (util.GetCurrentUser().RoleID == 3)
                 {
@@ -506,50 +506,30 @@ namespace SPFS.Controllers
         /// <param name="fileName"></param>
         public void ExportData(string fileName)
         {
+            List<UserListViewModel> userViewModel = null;
             GeneralSearchCriteria objSearch = (GeneralSearchCriteria)TempData["UserSearchCriteria"];
             TempData.Keep("UserSearchCriteria");
-           
-            using (Repository ExpRep = new Repository())
+            if (objSearch != null)
             {
-                var result = (from usrsite in ExpRep.Context.SPFS_USERSITES
-                              join site in ExpRep.Context.SPFS_SITES on usrsite.SiteID equals site.SiteID
-                              join user in ExpRep.Context.SPFS_USERS on usrsite.UserID equals user.UserID
-                              join tmprole in ExpRep.Context.SPFS_ROLES on user.RoleID equals tmprole.RoleID
-                              select new UserExportViewModel
-                              {
-                                  UserID = usrsite.UserID,
-                                  UserName = user.UserName,
-                                  FirstName = user.First_Name,
-                                  LastName = user.Last_Name,
-                                  MiddleName = user.MiddleName,
-                                  RoleName = tmprole.RoleName.Trim(),
-                                  Email = user.Email,
-                                  SPFS_Active = user.SPFS_Active,
-                                  UserSiteName = site.Name
-                              });
-
-                if (objSearch.Active.HasValue)
-                {
-                    if (objSearch.Active.Value == 1)
-                    {
-                        result = result.Where(item => item.SPFS_Active);
-                    }
-                    else if (objSearch.Active.Value == 0)
-                        result = result.Where(item => !item.SPFS_Active);
-
-                }
-                if (!string.IsNullOrEmpty(objSearch.SearchText))
-                {
-                    result = result.Where(item => item.UserName.Contains(objSearch.SearchText)
-                                              || item.FirstName.Contains(objSearch.SearchText));
-                }
-
-                base.ExportToCSV(result.ToList().GetCSV(), fileName + DateTime.Now.ToShortDateString());
-
+                userViewModel = GetUsers(objSearch);
+                userViewModel = SortByInput(objSearch.CurrentSort, userViewModel);
             }
+            var result = (from usr in userViewModel
+                          select new
+                          {
+                              UserID = usr.UserID,
+                              UserName = usr.UserName,
+                              FirstName = usr.FirstName,
+                              LastName = usr.LastName,
+                              MiddleName = usr.MiddleName,
+                              RoleName = usr.RoleName.Trim(),
+                              Email = usr.Email,
+                              SPFS_Active = usr.SPFS_Active,
+                              UserSitesName = usr.UserSitesName
+                          }).ToList();
 
-           
-            
-            }
+
+            base.ExportToCSV(result.GetCSV(), fileName + DateTime.Now.ToShortDateString());
         }
     }
+}

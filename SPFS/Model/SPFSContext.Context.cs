@@ -18,6 +18,7 @@ namespace SPFS.Model
         public SPFSContext()
             : base("name=SPFSContext")
         {
+            this.Configuration.LazyLoadingEnabled = false;
         }
     
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
@@ -34,5 +35,6 @@ namespace SPFS.Model
         public virtual DbSet<SPFS_SUPPLIERS> SPFS_SUPPLIERS { get; set; }
         public virtual DbSet<SPFS_USERS> SPFS_USERS { get; set; }
         public virtual DbSet<SPFS_USERSITES> SPFS_USERSITES { get; set; }
+        public virtual DbSet<sysdiagram> sysdiagrams { get; set; }
     }
 }

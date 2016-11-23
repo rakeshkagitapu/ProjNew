@@ -25,7 +25,6 @@
     <UseGlobalApplicationHostFile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -35,7 +34,6 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -44,13 +42,8 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="EPPlus, Version=4.1.0.0, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
-      <HintPath>..\packages\EPPlus.4.1.0\lib\net40\EPPlus.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Excel, Version=2.1.2.3, Culture=neutral, PublicKeyToken=93517dbe6a4012fa, processorArchitecture=MSIL">
       <HintPath>..\packages\ExcelDataReader.2.1.2.3\lib\net45\Excel.dll</HintPath>
       <Private>True</Private>
@@ -106,7 +99,6 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.DirectoryServices" />
     <Reference Include="System.DirectoryServices.AccountManagement" />
     <Reference Include="System.Drawing" />
@@ -116,9 +108,12 @@
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Web" />
-    <Reference Include="System.Web.Abstractions" />
     <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Abstractions" />
     <Reference Include="System.Web.Routing" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Configuration" />
@@ -159,7 +154,6 @@
       <Private>True</Private>
       <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
     </Reference>
-    <Reference Include="System.Xml.Linq" />
     <Reference Include="WebGrease">
       <Private>True</Private>
       <HintPath>..\packages\WebGrease.1.5.2\lib\WebGrease.dll</HintPath>
@@ -298,6 +292,9 @@
     <Compile Include="Model\SPFS_USERSITES.cs">
       <DependentUpon>SPFSContext.tt</DependentUpon>
     </Compile>
+    <Compile Include="Model\sysdiagram.cs">
+      <DependentUpon>SPFSContext.tt</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
@@ -358,7 +355,6 @@
     <Content Include="Content\Site.css" />
     <Content Include="Images\ajax-loader.gif" />
     <Content Include="Images\danalogo.png" />
-    <Content Include="Images\danasmall.png" />
     <Content Include="Images\danasml.png" />
     <Content Include="Images\gradient_3.png" />
     <Content Include="Model\SPFSContext.Context.tt">
@@ -387,74 +383,7 @@
     <Content Include="Model\SPFSContext.edmx.diagram">
       <DependentUpon>SPFSContext.edmx</DependentUpon>
     </Content>
-    <Content Include="Scripts\bootstrap-select.js.map" />
-    <Content Include="Content\bootstrap-select.css.map" />
-    <None Include="Properties\PublishProfiles\Applocal.pubxml" />
-    <None Include="Properties\PublishProfiles\LocalDeploy.pubxml" />
-    <None Include="Properties\PublishProfiles\SPFS_QA.pubxml" />
     <None Include="Scripts\jquery-1.12.4.intellisense.js" />
-    <Content Include="Scripts\i18n\defaults-ar_AR.js" />
-    <Content Include="Scripts\i18n\defaults-ar_AR.min.js" />
-    <Content Include="Scripts\i18n\defaults-bg_BG.js" />
-    <Content Include="Scripts\i18n\defaults-bg_BG.min.js" />
-    <Content Include="Scripts\i18n\defaults-cro_CRO.js" />
-    <Content Include="Scripts\i18n\defaults-cro_CRO.min.js" />
-    <Content Include="Scripts\i18n\defaults-cs_CZ.js" />
-    <Content Include="Scripts\i18n\defaults-cs_CZ.min.js" />
-    <Content Include="Scripts\i18n\defaults-da_DK.js" />
-    <Content Include="Scripts\i18n\defaults-da_DK.min.js" />
-    <Content Include="Scripts\i18n\defaults-de_DE.js" />
-    <Content Include="Scripts\i18n\defaults-de_DE.min.js" />
-    <Content Include="Scripts\i18n\defaults-en_US.js" />
-    <Content Include="Scripts\i18n\defaults-en_US.min.js" />
-    <Content Include="Scripts\i18n\defaults-es_CL.js" />
-    <Content Include="Scripts\i18n\defaults-es_CL.min.js" />
-    <Content Include="Scripts\i18n\defaults-eu.js" />
-    <Content Include="Scripts\i18n\defaults-eu.min.js" />
-    <Content Include="Scripts\i18n\defaults-fa_IR.js" />
-    <Content Include="Scripts\i18n\defaults-fa_IR.min.js" />
-    <Content Include="Scripts\i18n\defaults-fi_FI.js" />
-    <Content Include="Scripts\i18n\defaults-fi_FI.min.js" />
-    <Content Include="Scripts\i18n\defaults-fr_FR.js" />
-    <Content Include="Scripts\i18n\defaults-fr_FR.min.js" />
-    <Content Include="Scripts\i18n\defaults-hu_HU.js" />
-    <Content Include="Scripts\i18n\defaults-hu_HU.min.js" />
-    <Content Include="Scripts\i18n\defaults-id_ID.js" />
-    <Content Include="Scripts\i18n\defaults-id_ID.min.js" />
-    <Content Include="Scripts\i18n\defaults-it_IT.js" />
-    <Content Include="Scripts\i18n\defaults-it_IT.min.js" />
-    <Content Include="Scripts\i18n\defaults-ko_KR.js" />
-    <Content Include="Scripts\i18n\defaults-ko_KR.min.js" />
-    <Content Include="Scripts\i18n\defaults-lt_LT.js" />
-    <Content Include="Scripts\i18n\defaults-lt_LT.min.js" />
-    <Content Include="Scripts\i18n\defaults-nb_NO.js" />
-    <Content Include="Scripts\i18n\defaults-nb_NO.min.js" />
-    <Content Include="Scripts\i18n\defaults-nl_NL.js" />
-    <Content Include="Scripts\i18n\defaults-nl_NL.min.js" />
-    <Content Include="Scripts\i18n\defaults-pl_PL.js" />
-    <Content Include="Scripts\i18n\defaults-pl_PL.min.js" />
-    <Content Include="Scripts\i18n\defaults-pt_BR.js" />
-    <Content Include="Scripts\i18n\defaults-pt_BR.min.js" />
-    <Content Include="Scripts\i18n\defaults-pt_PT.js" />
-    <Content Include="Scripts\i18n\defaults-pt_PT.min.js" />
-    <Content Include="Scripts\i18n\defaults-ro_RO.js" />
-    <Content Include="Scripts\i18n\defaults-ro_RO.min.js" />
-    <Content Include="Scripts\i18n\defaults-ru_RU.js" />
-    <Content Include="Scripts\i18n\defaults-ru_RU.min.js" />
-    <Content Include="Scripts\i18n\defaults-sk_SK.js" />
-    <Content Include="Scripts\i18n\defaults-sk_SK.min.js" />
-    <Content Include="Scripts\i18n\defaults-sl_SI.js" />
-    <Content Include="Scripts\i18n\defaults-sl_SI.min.js" />
-    <Content Include="Scripts\i18n\defaults-sv_SE.js" />
-    <Content Include="Scripts\i18n\defaults-sv_SE.min.js" />
-    <Content Include="Scripts\i18n\defaults-tr_TR.js" />
-    <Content Include="Scripts\i18n\defaults-tr_TR.min.js" />
-    <Content Include="Scripts\i18n\defaults-ua_UA.js" />
-    <Content Include="Scripts\i18n\defaults-ua_UA.min.js" />
-    <Content Include="Scripts\i18n\defaults-zh_CN.js" />
-    <Content Include="Scripts\i18n\defaults-zh_CN.min.js" />
-    <Content Include="Scripts\i18n\defaults-zh_TW.js" />
-    <Content Include="Scripts\i18n\defaults-zh_TW.min.js" />
     <Content Include="Scripts\jquery-1.12.4.js" />
     <Content Include="Scripts\jquery-1.12.4.min.js" />
     <Content Include="Scripts\jquery-1.12.4.min.map" />
@@ -472,6 +401,7 @@
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
+    <Content Include="Scripts\script.js" />
     <Content Include="Scripts\_references.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
@@ -521,11 +451,11 @@
     <Content Include="Views\UserSites\SitesUser.cshtml" />
     <Content Include="Views\UserSites\_SiteUsersList.cshtml" />
     <Content Include="Views\Ratings\Index.cshtml" />
+    <Content Include="Views\Ratings\_ExcelUpload.cshtml" />
     <Content Include="Views\Account\LogOff.cshtml" />
     <Content Include="Views\ExcelUpload\Index.cshtml" />
     <Content Include="Views\Shared\_LayoutOther.cshtml" />
     <Content Include="Views\Shared\UnauthorizedUser.cshtml" />
-    <Content Include="Views\ExcelUpload\ExcelReview.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
