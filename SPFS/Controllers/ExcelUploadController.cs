@@ -18,7 +18,7 @@ namespace SPFS.Controllers
     {
         private static List<SupplierCacheViewModel> supplierCacheObj;
 
-       
+
         private static DateTime _cacheLastChecked;
 
         //private static List<SupplierCacheViewModel> selectSuppliers;
@@ -31,7 +31,7 @@ namespace SPFS.Controllers
             {
                 supplierCacheObj = GetSupplierCacheData();
                 selectSuppliers = GetSupplierListData();
-                 selectGDIS = GetSiteListData();
+                selectGDIS = GetSiteListData();
                 _cacheLastChecked = DateTime.Now;
             }
             else
@@ -44,7 +44,7 @@ namespace SPFS.Controllers
         {
             int cacheRefresh;
             if (!int.TryParse(System.Configuration.ConfigurationManager.AppSettings["CacheRefresh"], out cacheRefresh))
-                cacheRefresh = 12*60;
+                cacheRefresh = 12 * 60;
             if (_cacheLastChecked.AddMinutes(cacheRefresh) < DateTime.Now)
             {
                 supplierCacheObj = GetSupplierCacheData();
@@ -59,27 +59,28 @@ namespace SPFS.Controllers
             List<SupplierCacheViewModel> Formatedresult = new List<SupplierCacheViewModel>();
             using (Repository repository = new Repository())
             {
-                var MultipleLeftJoin = from spend in (from supSpend in
-                                          (from sup in repository.Context.SPFS_SUPPLIERS
-                                           join spendSup in repository.Context.SPFS_SPEND_SUPPLIERS on sup.CID equals spendSup.CID into JoinedSupSpend
-                                           from spendSup in JoinedSupSpend.DefaultIfEmpty()
-                                           select new
-                                           {
-                                               CID = sup.CID,
-                                               Duns = sup.Duns,
-                                               SpendSupplierID = spendSup != null ? spendSup.Spend_supplier_ID : 0,
-                                               SiteID = spendSup != null ? spendSup.SiteID : 0
+                var MultipleLeftJoin = from spend in
+                                           (from supSpend in
+                                                (from sup in repository.Context.SPFS_SUPPLIERS
+                                                 join spendSup in repository.Context.SPFS_SPEND_SUPPLIERS on sup.CID equals spendSup.CID into JoinedSupSpend
+                                                 from spendSup in JoinedSupSpend.DefaultIfEmpty()
+                                                 select new
+                                                 {
+                                                     CID = sup.CID,
+                                                     Duns = sup.Duns,
+                                                     SpendSupplierID = spendSup != null ? spendSup.Spend_supplier_ID : 0,
+                                                     SiteID = spendSup != null ? spendSup.SiteID : 0
 
-                                           })
-                                                      join erp in repository.Context.SPFS_LINK_ERP on supSpend.SpendSupplierID equals erp.Spend_supplier_ID into JoinedErp
-                                                      from erp in JoinedErp.DefaultIfEmpty()
-                                                      select new
-                                                      {
-                                                          CID = supSpend.CID,
-                                                          Duns = supSpend.Duns, //.Replace("\0", "").Trim(),
-                                                          ERPSupplierID = erp.Erp_supplier_ID,
-                                                          SiteID = supSpend.SiteID
-                                                      })
+                                                 })
+                                            join erp in repository.Context.SPFS_LINK_ERP on supSpend.SpendSupplierID equals erp.Spend_supplier_ID into JoinedErp
+                                            from erp in JoinedErp.DefaultIfEmpty()
+                                            select new
+                                            {
+                                                CID = supSpend.CID,
+                                                Duns = supSpend.Duns, //.Replace("\0", "").Trim(),
+                                                ERPSupplierID = erp.Erp_supplier_ID,
+                                                SiteID = supSpend.SiteID
+                                            })
                                        join site in repository.Context.SPFS_SITES on spend.SiteID equals site.SiteID into JoinedSite
                                        from site in JoinedSite.DefaultIfEmpty()
                                        select new SupplierCacheViewModel
@@ -87,36 +88,36 @@ namespace SPFS.Controllers
                                            CID = spend.CID,
                                            Duns = spend.Duns, //.Replace("\0", "").Trim(),
                                            ERPSupplierID = spend.ERPSupplierID.Trim(),
-                                           Gdis_org_entity_ID= site != null? site.Gdis_org_entity_ID :0
+                                           Gdis_org_entity_ID = site != null ? site.Gdis_org_entity_ID : 0
 
                                        };
 
 
-                 result = MultipleLeftJoin.ToList();
+                result = MultipleLeftJoin.ToList();
 
                 //result = (from sup in repository.Context.SPFS_SUPPLIERS
                 //          join spendSup in repository.Context.SPFS_SPEND_SUPPLIERS on sup.CID equals spendSup.CID
                 //          join erpsup in repository.Context.SPFS_LINK_ERP on spendSup.Spend_supplier_ID equals erpsup.Spend_supplier_ID into tmpErp
                 //          from erp in tmpErp.DefaultIfEmpty()
 
-                                     //          select new SupplierCacheViewModel
-                                     //          {
-                                     //              CID = sup.CID,
-                                     //              Duns = sup.Duns.Trim(),
-                                     //              ERPSupplierID = erp != null ? erp.Erp_supplier_ID : 0,
-                                     //          }).Distinct().ToList();
+                //          select new SupplierCacheViewModel
+                //          {
+                //              CID = sup.CID,
+                //              Duns = sup.Duns.Trim(),
+                //              ERPSupplierID = erp != null ? erp.Erp_supplier_ID : 0,
+                //          }).Distinct().ToList();
 
             }
 
 
             result.ForEach(z => z.Duns = z.Duns.Replace("\0", "").Trim());
-            
 
 
-//            result.ForEach(x => {
-//    x.CreateTime = DateTime.Now.AddMonths(-1);
-//    x.LastUpdateTime = DateTime.Now;
-//});
+
+            //            result.ForEach(x => {
+            //    x.CreateTime = DateTime.Now.AddMonths(-1);
+            //    x.LastUpdateTime = DateTime.Now;
+            //});
 
             //foreach (var item in result)
             //{
@@ -136,10 +137,10 @@ namespace SPFS.Controllers
             List<SelectListItem> suppliers;
             using (Repository repository = new Repository())
             {
-                 suppliers = (from supplier in repository.Context.SPFS_SUPPLIERS
-                               select new SelectListItem { Value = supplier.CID.ToString(), Text = supplier.Name}).ToList();                
+                suppliers = (from supplier in repository.Context.SPFS_SUPPLIERS
+                             select new SelectListItem { Value = supplier.CID.ToString(), Text = supplier.Name }).ToList();
             }
-           return suppliers;
+            return suppliers;
         }
 
         private List<SelectSiteGDIS> GetSiteListData()
@@ -148,7 +149,7 @@ namespace SPFS.Controllers
             using (Repository repository = new Repository())
             {
                 sites = (from site in repository.Context.SPFS_SITES
-                             select new SelectSiteGDIS { Gdis_org_entity_ID = site.Gdis_org_entity_ID, SiteID= site.SiteID ,Gdis_org_Parent_ID =site.Gdis_org_Parent_ID }).ToList();
+                         select new SelectSiteGDIS { Gdis_org_entity_ID = site.Gdis_org_entity_ID, SiteID = site.SiteID, Gdis_org_Parent_ID = site.Gdis_org_Parent_ID }).ToList();
             }
             return sites;
         }
@@ -180,7 +181,7 @@ namespace SPFS.Controllers
             ratingsViewModel.Year = DateTime.Now.Year;
 
             CreateListViewBags();
-            
+
             return View(ratingsViewModel);
         }
         //public ActionResult Index(ExcelRatingsViewModel exratingsViewModel)
@@ -230,15 +231,15 @@ namespace SPFS.Controllers
             ViewBag.Months = util.GetMonths(true);
             ViewBag.Years = util.GetYears(true);
             ViewBag.Sites = sites;
-           // ViewBag.Suppliers = suppliers;
+            // ViewBag.Suppliers = suppliers;
         }
 
-      
+
         [HttpPost]
         [MultipleSubmitAttribute(Name = "action", Argument = "Upload")]
         public ActionResult Upload(ExcelRatingsViewModel ratingModel)
         {
-            
+
             if (ModelState.IsValid)
             {
 
@@ -291,7 +292,7 @@ namespace SPFS.Controllers
             }
             else
             {
-                ViewBag.ShowMerge = true; 
+                ViewBag.ShowMerge = true;
             }
 
             return View("ExcelReview", ratingModel);
@@ -300,31 +301,31 @@ namespace SPFS.Controllers
         private ExcelRatingsViewModel ProcessExcelDataintoViewModel(ExcelRatingsViewModel ratingModel, DataSet result)
         {
             List<RatingRecord> ratings = result.Tables[0].ToList<RatingRecord>();
-            List<RatingRecord> Inboundratings = CheckInboundRatings(ratings,ratingModel);
+            List<RatingRecord> Inboundratings = CheckInboundRatings(ratings, ratingModel);
             List<RatingRecord> PrimaryKeyratings = new List<RatingRecord>();
             foreach (var item in Inboundratings)
             {
                 if (!string.IsNullOrEmpty(item.DUNS))
-                    {
+                {
                     item.DUNS = item.DUNS.PadLeft(9, '0');
-                    }
+                }
                 List<ErrorDetails> ErrorInfo = new List<ErrorDetails>();
                 bool iRecordfound = false;
-               if( supplierCacheObj.Any(m =>m.ERPSupplierID ==item.ERP_Supplier_ID && m.Gdis_org_entity_ID.Equals(item.Gdis_org_entity_ID)))  //supplierCacheObj.Any(m => m.CID.Equals(item.CID))
-                {                   
-                    if(supplierCacheObj.Any(m=>m.CID.Equals(item.CID)))
+                if (supplierCacheObj.Any(m => m.ERPSupplierID == item.ERP_Supplier_ID && m.Gdis_org_entity_ID.Equals(item.Gdis_org_entity_ID)))  //supplierCacheObj.Any(m => m.CID.Equals(item.CID))
+                {
+                    if (supplierCacheObj.Any(m => m.CID.Equals(item.CID)))
                     {
                         iRecordfound = true;
-                        if (string.IsNullOrWhiteSpace(item.DUNS) )
+                        if (string.IsNullOrWhiteSpace(item.DUNS))
                         {
                             item.DUNS = GetDUNSfromCID(item.CID);
                         }
                     }
                     else if (supplierCacheObj.Any(m => m.Duns.Equals(item.DUNS)))
-                    { 
-                      
+                    {
+
                         item.CID = GetCIDfromDuns(item.DUNS);
-                        if(item.CID ==0)
+                        if (item.CID == 0)
                         {
                             iRecordfound = false;
                             GetErrors(item, ErrorInfo);
@@ -338,7 +339,7 @@ namespace SPFS.Controllers
 
 
                 }
-                else if(supplierCacheObj.Any(m => m.CID.Equals(item.CID)))
+                else if (supplierCacheObj.Any(m => m.CID.Equals(item.CID)))
                 {
                     iRecordfound = true;
                     if (string.IsNullOrWhiteSpace(item.DUNS))
@@ -346,7 +347,7 @@ namespace SPFS.Controllers
                         item.DUNS = GetDUNSfromCID(item.CID);
                     }
                 }
-               else if(supplierCacheObj.Any(m => m.Duns.Equals(item.DUNS)))
+                else if (supplierCacheObj.Any(m => m.Duns.Equals(item.DUNS)))
                 {
                     iRecordfound = true;
                     item.CID = GetCIDfromDuns(item.DUNS);
@@ -356,13 +357,13 @@ namespace SPFS.Controllers
                         GetErrors(item, ErrorInfo);
                     }
                 }
-               else
+                else
                 {
                     iRecordfound = false;
                     GetErrors(item, ErrorInfo);
                 }
 
-                PrimaryKeyratings.Add(item);                   
+                PrimaryKeyratings.Add(item);
             }
 
             //ratingModel.RatingRecords = PrimaryKeyratings;
@@ -400,11 +401,11 @@ namespace SPFS.Controllers
             using (Repository repository = new Repository())
             {
 
-              var result = from sup in repository.Context.SPFS_SUPPLIERS
-                      where sup.Duns== DUNS
-                      select sup.CID;
+                var result = from sup in repository.Context.SPFS_SUPPLIERS
+                             where sup.Duns == DUNS
+                             select sup.CID;
 
-                CID = Convert.ToInt32(result.FirstOrDefault());      
+                CID = Convert.ToInt32(result.FirstOrDefault());
 
             }
             return CID;
@@ -428,14 +429,14 @@ namespace SPFS.Controllers
         private List<RatingRecord> CheckInboundRatings(List<RatingRecord> ratngs, ExcelRatingsViewModel ratingsModel)
         {
             List<RatingRecord> ratings = new List<RatingRecord>();
-            foreach(var item in ratngs)
+            foreach (var item in ratngs)
             {
-               if(item.Inbound_parts > 0)
+                if (item.Inbound_parts > 0)
                 {
                     SelectSiteGDIS gdis = selectGDIS.Where(g => g.SiteID.Equals(ratingsModel.SiteID)).FirstOrDefault();
                     //RatingRecord ratingRecord = new RatingRecord();
                     // ratingRecord.CID = int.TryParse(item.CID,)
-                   gdis.Gdis_org_entity_ID = item.Gdis_org_entity_ID;
+                    gdis.Gdis_org_entity_ID = item.Gdis_org_entity_ID;
                     ratings.Add(item);
                 }
 
@@ -533,9 +534,31 @@ namespace SPFS.Controllers
 
         public ActionResult Merge(ExcelRatingsViewModel RatingModel)
         {
+            List<RatingRecord> Records = (List<RatingRecord>)TempData["RatingRecords"];
 
+            List<RatingRecord> GroupedRecords = Records
+                        .GroupBy(r => r.CID)// new { r.CID,r.DUNS })
+                        .Select(g => new RatingRecord
+                        {
+                            CID = g.Key,
+                            DUNS = g.First().DUNS,
+                            Gdis_org_entity_ID = g.First().Gdis_org_entity_ID,
+                            Inbound_parts = g.Sum(s => s.Inbound_parts),
+                            OTD = g.Sum(s => s.OTD),
+                            OTR = g.Sum(s => s.OTR),
+                            PFR = g.Sum(s => s.PFR),
+                            ErrorInformation = g.SelectMany((s => s.ErrorInformation != null ? s.ErrorInformation : new List<ErrorDetails>())).ToList()
+                        }).ToList();
 
-
+            RatingModel.RatingRecords = GroupedRecords;
+            //var count = 0;
+            //foreach (var record in GroupedRecords)
+            //{
+            //    if ((record.ErrorInformation != null ? record.ErrorInformation.Count : 0) > 0)
+            //    {
+            //        count++;
+            //    }
+            //}
             return View();
         }
 
@@ -548,9 +571,9 @@ namespace SPFS.Controllers
         /// <returns></returns>
         public JsonResult GetSupplierbyName(string nameString)
         {
-            var newSuppliercache = string.IsNullOrWhiteSpace(nameString) ? selectSuppliers:         
+            var newSuppliercache = string.IsNullOrWhiteSpace(nameString) ? selectSuppliers :
                 selectSuppliers.Where(s => s.Text.StartsWith(nameString, StringComparison.InvariantCultureIgnoreCase));
-             return Json(newSuppliercache, JsonRequestBehavior.AllowGet);
+            return Json(newSuppliercache, JsonRequestBehavior.AllowGet);
         }
 
         public JsonResult UpdateRecord(int CID, string Name, int Rowid)
@@ -592,32 +615,7 @@ namespace SPFS.Controllers
 
             item.ErrorInformation = ErrorInfo;
         }
-        //public void UpdateRecord( int CID, string Name, int Rowid)
-        //{
-        //    List<RatingRecord> Records = (List<RatingRecord>)TempData["RatingRecords"];
-
-        //    RatingRecord OldRec = new RatingRecord();
-
-        //    RatingRecord UpdatedRec = new RatingRecord();
-
-        //    OldRec = Records.Where(r => r.ExcelDiferentiatorID.Equals(Rowid)).FirstOrDefault();
-
-        //    UpdatedRec = Records.Where(r => r.ExcelDiferentiatorID.Equals(Rowid)).FirstOrDefault();
-
-        //    Records.Remove(OldRec);
-
-
-        //    UpdatedRec.CID = CID;
-        //    UpdatedRec.DUNS = GetDUNSfromCID(CID);
-        //    UpdatedRec.SupplierName = Name;
-        //    UpdatedRec.ErrorInformation = null;
-
-
-        //    Records.Add(UpdatedRec);
-        //    //RatingRecord 
-
-        //    TempData["RatingRecords"] = Records;
-        //}
+        
 
 
         #endregion

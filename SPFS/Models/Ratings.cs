@@ -25,7 +25,7 @@ namespace SPFS.Models
     }
     public class ExcelRatingsViewModel : RatingsViewModel
     {
-       
+
 
         [Display(Name = "Upload File:")]
         public HttpPostedFileBase UploadFile { get; set; }
@@ -84,6 +84,16 @@ namespace SPFS.Models
         public int ExcelDiferentiatorID { get; set; }
 
         public string CombinedKey { get; set; }
+
+        public decimal Total_Spend { get; set; }
+        public int Reject_incident_count { get; set; }
+        public int Reject_parts_count { get; set; }
+
+        public decimal PPM { get; set; }
+
+        public decimal IPM { get; set; }
+
+        public decimal PCT { get; set; }
     }
 
     public class HistoricalRecordsCheck
