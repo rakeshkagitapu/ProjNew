@@ -12,7 +12,7 @@ namespace SPFS
                         "~/Scripts/jquery-{version}.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/jqueryui").Include(
-                         "~/Scripts/jquery-ui-{version}.js"                        
+                         "~/Scripts/jquery-ui.js"                        
                       ));
 
 

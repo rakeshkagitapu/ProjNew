@@ -1,6 +1,7 @@
 ﻿@using Microsoft.AspNet.Identity
 
 <!DOCTYPE html>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <html>
 <head>
     <meta charset="utf-8" />
@@ -55,7 +56,7 @@
                                         Ratings<span class="caret" />
                                     </a>
                                     <ul class="dropdown-menu">
-                                        <li>@Html.ActionLink("Ratings Manual", "Create", "Ratings", null, new { isUpload = false })</li>
+                                        <li>@Html.ActionLink("Ratings Manual", "Index", "Ratings", null, new { isUpload = false })</li>
                                         <li>@Html.ActionLink("Ratings Upload", "Index", "ExcelUpload", null, new { isUpload = true })</li>
                                     </ul>
                                 </li>
@@ -69,11 +70,12 @@
                                     <ul class="dropdown-menu">
                                         <li>@Html.ActionLink("Register New User", "Create", "User")</li>
                                         <li>@Html.ActionLink("View/Edit Existing Users", "Index1", "User")</li>
+                                        <li>@Html.ActionLink("Add Sites to User", "Index", "UserSites")</li>
+                                        <li>@Html.ActionLink("Add Users to Site", "SitesUser", "UserSites")</li>
                                         <li>@Html.ActionLink("View/Edit Existing Suppliers", "Index", "Supplier")</li>
                                         <li>@Html.ActionLink("View/Edit Existing Sites", "Index", "Site")</li>
                                         <li>@Html.ActionLink("Move Ratings", "Index", "MoveRatings")</li>
-                                        <li>@Html.ActionLink("Add Sites to User", "Index", "UserSites")</li>
-                                        <li>@Html.ActionLink("Add Users to Site", "SitesUser", "UserSites")</li>
+                                     
                                         @*<li>@Html.ActionLink("Add Sites to User", "Index", "UserSites")</li>
                                             <li>@Html.ActionLink("Add Users to Site", "SitesUser", "UserSites")</li>*@
                                     </ul>
@@ -131,14 +133,24 @@
         </div>
     </div>
 
-
+    <div id="dlgupload" class="panel panel-default text-center" style="background-color: rgba(229, 245, 250, 0.701961); color: rgb(4, 135, 196); margin: 0; border-color: rgb(183, 225, 240);">
+        <div class="panel-body">
+            <h4>
+                <span class="glyphicon glyphicon-upload" style="top: 3px;"></span>
+                <span style="padding-left: 4px;"> Uploading...</span>
+            </h4>
+        </div>
+    </div>
     @Scripts.Render("~/bundles/bootstrap")
+
     <script type="text/javascript">
+
         function OnBeginPostBack_Save(sender) {
             var form = $(sender).parents('form');
 
             if (form.valid()) {
                 $("#dlgsave").dialog('open');
+                $("#dlgupload").dialog('open');
             }
         }
         $(document).ready(function () {
@@ -155,12 +167,25 @@
                     $(".ui-dialog-titlebar-close").hide();
                 }
             });
-          
+
             $("#dlgsave").dialog({
                 autoOpen: false,
                 resizable: false,
                 width: "auto",
-                height: $(window).height() * 0.2,
+                height: "auto",
+                show: { effect: 'drop', direction: "up" },
+                modal: true,
+                draggable: true,
+                open: function (event, ui) {
+                    $(".ui-dialog-titlebar").hide();
+                    $(".ui-dialog-titlebar-close").hide();
+                }
+            });
+            $("#dlgupload").dialog({
+                autoOpen: false,
+                resizable: false,
+                width: "auto",
+                height: "auto",
                 show: { effect: 'drop', direction: "up" },
                 modal: true,
                 draggable: true,

@@ -2,7 +2,7 @@
 
 @{
     ViewBag.Title = "SitesUser";
-
+   
 }
 
 <h2>Add User to Sites</h2>
@@ -27,15 +27,17 @@
         @Html.Partial("_SiteUsersList", Model)
 
     </div>
-
-    <div class="row col-md-12" style="padding-left: 25px;">
+    <div id="divsitesSave" class="row col-md-12" style="padding-left: 25px;">
         <span class="input-group-btn">
-            <button id="btnSave" type="submit" value="Save" class="btn btn-primary btn-block" style="border-radius:5px">
+            <button id="btnSave" type="submit" value="Save" onclick="OnBeginPostBack_Save(this)" class="btn btn-primary btn-block" style="border-radius:5px">
                 <span class="glyphicon glyphicon-floppy-save"></span>
                 <span>Save</span>
             </button>
         </span>
+
+
     </div>
+
 }
 
 <script type="text/javascript">
@@ -86,6 +88,7 @@
                 $(this).valid();
 
                 loadUsers(siteId);
+
                 $("#btnSave").show();
             }
 

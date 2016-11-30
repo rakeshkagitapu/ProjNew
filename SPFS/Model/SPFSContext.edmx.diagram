@@ -4,29 +4,28 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="5977bc6fcb074bf3bd43d7666dc23d1d" Name="Diagram1" ZoomLevel="67">
-        <EntityTypeShape EntityType="SPFS_Model.SPFS_LINK_ERP" Width="1.5" PointX="10.5" PointY="2.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="SPFS_Model.SPFS_ROLES" Width="1.5" PointX="0.75" PointY="8" IsExpanded="true" />
-        <EntityTypeShape EntityType="SPFS_Model.SPFS_SITES" Width="1.5" PointX="3" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="SPFS_Model.SPFS_SPEND_SUPPLIERS" Width="1.5" PointX="8.25" PointY="1.875" IsExpanded="true" />
-        <EntityTypeShape EntityType="SPFS_Model.SPFS_STAGING_SUPPLIER_RATINGS" Width="1.5" PointX="5.25" PointY="6.5" IsExpanded="true" />
-        <EntityTypeShape EntityType="SPFS_Model.SPFS_SUPPLIER_RATINGS" Width="1.5" PointX="8.25" PointY="6.875" IsExpanded="true" />
-        <EntityTypeShape EntityType="SPFS_Model.SPFS_SUPPLIERS" Width="1.5" PointX="3" PointY="12" IsExpanded="true" />
-        <EntityTypeShape EntityType="SPFS_Model.SPFS_USERS" Width="1.5" PointX="3" PointY="7.375" IsExpanded="true" />
-        <EntityTypeShape EntityType="SPFS_Model.SPFS_USERSITES" Width="1.5" PointX="5.25" PointY="2.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="SPFS_Model.sysdiagram" Width="1.5" PointX="10.75" PointY="5.375" IsExpanded="true" />
-        <AssociationConnector Association="SPFS_Model.FK_SPFS_LINK_ERP_SPFS_SPEND_SUPPLIERS" ManuallyRouted="false" />
-        <AssociationConnector Association="SPFS_Model.FK_SPFS_USERS_SPFS_ROLES" ManuallyRouted="false" />
-        <AssociationConnector Association="SPFS_Model.FK_SPFS_SPEND_SUPPLIERS_SPFS_SITES" ManuallyRouted="false" />
-        <AssociationConnector Association="SPFS_Model.FK_SPFS_STAGING_SUPPLIER_RATINGS_SPFS_SITES" ManuallyRouted="false" />
-        <AssociationConnector Association="SPFS_Model.FK_SPFS_SUPPLIER_RATINGS_SPFS_SITES" ManuallyRouted="false" />
-        <AssociationConnector Association="SPFS_Model.FK_SPFS_USERSITES_SPFS_SITES" ManuallyRouted="false" />
-        <AssociationConnector Association="SPFS_Model.FK_SPFS_SPEND_SUPPLIERS_SPFS_SUPPLIERS" ManuallyRouted="false" />
-        <AssociationConnector Association="SPFS_Model.FK_SPFS_STAGING_SUPPLIER_RATINGS_SPFS_SUPPLIERS" ManuallyRouted="false" />
-        <AssociationConnector Association="SPFS_Model.FK_SPFS_STAGING_SUPPLIER_RATINGS_SPFS_USERS" ManuallyRouted="false" />
-        <AssociationConnector Association="SPFS_Model.FK_SPFS_SUPPLIER_RATINGS_SPFS_SUPPLIERS" ManuallyRouted="false" />
-        <AssociationConnector Association="SPFS_Model.FK_SPFS_SUPPLIER_RATINGS_SPFS_USERS" ManuallyRouted="false" />
-        <AssociationConnector Association="SPFS_Model.FK_SPFS_USERSITES_SPFS_USERS" ManuallyRouted="false" />
+      <Diagram DiagramId="e8b5c5077c60417dbcfc2c559adb675d" Name="Diagram1">
+        <EntityTypeShape EntityType="SPFS.SPFS_ROLES" Width="1.5" PointX="0.75" PointY="8.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="SPFS.SPFS_SITES" Width="1.5" PointX="3" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="SPFS.SPFS_SPEND_SUPPLIERS" Width="1.5" PointX="8.25" PointY="2.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="SPFS.SPFS_STAGING_SUPPLIER_RATINGS" Width="1.5" PointX="5.25" PointY="6.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="SPFS.SPFS_SUPPLIER_RATINGS" Width="1.5" PointX="8.25" PointY="7" IsExpanded="true" />
+        <EntityTypeShape EntityType="SPFS.SPFS_SUPPLIERS" Width="1.5" PointX="3" PointY="13" IsExpanded="true" />
+        <EntityTypeShape EntityType="SPFS.SPFS_USERS" Width="1.5" PointX="3" PointY="7.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="SPFS.SPFS_USERSITES" Width="1.5" PointX="5.25" PointY="2.875" IsExpanded="true" />
+        <AssociationConnector Association="SPFS.FK_SPFS_USERS_SPFS_ROLES" ManuallyRouted="false" />
+        <AssociationConnector Association="SPFS.FK_SPFS_SPEND_SUPPLIERS_SPFS_SITES" ManuallyRouted="false" />
+        <AssociationConnector Association="SPFS.FK_SPFS_STAGING_SUPPLIER_RATINGS_SPFS_SITES" ManuallyRouted="false" />
+        <AssociationConnector Association="SPFS.FK_SPFS_SUPPLIER_RATINGS_SPFS_SITES" ManuallyRouted="false" />
+        <AssociationConnector Association="SPFS.FK_SPFS_USERSITES_SPFS_SITES" ManuallyRouted="false" />
+        <AssociationConnector Association="SPFS.FK_SPFS_SPEND_SUPPLIERS_SPFS_SUPPLIERS" ManuallyRouted="false" />
+        <AssociationConnector Association="SPFS.FK_SPFS_STAGING_SUPPLIER_RATINGS_SPFS_SUPPLIERS" ManuallyRouted="false" />
+        <AssociationConnector Association="SPFS.FK_SPFS_STAGING_SUPPLIER_RATINGS_SPFS_USERS" ManuallyRouted="false" />
+        <AssociationConnector Association="SPFS.FK_SPFS_SUPPLIER_RATINGS_SPFS_SUPPLIERS" ManuallyRouted="false" />
+        <AssociationConnector Association="SPFS.FK_SPFS_SUPPLIER_RATINGS_SPFS_USERS" ManuallyRouted="false" />
+        <AssociationConnector Association="SPFS.FK_SPFS_USERSITES_SPFS_USERS" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="SPFS.SPFS_LINK_ERP" Width="1.5" PointX="10.5" PointY="3.25" />
+        <AssociationConnector Association="SPFS.FK_SPFS_LINK_ERP_SPFS_SPEND_SUPPLIERS" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

@@ -5,20 +5,25 @@
 }
 
 @*@using (Html.BeginForm(new { enctype = "multipart/form-data" }))*@
-@using (Html.BeginForm("Upload", "ExcelUpload", FormMethod.Post, new { enctype = "multipart/form-data" }))
+@using (Html.BeginForm(null, null, FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
+    <h2>Ratings Excel Upload Page</h2>
+    <hr />
+    <br />
     @Html.AntiForgeryToken()
     @Html.HiddenFor(m => m.isUpload)
     <div class="row col-md-12" style="padding-top: 5px">
+
         <div class="col-md-6">
             <div class="form-group">
-                @Html.LabelFor(model => model.SiteID, new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
+                @Html.LabelFor(model => model.SiteID, new { @class = "control-label col-md-3" })
+                <div class="col-md-9">
                     @Html.DropDownListFor(model => model.SiteID, ViewBag.Sites as IEnumerable<SelectListItem>, "",
-new { @class = "selectpicker col-md-12", data_live_search = "true", data_size = "10", required = "true" })
+                       new { @class = "selectpicker col-md-12", data_live_search = "true", data_size = "10", required = "true" })
                     @Html.ValidationMessageFor(model => model.SiteID)
                 </div>
-            </div>           
+            </div>
+
         </div>
         <div class="col-md-6">
             <div class="form-group col-md-6">
@@ -42,31 +47,53 @@ new { @class = "selectpicker col-md-12", data_live_search = "true", data_size = 
             </div>
 
         </div>
+
     </div>
-    <div class="row col-md-12">
-        <div class="col-md-6">           
-            <div class="form-group">
-                @Html.LabelFor(model => model.UploadFile, new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    <input type="file" id="UploadFile" name="UploadFile" class="col-md-12 form-control" />
-                    @Html.ValidationMessageFor(model => model.UploadFile)
-                </div>
-            </div>
-        </div>
-        <div class="form-group form-group-marginless">
+
+
+
+        <div class="row col-md-12">
             <div class="col-md-6">
-                <div class="form-horizontal">
-                    <div class="form-group form-group-marginless">
-                        <div class="col-md-6">
-                            <button type="submit" value="Upload" name="action:Upload" class="btn btn-primary">
-                                <span class="glyphicon glyphicon-upload search"></span>
-                                <span>Upload</span>
-                            </button>
-                        </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.UploadFile, new { @class = "control-label col-md-3" })
+                    <div class="col-md-9">
+                        <input type="file" id="UploadFile" name="UploadFile" class="col-md-12 form-control" />
+                        @Html.ValidationMessageFor(model => model.UploadFile)
                     </div>
                 </div>
             </div>
+            <div class="form-group form-group-marginless">
+                <div class="col-md-6">
 
+                    <div class="col-md-5">
+                        <button type="submit" value="Upload" onclick="OnBeginPostBack_Save(this)" name="action:Upload" class="btn btn-primary">
+                            <span class="glyphicon glyphicon-upload search"></span>
+                            <span>Upload</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
+
+
 }
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        var siteId = $("#SiteID option:selected").val();
+
+        $('#SiteID').change(function () {
+            var siteId = $("#SiteID option:selected").val();
+            if (siteId != "") {
+
+                $(this).valid();
+
+            }
+
+        });
+
+
+    });
+
+</script>

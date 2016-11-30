@@ -4,14 +4,14 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-    <Schema Namespace="SPFS_Model.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="SPFS.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="SPFS_LINK_ERP">
           <Key>
             <PropertyRef Name="Spend_supplier_ID" />
             <PropertyRef Name="Erp_supplier_ID" />
           </Key>
           <Property Name="Spend_supplier_ID" Type="int" Nullable="false" />
-          <Property Name="Erp_supplier_ID" Type="int" Nullable="false" />
+          <Property Name="Erp_supplier_ID" Type="nvarchar" MaxLength="30" Nullable="false" />
         </EntityType>
         <EntityType Name="SPFS_ROLES">
           <Key>
@@ -31,7 +31,7 @@
           <Property Name="SiteID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Gdis_org_entity_ID" Type="int" Nullable="false" />
           <Property Name="Gdis_org_Parent_ID" Type="int" />
-          <Property Name="Name" Type="nvarchar" MaxLength="50" />
+          <Property Name="Name" Type="nvarchar" MaxLength="250" />
           <Property Name="Address_1" Type="nvarchar" MaxLength="255" />
           <Property Name="Address_2" Type="nvarchar" MaxLength="255" />
           <Property Name="City" Type="nvarchar" MaxLength="50" />
@@ -75,10 +75,10 @@
           <Property Name="CID" Type="int" Nullable="false" />
           <Property Name="Duns" Type="int" Nullable="false" />
           <Property Name="Erp_supplier_ID" Type="int" Nullable="false" />
-          <Property Name="Inbound_parts" Type="numeric" Precision="18" Scale="0" Nullable="false" />
-          <Property Name="OTR" Type="numeric" Precision="18" Scale="0" Nullable="false" />
-          <Property Name="OTD" Type="numeric" Precision="18" Scale="0" Nullable="false" />
-          <Property Name="PFR" Type="numeric" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="Inbound_parts" Type="int" Nullable="false" />
+          <Property Name="OTR" Type="int" Nullable="false" />
+          <Property Name="OTD" Type="int" Nullable="false" />
+          <Property Name="PFR" Type="int" Nullable="false" />
           <Property Name="Initial_submission_date" Type="date" Nullable="false" />
           <Property Name="Temp_Upload?" Type="bit" />
           <Property Name="UserID" Type="int" Nullable="false" />
@@ -95,10 +95,10 @@
           <Property Name="Rating_period" Type="date" Nullable="false" />
           <Property Name="SiteID" Type="int" Nullable="false" />
           <Property Name="CID" Type="int" Nullable="false" />
-          <Property Name="Inbound_parts" Type="numeric" Precision="18" Scale="0" Nullable="false" />
-          <Property Name="OTR" Type="numeric" Precision="18" Scale="0" Nullable="false" />
-          <Property Name="OTD" Type="numeric" Precision="18" Scale="0" Nullable="false" />
-          <Property Name="PFR" Type="numeric" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="Inbound_parts" Type="int" Nullable="false" />
+          <Property Name="OTR" Type="int" Nullable="false" />
+          <Property Name="OTD" Type="int" Nullable="false" />
+          <Property Name="PFR" Type="int" Nullable="false" />
           <Property Name="Initial_submission_date" Type="date" Nullable="false" />
           <Property Name="Temp_Upload?" Type="bit" />
           <Property Name="Interface_flag" Type="bit" />
@@ -158,16 +158,6 @@
           <Property Name="Modified_date" Type="date" />
           <Property Name="Modified_by" Type="nvarchar" MaxLength="50" />
         </EntityType>
-        <EntityType Name="sysdiagrams">
-          <Key>
-            <PropertyRef Name="diagram_id" />
-          </Key>
-          <Property Name="name" Type="nvarchar" MaxLength="128" Nullable="false" />
-          <Property Name="principal_id" Type="int" Nullable="false" />
-          <Property Name="diagram_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="version" Type="int" />
-          <Property Name="definition" Type="varbinary(max)" />
-        </EntityType>
         <Association Name="FK_SPFS_LINK_ERP_SPFS_SPEND_SUPPLIERS">
           <End Role="SPFS_SPEND_SUPPLIERS" Type="Self.SPFS_SPEND_SUPPLIERS" Multiplicity="1" />
           <End Role="SPFS_LINK_ERP" Type="Self.SPFS_LINK_ERP" Multiplicity="*" />
@@ -312,7 +302,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityContainer Name="SPFS_ModelStoreContainer">
+        <EntityContainer Name="SPFSStoreContainer">
           <EntitySet Name="SPFS_LINK_ERP" EntityType="Self.SPFS_LINK_ERP" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SPFS_ROLES" EntityType="Self.SPFS_ROLES" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SPFS_SITES" EntityType="Self.SPFS_SITES" Schema="dbo" store:Type="Tables" />
@@ -322,7 +312,6 @@
           <EntitySet Name="SPFS_SUPPLIERS" EntityType="Self.SPFS_SUPPLIERS" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SPFS_USERS" EntityType="Self.SPFS_USERS" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SPFS_USERSITES" EntityType="Self.SPFS_USERSITES" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK_SPFS_LINK_ERP_SPFS_SPEND_SUPPLIERS" Association="Self.FK_SPFS_LINK_ERP_SPFS_SPEND_SUPPLIERS">
             <End Role="SPFS_SPEND_SUPPLIERS" EntitySet="SPFS_SPEND_SUPPLIERS" />
             <End Role="SPFS_LINK_ERP" EntitySet="SPFS_LINK_ERP" />
@@ -375,16 +364,7 @@
       </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
-      <Schema Namespace="SPFS_Model" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
-        <EntityType Name="SPFS_LINK_ERP">
-          <Key>
-            <PropertyRef Name="Spend_supplier_ID" />
-            <PropertyRef Name="Erp_supplier_ID" />
-          </Key>
-          <Property Name="Spend_supplier_ID" Type="Int32" Nullable="false" />
-          <Property Name="Erp_supplier_ID" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="SPFS_SPEND_SUPPLIERS" Relationship="Self.FK_SPFS_LINK_ERP_SPFS_SPEND_SUPPLIERS" FromRole="SPFS_LINK_ERP" ToRole="SPFS_SPEND_SUPPLIERS" />
-        </EntityType>
+      <Schema Namespace="SPFS" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
         <EntityType Name="SPFS_ROLES">
           <Key>
             <PropertyRef Name="RoleID" />
@@ -404,7 +384,7 @@
           <Property Name="SiteID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Gdis_org_entity_ID" Type="Int32" Nullable="false" />
           <Property Name="Gdis_org_Parent_ID" Type="Int32" />
-          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Name" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
           <Property Name="Address_1" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Name="Address_2" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Name="City" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
@@ -417,11 +397,11 @@
           <Property Name="Created_by" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="Modified_date" Type="DateTime" Precision="0" />
           <Property Name="Modified_by" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="SPEND_INC_FLAG" Type="String" MaxLength="5" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="SPFS_SPEND_SUPPLIERS" Relationship="Self.FK_SPFS_SPEND_SUPPLIERS_SPFS_SITES" FromRole="SPFS_SITES" ToRole="SPFS_SPEND_SUPPLIERS" />
           <NavigationProperty Name="SPFS_STAGING_SUPPLIER_RATINGS" Relationship="Self.FK_SPFS_STAGING_SUPPLIER_RATINGS_SPFS_SITES" FromRole="SPFS_SITES" ToRole="SPFS_STAGING_SUPPLIER_RATINGS" />
           <NavigationProperty Name="SPFS_SUPPLIER_RATINGS" Relationship="Self.FK_SPFS_SUPPLIER_RATINGS_SPFS_SITES" FromRole="SPFS_SITES" ToRole="SPFS_SUPPLIER_RATINGS" />
           <NavigationProperty Name="SPFS_USERSITES" Relationship="Self.FK_SPFS_USERSITES_SPFS_SITES" FromRole="SPFS_SITES" ToRole="SPFS_USERSITES" />
-          <Property Name="SPEND_INC_FLAG" Type="String" MaxLength="5" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="SPFS_SPEND_SUPPLIERS">
           <Key>
@@ -429,7 +409,9 @@
           </Key>
           <Property Name="Spend_supplier_ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="SiteID" Type="Int32" Nullable="false" />
+          <Property Name="Gdis_org_Parent_ID" Type="Int32" />
           <Property Name="CID" Type="Int32" Nullable="false" />
+          <Property Name="Entity_Type" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
           <Property Name="Total_Spend" Type="Decimal" Precision="18" Scale="0" Nullable="false" />
           <Property Name="Reject_incident_count" Type="Int32" Nullable="false" />
           <Property Name="Reject_parts_count" Type="Int32" Nullable="false" />
@@ -437,11 +419,9 @@
           <Property Name="Created_by" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="Modified_date" Type="DateTime" Precision="0" />
           <Property Name="Modified_by" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="SPFS_LINK_ERP" Relationship="Self.FK_SPFS_LINK_ERP_SPFS_SPEND_SUPPLIERS" FromRole="SPFS_SPEND_SUPPLIERS" ToRole="SPFS_LINK_ERP" />
           <NavigationProperty Name="SPFS_SITES" Relationship="Self.FK_SPFS_SPEND_SUPPLIERS_SPFS_SITES" FromRole="SPFS_SPEND_SUPPLIERS" ToRole="SPFS_SITES" />
           <NavigationProperty Name="SPFS_SUPPLIERS" Relationship="Self.FK_SPFS_SPEND_SUPPLIERS_SPFS_SUPPLIERS" FromRole="SPFS_SPEND_SUPPLIERS" ToRole="SPFS_SUPPLIERS" />
-          <Property Name="Gdis_org_Parent_ID" Type="Int32" />
-          <Property Name="Entity_Type" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
+          <NavigationProperty Name="SPFS_LINK_ERP" Relationship="SPFS.FK_SPFS_LINK_ERP_SPFS_SPEND_SUPPLIERS" FromRole="SPFS_SPEND_SUPPLIERS" ToRole="SPFS_LINK_ERP" />
         </EntityType>
         <EntityType Name="SPFS_STAGING_SUPPLIER_RATINGS">
           <Key>
@@ -455,10 +435,10 @@
           <Property Name="CID" Type="Int32" Nullable="false" />
           <Property Name="Duns" Type="Int32" Nullable="false" />
           <Property Name="Erp_supplier_ID" Type="Int32" Nullable="false" />
-          <Property Name="Inbound_parts" Type="Decimal" Precision="18" Scale="0" Nullable="false" />
-          <Property Name="OTR" Type="Decimal" Precision="18" Scale="0" Nullable="false" />
-          <Property Name="OTD" Type="Decimal" Precision="18" Scale="0" Nullable="false" />
-          <Property Name="PFR" Type="Decimal" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="Inbound_parts" Type="Int32" Nullable="false" />
+          <Property Name="OTR" Type="Int32" Nullable="false" />
+          <Property Name="OTD" Type="Int32" Nullable="false" />
+          <Property Name="PFR" Type="Int32" Nullable="false" />
           <Property Name="Initial_submission_date" Type="DateTime" Nullable="false" Precision="0" />
           <Property Name="Temp_Upload_" Type="Boolean" />
           <Property Name="UserID" Type="Int32" Nullable="false" />
@@ -478,10 +458,10 @@
           <Property Name="Rating_period" Type="DateTime" Nullable="false" Precision="0" />
           <Property Name="SiteID" Type="Int32" Nullable="false" />
           <Property Name="CID" Type="Int32" Nullable="false" />
-          <Property Name="Inbound_parts" Type="Decimal" Precision="18" Scale="0" Nullable="false" />
-          <Property Name="OTR" Type="Decimal" Precision="18" Scale="0" Nullable="false" />
-          <Property Name="OTD" Type="Decimal" Precision="18" Scale="0" Nullable="false" />
-          <Property Name="PFR" Type="Decimal" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="Inbound_parts" Type="Int32" Nullable="false" />
+          <Property Name="OTR" Type="Int32" Nullable="false" />
+          <Property Name="OTD" Type="Int32" Nullable="false" />
+          <Property Name="PFR" Type="Int32" Nullable="false" />
           <Property Name="Initial_submission_date" Type="DateTime" Nullable="false" Precision="0" />
           <Property Name="Temp_Upload_" Type="Boolean" />
           <Property Name="Interface_flag" Type="Boolean" />
@@ -525,6 +505,9 @@
           <Property Name="RoleID" Type="Int32" Nullable="false" />
           <Property Name="UserName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="Email" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="First_Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Last_Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="MiddleName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="SPFS_Active" Type="Boolean" Nullable="false" />
           <Property Name="Active_Date" Type="DateTime" Precision="0" />
           <Property Name="Created_date" Type="DateTime" Nullable="false" Precision="0" />
@@ -535,9 +518,6 @@
           <NavigationProperty Name="SPFS_STAGING_SUPPLIER_RATINGS" Relationship="Self.FK_SPFS_STAGING_SUPPLIER_RATINGS_SPFS_USERS" FromRole="SPFS_USERS" ToRole="SPFS_STAGING_SUPPLIER_RATINGS" />
           <NavigationProperty Name="SPFS_SUPPLIER_RATINGS" Relationship="Self.FK_SPFS_SUPPLIER_RATINGS_SPFS_USERS" FromRole="SPFS_USERS" ToRole="SPFS_SUPPLIER_RATINGS" />
           <NavigationProperty Name="SPFS_USERSITES" Relationship="Self.FK_SPFS_USERSITES_SPFS_USERS" FromRole="SPFS_USERS" ToRole="SPFS_USERSITES" />
-          <Property Name="First_Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="Last_Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="MiddleName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="SPFS_USERSITES">
           <Key>
@@ -553,28 +533,6 @@
           <NavigationProperty Name="SPFS_SITES" Relationship="Self.FK_SPFS_USERSITES_SPFS_SITES" FromRole="SPFS_USERSITES" ToRole="SPFS_SITES" />
           <NavigationProperty Name="SPFS_USERS" Relationship="Self.FK_SPFS_USERSITES_SPFS_USERS" FromRole="SPFS_USERSITES" ToRole="SPFS_USERS" />
         </EntityType>
-        <EntityType Name="sysdiagram">
-          <Key>
-            <PropertyRef Name="diagram_id" />
-          </Key>
-          <Property Name="name" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="principal_id" Type="Int32" Nullable="false" />
-          <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="version" Type="Int32" />
-          <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
-        </EntityType>
-        <Association Name="FK_SPFS_LINK_ERP_SPFS_SPEND_SUPPLIERS">
-          <End Role="SPFS_SPEND_SUPPLIERS" Type="Self.SPFS_SPEND_SUPPLIERS" Multiplicity="1" />
-          <End Role="SPFS_LINK_ERP" Type="Self.SPFS_LINK_ERP" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="SPFS_SPEND_SUPPLIERS">
-              <PropertyRef Name="Spend_supplier_ID" />
-            </Principal>
-            <Dependent Role="SPFS_LINK_ERP">
-              <PropertyRef Name="Spend_supplier_ID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_SPFS_USERS_SPFS_ROLES">
           <End Role="SPFS_ROLES" Type="Self.SPFS_ROLES" Multiplicity="1" />
           <End Role="SPFS_USERS" Type="Self.SPFS_USERS" Multiplicity="*" />
@@ -707,8 +665,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityContainer Name="SPFSContext" annotation:LazyLoadingEnabled="false">
-          <EntitySet Name="SPFS_LINK_ERP" EntityType="Self.SPFS_LINK_ERP" />
+        <EntityContainer Name="SPFSContext" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="SPFS_ROLES" EntityType="Self.SPFS_ROLES" />
           <EntitySet Name="SPFS_SITES" EntityType="Self.SPFS_SITES" />
           <EntitySet Name="SPFS_SPEND_SUPPLIERS" EntityType="Self.SPFS_SPEND_SUPPLIERS" />
@@ -717,11 +674,6 @@
           <EntitySet Name="SPFS_SUPPLIERS" EntityType="Self.SPFS_SUPPLIERS" />
           <EntitySet Name="SPFS_USERS" EntityType="Self.SPFS_USERS" />
           <EntitySet Name="SPFS_USERSITES" EntityType="Self.SPFS_USERSITES" />
-          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagram" />
-          <AssociationSet Name="FK_SPFS_LINK_ERP_SPFS_SPEND_SUPPLIERS" Association="Self.FK_SPFS_LINK_ERP_SPFS_SPEND_SUPPLIERS">
-            <End Role="SPFS_SPEND_SUPPLIERS" EntitySet="SPFS_SPEND_SUPPLIERS" />
-            <End Role="SPFS_LINK_ERP" EntitySet="SPFS_LINK_ERP" />
-          </AssociationSet>
           <AssociationSet Name="FK_SPFS_USERS_SPFS_ROLES" Association="Self.FK_SPFS_USERS_SPFS_ROLES">
             <End Role="SPFS_ROLES" EntitySet="SPFS_ROLES" />
             <End Role="SPFS_USERS" EntitySet="SPFS_USERS" />
@@ -766,23 +718,41 @@
             <End Role="SPFS_USERS" EntitySet="SPFS_USERS" />
             <End Role="SPFS_USERSITES" EntitySet="SPFS_USERSITES" />
           </AssociationSet>
+          <EntitySet Name="SPFS_LINK_ERP" EntityType="SPFS.SPFS_LINK_ERP" />
+          <AssociationSet Name="FK_SPFS_LINK_ERP_SPFS_SPEND_SUPPLIERS" Association="SPFS.FK_SPFS_LINK_ERP_SPFS_SPEND_SUPPLIERS">
+            <End Role="SPFS_SPEND_SUPPLIERS" EntitySet="SPFS_SPEND_SUPPLIERS" />
+            <End Role="SPFS_LINK_ERP" EntitySet="SPFS_LINK_ERP" />
+          </AssociationSet>
         </EntityContainer>
+        <EntityType Name="SPFS_LINK_ERP">
+          <Key>
+            <PropertyRef Name="Spend_supplier_ID" />
+            <PropertyRef Name="Erp_supplier_ID" />
+          </Key>
+          <Property Name="Spend_supplier_ID" Type="Int32" Nullable="false" />
+          <Property Name="Erp_supplier_ID" Type="String" Nullable="false" MaxLength="30" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="SPFS_SPEND_SUPPLIERS" Relationship="SPFS.FK_SPFS_LINK_ERP_SPFS_SPEND_SUPPLIERS" FromRole="SPFS_LINK_ERP" ToRole="SPFS_SPEND_SUPPLIERS" />
+        </EntityType>
+        <Association Name="FK_SPFS_LINK_ERP_SPFS_SPEND_SUPPLIERS">
+          <End Type="SPFS.SPFS_SPEND_SUPPLIERS" Role="SPFS_SPEND_SUPPLIERS" Multiplicity="1" />
+          <End Type="SPFS.SPFS_LINK_ERP" Role="SPFS_LINK_ERP" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SPFS_SPEND_SUPPLIERS">
+              <PropertyRef Name="Spend_supplier_ID" />
+            </Principal>
+            <Dependent Role="SPFS_LINK_ERP">
+              <PropertyRef Name="Spend_supplier_ID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="SPFS_ModelStoreContainer" CdmEntityContainer="SPFSContext">
-          <EntitySetMapping Name="SPFS_LINK_ERP">
-            <EntityTypeMapping TypeName="SPFS_Model.SPFS_LINK_ERP">
-              <MappingFragment StoreEntitySet="SPFS_LINK_ERP">
-                <ScalarProperty Name="Spend_supplier_ID" ColumnName="Spend_supplier_ID" />
-                <ScalarProperty Name="Erp_supplier_ID" ColumnName="Erp_supplier_ID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
+        <EntityContainerMapping StorageEntityContainer="SPFSStoreContainer" CdmEntityContainer="SPFSContext">
           <EntitySetMapping Name="SPFS_ROLES">
-            <EntityTypeMapping TypeName="SPFS_Model.SPFS_ROLES">
+            <EntityTypeMapping TypeName="SPFS.SPFS_ROLES">
               <MappingFragment StoreEntitySet="SPFS_ROLES">
                 <ScalarProperty Name="RoleID" ColumnName="RoleID" />
                 <ScalarProperty Name="RoleName" ColumnName="RoleName" />
@@ -794,9 +764,8 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="SPFS_SITES">
-            <EntityTypeMapping TypeName="SPFS_Model.SPFS_SITES">
+            <EntityTypeMapping TypeName="SPFS.SPFS_SITES">
               <MappingFragment StoreEntitySet="SPFS_SITES">
-                <ScalarProperty Name="SPEND_INC_FLAG" ColumnName="SPEND_INC_FLAG" />
                 <ScalarProperty Name="SiteID" ColumnName="SiteID" />
                 <ScalarProperty Name="Gdis_org_entity_ID" ColumnName="Gdis_org_entity_ID" />
                 <ScalarProperty Name="Gdis_org_Parent_ID" ColumnName="Gdis_org_Parent_ID" />
@@ -813,17 +782,18 @@
                 <ScalarProperty Name="Created_by" ColumnName="Created_by" />
                 <ScalarProperty Name="Modified_date" ColumnName="Modified_date" />
                 <ScalarProperty Name="Modified_by" ColumnName="Modified_by" />
+                <ScalarProperty Name="SPEND_INC_FLAG" ColumnName="SPEND_INC_FLAG" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="SPFS_SPEND_SUPPLIERS">
-            <EntityTypeMapping TypeName="SPFS_Model.SPFS_SPEND_SUPPLIERS">
+            <EntityTypeMapping TypeName="SPFS.SPFS_SPEND_SUPPLIERS">
               <MappingFragment StoreEntitySet="SPFS_SPEND_SUPPLIERS">
-                <ScalarProperty Name="Entity_Type" ColumnName="Entity_Type" />
-                <ScalarProperty Name="Gdis_org_Parent_ID" ColumnName="Gdis_org_Parent_ID" />
                 <ScalarProperty Name="Spend_supplier_ID" ColumnName="Spend_supplier_ID" />
                 <ScalarProperty Name="SiteID" ColumnName="SiteID" />
+                <ScalarProperty Name="Gdis_org_Parent_ID" ColumnName="Gdis_org_Parent_ID" />
                 <ScalarProperty Name="CID" ColumnName="CID" />
+                <ScalarProperty Name="Entity_Type" ColumnName="Entity_Type" />
                 <ScalarProperty Name="Total_Spend" ColumnName="Total_Spend" />
                 <ScalarProperty Name="Reject_incident_count" ColumnName="Reject_incident_count" />
                 <ScalarProperty Name="Reject_parts_count" ColumnName="Reject_parts_count" />
@@ -835,7 +805,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="SPFS_STAGING_SUPPLIER_RATINGS">
-            <EntityTypeMapping TypeName="SPFS_Model.SPFS_STAGING_SUPPLIER_RATINGS">
+            <EntityTypeMapping TypeName="SPFS.SPFS_STAGING_SUPPLIER_RATINGS">
               <MappingFragment StoreEntitySet="SPFS_STAGING_SUPPLIER_RATINGS">
                 <ScalarProperty Name="StagingID" ColumnName="StagingID" />
                 <ScalarProperty Name="Rating_period" ColumnName="Rating_period" />
@@ -860,7 +830,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="SPFS_SUPPLIER_RATINGS">
-            <EntityTypeMapping TypeName="SPFS_Model.SPFS_SUPPLIER_RATINGS">
+            <EntityTypeMapping TypeName="SPFS.SPFS_SUPPLIER_RATINGS">
               <MappingFragment StoreEntitySet="SPFS_SUPPLIER_RATINGS">
                 <ScalarProperty Name="RatingsID" ColumnName="RatingsID" />
                 <ScalarProperty Name="Rating_period" ColumnName="Rating_period" />
@@ -882,7 +852,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="SPFS_SUPPLIERS">
-            <EntityTypeMapping TypeName="SPFS_Model.SPFS_SUPPLIERS">
+            <EntityTypeMapping TypeName="SPFS.SPFS_SUPPLIERS">
               <MappingFragment StoreEntitySet="SPFS_SUPPLIERS">
                 <ScalarProperty Name="CID" ColumnName="CID" />
                 <ScalarProperty Name="Duns" ColumnName="Duns" />
@@ -903,15 +873,15 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="SPFS_USERS">
-            <EntityTypeMapping TypeName="SPFS_Model.SPFS_USERS">
+            <EntityTypeMapping TypeName="SPFS.SPFS_USERS">
               <MappingFragment StoreEntitySet="SPFS_USERS">
-                <ScalarProperty Name="MiddleName" ColumnName="MiddleName" />
-                <ScalarProperty Name="Last_Name" ColumnName="Last_Name" />
-                <ScalarProperty Name="First_Name" ColumnName="First_Name" />
                 <ScalarProperty Name="UserID" ColumnName="UserID" />
                 <ScalarProperty Name="RoleID" ColumnName="RoleID" />
                 <ScalarProperty Name="UserName" ColumnName="UserName" />
                 <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="First_Name" ColumnName="First_Name" />
+                <ScalarProperty Name="Last_Name" ColumnName="Last_Name" />
+                <ScalarProperty Name="MiddleName" ColumnName="MiddleName" />
                 <ScalarProperty Name="SPFS_Active" ColumnName="SPFS_Active" />
                 <ScalarProperty Name="Active_Date" ColumnName="Active_Date" />
                 <ScalarProperty Name="Created_date" ColumnName="Created_date" />
@@ -922,7 +892,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="SPFS_USERSITES">
-            <EntityTypeMapping TypeName="SPFS_Model.SPFS_USERSITES">
+            <EntityTypeMapping TypeName="SPFS.SPFS_USERSITES">
               <MappingFragment StoreEntitySet="SPFS_USERSITES">
                 <ScalarProperty Name="UserSitesID" ColumnName="UserSitesID" />
                 <ScalarProperty Name="UserID" ColumnName="UserID" />
@@ -934,14 +904,11 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="sysdiagrams">
-            <EntityTypeMapping TypeName="SPFS_Model.sysdiagram">
-              <MappingFragment StoreEntitySet="sysdiagrams">
-                <ScalarProperty Name="name" ColumnName="name" />
-                <ScalarProperty Name="principal_id" ColumnName="principal_id" />
-                <ScalarProperty Name="diagram_id" ColumnName="diagram_id" />
-                <ScalarProperty Name="version" ColumnName="version" />
-                <ScalarProperty Name="definition" ColumnName="definition" />
+          <EntitySetMapping Name="SPFS_LINK_ERP">
+            <EntityTypeMapping TypeName="SPFS.SPFS_LINK_ERP">
+              <MappingFragment StoreEntitySet="SPFS_LINK_ERP">
+                <ScalarProperty Name="Erp_supplier_ID" ColumnName="Erp_supplier_ID" />
+                <ScalarProperty Name="Spend_supplier_ID" ColumnName="Spend_supplier_ID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

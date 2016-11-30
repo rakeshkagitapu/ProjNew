@@ -13,6 +13,8 @@ using System.DirectoryServices;
 using System.DirectoryServices.AccountManagement;
 using System.IO;
 using System.Web.UI;
+using System.Globalization;
+using System.Text;
 
 namespace SPFS.Helpers
 {
@@ -52,12 +54,12 @@ namespace SPFS.Helpers
         public const string AlLOW_ACCESS_SERVICEDESK_CONTROLLERS = "Home,User,Account,UserSites";
 
         /// <summary>
-        /// The canno t_ fin d_ user
+        /// The cannot_ fin d_ user
         /// </summary>
         public const string CANNOT_FIND_USER = "Cannot find user. Please contact administrator.";
 
         /// <summary>
-        /// The canno t_ fin d_ user
+        /// The cannot_ fin d_ user
         /// </summary>
         public const string NO_RESULT = "No results found. Please contact administrator.";
 
@@ -284,31 +286,88 @@ namespace SPFS.Helpers
             // Return the result.
             return stringWriter.ToString();
         }
-        public List<SelectListItem> GetMonths()
+        public List<SelectListItem> GetMonths(bool isUpload)
         {
             List<SelectListItem> months = new List<SelectListItem>();
-            string[] localizedMonths = System.Threading.Thread.CurrentThread.CurrentCulture.DateTimeFormat.MonthNames;
-
-            for (int month = 0; month < 12; month++)
+            if (isUpload)
             {
-                // SelectListItem monthListItem = new SelectListItemlocalizedMonths[month], invariantMonths[month]);
-                months.Add(new SelectListItem { Value = (month + 1).ToString(), Text = localizedMonths[month] });
+
+                var uploadMonths = Enumerable.Range(0, 3).Select(i => DateTime.Now.AddMonths(i - 3).ToString("MMMM")).Distinct();
+
+                foreach( var  month in uploadMonths)
+                {
+                    var monthValue = DateTime.ParseExact(month, "MMMM", CultureInfo.InvariantCulture).Month;
+                    months.Add(new SelectListItem { Value = monthValue.ToString(), Text = month.ToString() });
+                }
             }
+            else
+            {
+                var manualMonths = Enumerable.Range(0, 12).Select(i => DateTime.Now.AddMonths(i - 12).ToString("MMMM")).Distinct();
+
+                foreach (var month in manualMonths)
+                {
+                    var monthValue = DateTime.ParseExact(month, "MMMM", CultureInfo.InvariantCulture).Month;
+                    months.Add(new SelectListItem { Value = monthValue.ToString(), Text = month.ToString() });
+                }
+            }
+           
             return months;
         }
 
-        public List<SelectListItem> GetYears()
+        public List<SelectListItem> GetYears(bool isUpload)
         {
             List<SelectListItem> years = new List<SelectListItem>();
-            int year = DateTime.Now.Year;
-            int yearsAdd = year + 5;
-            int yearsSub = year - 5;
-            for (int i = yearsSub; i < yearsAdd; i++)
+            if (isUpload)
             {
-                years.Add(new SelectListItem { Value = i.ToString(), Text = i.ToString() });
+
+                var uploadYears = Enumerable.Range(0, 3).Select(i => DateTime.Now.AddMonths(i - 3).ToString("yyyy")).Distinct();
+
+                foreach (var year in uploadYears)
+                {
+                    years.Add(new SelectListItem { Value = year.ToString(), Text = year.ToString() });
+                }
+            }
+            else
+            {
+                var manualYears = Enumerable.Range(0, 12).Select(i => DateTime.Now.AddMonths(i - 12).ToString("yyyy")).Distinct();
+
+                foreach (var year in manualYears)
+                {
+                    years.Add(new SelectListItem { Value = year.ToString(), Text = year.ToString() });
+                }
             }
             return years;
         }
+       
+        //public List<SelectListItem> GetMonths(bool isUpload)
+        //{
+        //    List<SelectListItem> months = new List<SelectListItem>();
+        //    if (isUpload)
+        //    {
+
+        //        string[] localizedMonths = System.Threading.Thread.CurrentThread.CurrentCulture.DateTimeFormat.MonthNames;
+
+        //        for (int month = 0; month < 12; month++)
+        //        {
+        //            // SelectListItem monthListItem = new SelectListItemlocalizedMonths[month], invariantMonths[month]);
+        //            months.Add(new SelectListItem { Value = (month + 1).ToString(), Text = localizedMonths[month] });
+        //        }
+        //    }
+        //    return months;
+        //}
+
+        //public List<SelectListItem> GetYears()
+        //{
+        //    List<SelectListItem> years = new List<SelectListItem>();
+        //    int year = DateTime.Now.Year;
+        //    int yearsAdd = year + 5;
+        //    int yearsSub = year - 5;
+        //    for (int i = yearsSub; i < yearsAdd; i++)
+        //    {
+        //        years.Add(new SelectListItem { Value = i.ToString(), Text = i.ToString() });
+        //    }
+        //    return years;
+        //}
 
     }
 

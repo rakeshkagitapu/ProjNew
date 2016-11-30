@@ -120,5 +120,40 @@ namespace SPFS.Models
 
     }
 
-    
+    public class UserExportViewModel
+    {
+
+        public int UserID { get; set; }
+
+
+        [Display(Name = "User Name")]
+        public string UserName { get; set; }
+
+        public string Email { get; set; }
+
+        [Display(Name = "First Name")]
+        public string FirstName { get; set; }
+
+
+        [Display(Name = "Middle Name")]
+        public string MiddleName { get; set; }
+
+
+        [Display(Name = "Last Name")]
+        public string LastName { get; set; }
+
+        [Display(Name = "Active")]
+        public bool SPFS_Active { get; set; }
+
+
+        [Display(Name = "Role")]
+        public string RoleName { get; set; }
+
+
+        [Display(Name = "Location")]
+        public string UserSiteName { get; set; }
+       
+
+
+    }
 }

@@ -19,12 +19,13 @@
             </th>
 
             <th>
+                <a href="#" data-sortby="@ViewData["CitySort"]" class="sortby">@Html.DisplayNameFor(model => model.First().City)</a>
+            </th>
+            <th>
                 <a href="#" data-sortby="@ViewData["CountrySort"]" class="sortby">@Html.DisplayNameFor(model => model.First().Country)</a>
             </th>
 
-            <th>
-                <a href="#" data-sortby="@ViewData["ZipSort"]" class="sortby">@Html.DisplayNameFor(model => model.First().Postal_Code)</a>
-            </th>
+           
             <th class="actalign">
                 <a href="#" data-sortby="@ViewData["IsActiveSort"]" class="sortby">@Html.DisplayNameFor(model => model.First().SPFS_Active)</a>
             </th>
@@ -58,14 +59,14 @@
                     <td>
                         @Html.DisplayFor(modelItem => item.Duns)
                     </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.City)
 
+                    </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.Country)
                     </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Postal_Code)
-
-                    </td>
+                  
                     <td style="text-align:center">
                         @Html.DisplayFor(modelItem => item.SPFS_Active)
 

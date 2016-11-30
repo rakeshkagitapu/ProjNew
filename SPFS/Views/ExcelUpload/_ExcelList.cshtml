@@ -1,0 +1,122 @@
+﻿
+@model SPFS.Models.ExcelRatingsViewModel
+
+@{
+    string rowID = string.Empty;
+    
+}
+
+<div class="container col-md-12 tableheight">
+    <table class="table table-condensed table-hover" id="errortable">
+        <thead>
+            <tr class="active">
+                <th>
+                    @Html.DisplayNameFor(model => model.RatingRecords.First().CID)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.RatingRecords.First().DUNS)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.RatingRecords.First().ERP_Supplier_ID)
+                </th>
+                @*<th>
+                    @Html.DisplayNameFor(model => model.RatingRecords.First().SupplierName)
+                </th>*@
+                <th>
+                    @Html.DisplayNameFor(model => model.RatingRecords.First().Inbound_parts)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.RatingRecords.First().OTR)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.RatingRecords.First().OTD)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.RatingRecords.First().PFR)
+                </th>
+
+                <th>
+                    Actions
+                </th>
+
+            </tr>
+        </thead>
+            @if (Model.RatingRecords.Count() == 0)
+            {
+                <tr>
+                    <td colspan="6">
+                        <div class="alert alert-warning" role="alert">
+                            <strong>Warning!</strong> @SPFS.Helpers.Utilities.NO_RESULT
+                        </div>
+
+                    </td>
+                </tr>
+            }
+            else
+            {
+
+                foreach (var item in Model.RatingRecords)
+                {
+
+                    //  var borderColor = "green";
+                    if ((item.ErrorInformation != null ? item.ErrorInformation.Count : 0) > 1)
+                    {
+                        //borderColor = "red";
+                        @Html.HiddenFor(modelItem => item.CID)
+                        @Html.HiddenFor(modelItem => item.ExcelDiferentiatorID)
+                        <tr Id="@item.ExcelDiferentiatorID">
+                            <td>
+                                @Html.DisplayFor(modelItem => item.CID)
+
+                            </td>
+
+                            <td>
+                                @Html.DisplayFor(modelItem => item.DUNS)
+
+                            </td>
+
+                            <td>
+                                @Html.DisplayFor(modelItem => item.ERP_Supplier_ID)
+                            </td>
+                            @*<td>
+                                        @Html.DropDownListFor(modelItem => item.CID, ViewBag.Suppliers as IEnumerable<SelectListItem>, "",
+                            new { @class = "selectpicker", data_live_search = "true", data_size = "10", data_width = "30%" })
+                                    </td>*@
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Inbound_parts)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.OTR)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.OTD)
+
+
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.PFR)
+                            </td>
+                            @*<td>
+                                @Html.DisplayFor(modelItem => item.ErrorInformation.Count)
+                            </td>*@
+                            <div id="errorDiv">
+                                <td style="width: 120px;">
+                                    <span class="glyphicon glyphicon-exclamation-sign errorClass" data-toggle="tooltip" data-placement="top" title="@item.ErrorDetails" id="status"></span>
+
+                                    <button type="button" value="Search" data-RowId="@item.ExcelDiferentiatorID" class="btn btn-primary btn-sm btnSearch" data-toggle="tooltip" data-placement="top" title="Update Record">
+                                        <span class="glyphicon glyphicon-search"></span>
+                                    </button>
+
+                                    <button type="button" value="Remove" id="btnRemoveRow" class="btn btn-danger btn-sm help-button" data-toggle="tooltip" data-placement="top" title="Remove Record">
+                                        <span class="glyphicon glyphicon-remove"></span>
+                                    </button>
+
+                                </td>
+                            </div>
+                        </tr>
+                    }
+                }
+            }
+</table>
+
+</div>

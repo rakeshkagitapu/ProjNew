@@ -11,6 +11,7 @@ namespace SPFS.Helpers
         public const int UserPageSize =8;
         public const int SupplierPageSize = 20;
         public const int SitePageSize = 20;
+        public const int Excelrecords = 30;
     }
 
     public static class SPFSHelpers

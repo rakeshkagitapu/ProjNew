@@ -127,9 +127,10 @@ html, body {
 
 
 .leftimage {
-    width: 150px;
-    height: 0px;
+    width: 200px;
+    height:0px;
 }
+
 
 
 .dropdown-menu>li>a {
@@ -204,7 +205,30 @@ html, body {
   border-color: #1398d0;
  
 }
-.upload{
-    padding-right: 40px; 
-    padding-left: 15px;
+.tableheight{
+   height: 650px;
+    overflow:auto;
+}
+
+
+.table tbody tr > td.success {
+  background-color: #dff0d8 !important;
+}
+
+.trerror {
+    border: solid  #ff0000 !important; 
+}
+.errorClass
+{
+ color:red;
+
+}
+.fixedClass
+{
+    color:green;
+}
+#header-fixed { 
+    position: fixed; 
+    top: 0px; display:none;
+    background-color:white;
 }

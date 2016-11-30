@@ -44,4 +44,13 @@ namespace SPFS.Models
 
 
     }
+
+    public class SelectSiteGDIS
+    {
+        public int SiteID { get; set; }
+
+        public int Gdis_org_entity_ID { get; set; }
+
+        public Nullable<int> Gdis_org_Parent_ID { get; set; }
+    }
 }

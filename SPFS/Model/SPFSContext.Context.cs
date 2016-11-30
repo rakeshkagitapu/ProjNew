@@ -18,7 +18,6 @@ namespace SPFS.Model
         public SPFSContext()
             : base("name=SPFSContext")
         {
-            this.Configuration.LazyLoadingEnabled = false;
         }
     
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
@@ -26,7 +25,6 @@ namespace SPFS.Model
             throw new UnintentionalCodeFirstException();
         }
     
-        public virtual DbSet<SPFS_LINK_ERP> SPFS_LINK_ERP { get; set; }
         public virtual DbSet<SPFS_ROLES> SPFS_ROLES { get; set; }
         public virtual DbSet<SPFS_SITES> SPFS_SITES { get; set; }
         public virtual DbSet<SPFS_SPEND_SUPPLIERS> SPFS_SPEND_SUPPLIERS { get; set; }
@@ -35,6 +33,6 @@ namespace SPFS.Model
         public virtual DbSet<SPFS_SUPPLIERS> SPFS_SUPPLIERS { get; set; }
         public virtual DbSet<SPFS_USERS> SPFS_USERS { get; set; }
         public virtual DbSet<SPFS_USERSITES> SPFS_USERSITES { get; set; }
-        public virtual DbSet<sysdiagram> sysdiagrams { get; set; }
+        public virtual DbSet<SPFS_LINK_ERP> SPFS_LINK_ERP { get; set; }
     }
 }

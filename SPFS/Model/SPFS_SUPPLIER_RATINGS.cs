@@ -18,10 +18,10 @@ namespace SPFS.Model
         public System.DateTime Rating_period { get; set; }
         public int SiteID { get; set; }
         public int CID { get; set; }
-        public decimal Inbound_parts { get; set; }
-        public decimal OTR { get; set; }
-        public decimal OTD { get; set; }
-        public decimal PFR { get; set; }
+        public int Inbound_parts { get; set; }
+        public int OTR { get; set; }
+        public int OTD { get; set; }
+        public int PFR { get; set; }
         public System.DateTime Initial_submission_date { get; set; }
         public Nullable<bool> Temp_Upload_ { get; set; }
         public Nullable<bool> Interface_flag { get; set; }

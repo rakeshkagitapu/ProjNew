@@ -15,7 +15,7 @@ namespace SPFS.Model
     public partial class SPFS_LINK_ERP
     {
         public int Spend_supplier_ID { get; set; }
-        public int Erp_supplier_ID { get; set; }
+        public string Erp_supplier_ID { get; set; }
     
         public virtual SPFS_SPEND_SUPPLIERS SPFS_SPEND_SUPPLIERS { get; set; }
     }
