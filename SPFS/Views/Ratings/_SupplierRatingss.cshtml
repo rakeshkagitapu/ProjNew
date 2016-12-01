@@ -1,0 +1,85 @@
+﻿@model SPFS.Models.RatingsViewModel
+
+
+<!-- IE < 10 does not like giving a tbody a height.  The workaround here applies the scrolling to a wrapped <div>. -->
+<!--[if lte IE 9]>
+<div class="old_ie_wrapper">
+<!--<![endif]-->
+
+<table class="fixed_headers table-condensed table-hover">
+    @*<col>
+        <colgroup span="2"></colgroup>
+        <colgroup span="2"></colgroup>*@
+    <thead>
+        @*<tr>
+                <th colspan="2"></th>
+                <th colspan="5">Quality</th>
+                <th colspan="4">On Time Delivery</th>
+
+            </tr>*@
+
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.RatingRecords.First().SupplierName)</th>
+            <th>Total Spend (US$)</th>
+            <th rowspan="2"> @Html.DisplayNameFor(model => model.RatingRecords.First().Reject_incident_count)</th>
+            <th rowspan="2"> @Html.DisplayNameFor(model => model.RatingRecords.First().Reject_parts_count)</th>
+            <th rowspan="2"> @Html.DisplayNameFor(model => model.RatingRecords.First().Inbound_parts)</th>
+            <th rowspan="2"> @Html.DisplayNameFor(model => model.RatingRecords.First().PPM)</th>
+            <th rowspan="2"> @Html.DisplayNameFor(model => model.RatingRecords.First().IPM)</th>
+            <th rowspan="2"> @Html.DisplayNameFor(model => model.RatingRecords.First().OTR)</th>
+            <th rowspan="2"> @Html.DisplayNameFor(model => model.RatingRecords.First().OTD)</th>
+            <th rowspan="2"> @Html.DisplayNameFor(model => model.RatingRecords.First().PCT)</th>
+            <th rowspan="2"> @Html.DisplayNameFor(model => model.RatingRecords.First().PFR)</th>
+
+        </tr>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.RatingRecords.First().CID)</th>
+            <th>@Html.DisplayNameFor(model => model.RatingRecords.First().DUNS)</th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+
+
+        </tr>
+
+    </thead>
+    <tbody style="padding-top:2px">
+        @foreach (var item in Model.RatingRecords)
+        {
+            <tr id="part1">
+                <td>@Html.DisplayFor(modelItem => item.SupplierName)</td>
+                <td>@Html.DisplayFor(modelItem => item.Total_Spend)</td>
+                <td rowspan="2">@Html.DisplayFor(modelItem => item.Reject_incident_count)</td>
+                <td rowspan="2">@Html.DisplayFor(modelItem => item.Reject_parts_count)</td>
+                <td rowspan="2">
+                    @Html.TextBoxFor(modelItem => item.Inbound_parts, null, new { @class = "form-control", style = "width:80px" })
+                </td>
+                @*<td rowspan="2"> @Html.DisplayFor(modelItem => item.Inbound_parts)</td>*@
+                <td rowspan="2"> @Html.DisplayFor(modelItem => item.PPM)</td>
+                <td rowspan="2">@Html.DisplayFor(modelItem => item.IPM)</td>
+                <td rowspan="2">@Html.DisplayFor(modelItem => item.OTR)</td>
+                <td rowspan="2"> @Html.DisplayFor(modelItem => item.OTD)</td>
+                @*<td rowspan="2">@Html.EditorFor(modelItem => item.OTR)</td>
+                    <td rowspan="2"> @Html.EditorFor(modelItem => item.OTD)</td>*@
+                <td rowspan="2"> @Html.DisplayFor(modelItem => item.PCT)</td>
+                <td rowspan="2"> @Html.DisplayFor(modelItem => item.PFR)</td>
+                @*<td rowspan="2"> @Html.EditorFor(modelItem => item.PFR)</td>*@
+
+
+            </tr>
+            <tr id="part2">
+                <td>@Html.DisplayFor(modelItem => item.CID)</td>
+                <td>@Html.DisplayFor(modelItem => item.DUNS)</td>
+
+
+            </tr>
+        }
+
+
+    </tbody>
+</table>
+
+<!--[if lte IE 9]>
+</div>
+<!--<![endif]-->

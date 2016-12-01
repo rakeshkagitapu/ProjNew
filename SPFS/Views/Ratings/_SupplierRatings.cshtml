@@ -1,0 +1,55 @@
+﻿@model SPFS.Models.RatingsViewModel
+
+
+<script src="~/Scripts/table-fixed-header.js"></script>
+<div class="container">
+    <h1>Table Fixed Header</h1>
+    <table id="mytable" class="table table-bordered table-striped table-fixed-header">
+        <thead class="header">
+            <tr>
+                <th>Column 1</th>
+                <th>Column 2</th>
+                <th>Column 3</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Data Column 1</td>
+                <td>Data Column 2</td>
+                <td>Data Column 3</td>
+            </tr>
+        </tbody>
+    </table>
+    @*<h1>Another table</h1>
+    <table id="mytable2" class="table table-bordered table-striped table-fixed-header">
+        <thead class="header">
+            <tr style="color:#00f;">
+                <th>Column 11</th>
+                <th>Column 22</th>
+                <th>Column 33</th>
+                <th>Column 44</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Data Column 11</td>
+                <td>Data Column 22</td>
+                <td>Data Column 33</td>
+                <td>Data Column 44</td>
+            </tr>
+        </tbody>
+    </table>*@
+</div>
+<script language="javascript" type="text/javascript">
+    $(document).ready(function(){
+      // add 30 more rows to the table
+      var row = $('table#mytable > tbody > tr:first');
+      var row2 = $('table#mytable2 > tbody > tr:first');
+      for (i=0; i<30; i++) {
+        $('table#mytable > tbody').append(row.clone());
+        $('table#mytable2 > tbody').append(row2.clone());
+      }
+      // make the header fixed on scroll
+      $('.table-fixed-header').fixedHeader();
+    });
+</script>

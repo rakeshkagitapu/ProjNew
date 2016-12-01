@@ -296,11 +296,14 @@ table .header-fixed {
 
 /*#endregion Tooltip*/
 
+
 /*#region Scrollable header*/
 .fixed_headers {
-    width: 1150px;
+    width: 100%;
     table-layout: fixed;
-    border-collapse: collapse;
+    /*border-collapse: collapse;*/
+    border:solid;
+    
 }
 
     /*.fixed_headers th {
@@ -310,54 +313,56 @@ table .header-fixed {
     .fixed_headers th,
     .fixed_headers td {
         padding: 5px;
-        text-align: left;
+        /*text-align: center;*/
+        border:dotted;
+        
     }
 
         .fixed_headers td:nth-child(1),
         .fixed_headers th:nth-child(1) {
-            min-width: 200px;
+            width: 17%;
         }
 
         .fixed_headers td:nth-child(2),
         .fixed_headers th:nth-child(2) {
-            min-width: 100px;
+            width: 8%;
         }
 
         .fixed_headers td:nth-child(3),
         .fixed_headers th:nth-child(3) {
-            width: 100px;
+            width:  8%;
         }
         .fixed_headers td:nth-child(4),
         .fixed_headers th:nth-child(4) {
-            width: 100px;
+           width: 8%;
         }
         .fixed_headers td:nth-child(5),
         .fixed_headers th:nth-child(5) {
-            width: 100px;
+            width: 8%;
         }
         .fixed_headers td:nth-child(6),
         .fixed_headers th:nth-child(6) {
-            width: 100px;
+           width: 8%;
         }
         .fixed_headers td:nth-child(7),
         .fixed_headers th:nth-child(7) {
-            width: 100px;
+            width: 8%;
         }
         .fixed_headers td:nth-child(8),
         .fixed_headers th:nth-child(8) {
-            width: 100px;
+           width: 8%;
         }
          .fixed_headers td:nth-child(9),
         .fixed_headers th:nth-child(9) {
-            width: 100px;
+             width: 8%;
         }
         .fixed_headers td:nth-child(10),
         .fixed_headers th:nth-child(10) {
-            width: 100px;
+            width: 8%;
         }
         .fixed_headers td:nth-child(11),
         .fixed_headers th:nth-child(11) {
-            width: 100px;
+            width: 8%;
         }
     .fixed_headers thead {
         background-color: #1398d0;
@@ -390,4 +395,7 @@ table .header-fixed {
     .old_ie_wrapper tbody {
         height: auto;
     }
+    .fixed_headers tr:nth-of-type(n) td {
+    border-bottom: 3px solid #1398d0;
+}
 /*#endregion Scrollable header*/
