@@ -37,7 +37,7 @@
                 @Html.LabelFor(model => model.Year, new { @class = "control-label col-md-3" })
                 <div class="input-group">
                     @Html.DropDownListFor(model => model.Year, ViewBag.Years as IEnumerable<SelectListItem>, new { @class = "form-control" })
-                    <span class="input-group-btn" title="Search">
+                    <span class="input-group-btn" title="Search" rel="tooltip">
                         <button type="submit" value="Search" name="action:Search" class="btn btn-warning">
                             <span class="glyphicon glyphicon-search" />
                         </button>

@@ -2,6 +2,7 @@
 
 @{
     ViewBag.Title = "Ratings";
+    var count = Model.RatingRecords != null ? Model.RatingRecords.Count : 0;
 }
 
 @*@using (Html.BeginForm(new { enctype = "multipart/form-data" }))*@
@@ -49,7 +50,23 @@
 
     </div>
 
+    <hr/>
 
+
+    if (count > 0)
+    {
+
+        <div id="output">
+            @*@Html.Partial("_SupplierRatings", Model)*@
+            @Html.Partial("_SupplierRatingss", Model)
+        </div>
+    }
+    <div class="col-md-12">
+        <div id="Header"></div>
+
+
+
+    </div>
 
     
 

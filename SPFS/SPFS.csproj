@@ -474,6 +474,7 @@
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
+    <Content Include="Scripts\table-fixed-header.js" />
     <Content Include="Scripts\_references.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
@@ -530,6 +531,8 @@
     <Content Include="Views\ExcelUpload\ExcelReview.cshtml" />
     <Content Include="Views\ExcelUpload\_ExcelList.cshtml" />
     <Content Include="Views\ExcelUpload\_SelectSupplier.cshtml" />
+    <Content Include="Views\Ratings\_SupplierRatings.cshtml" />
+    <Content Include="Views\Ratings\_SupplierRatingss.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
