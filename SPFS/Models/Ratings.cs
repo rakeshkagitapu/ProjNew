@@ -37,7 +37,7 @@ namespace SPFS.Models
         [Display(Name = "Supplier Name")]
         public string SupplierName { get; set; }
         public int RatingsID { get; set; }
-        public System.DateTime Rating_period { get; set; }
+        public int Rating_period { get; set; }
         public int SiteID { get; set; }
         public int CID { get; set; }
 
@@ -120,14 +120,19 @@ namespace SPFS.Models
         public int CID { get; set; }
         public string DUNS { get; set; }
 
+        [Display(Name = "ERP_Supplier_ID")]
         public string ERP_Supplier_ID { get; set; }
 
+        [Display(Name = "Inbound")]
         public int Inbound_parts { get; set; }
 
+        [Display(Name = "OnTime Quantity")]
         public int OTR { get; set; }
 
+        [Display(Name = "OnTime Quantity Due")]
         public int OTD { get; set; }
 
+        [Display(Name = "Premium Freight")]
         public int PFR { get; set; }
 
 

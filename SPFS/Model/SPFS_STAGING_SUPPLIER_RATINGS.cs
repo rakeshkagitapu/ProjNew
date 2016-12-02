@@ -15,7 +15,7 @@ namespace SPFS.Model
     public partial class SPFS_STAGING_SUPPLIER_RATINGS
     {
         public int StagingID { get; set; }
-        public System.DateTime Rating_period { get; set; }
+        public int Rating_period { get; set; }
         public int SiteID { get; set; }
         public int Gdis_org_entity_ID { get; set; }
         public int Gdis_org_Parent_ID { get; set; }

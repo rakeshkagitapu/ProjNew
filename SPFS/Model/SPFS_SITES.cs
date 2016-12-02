@@ -18,9 +18,9 @@ namespace SPFS.Model
         public SPFS_SITES()
         {
             this.SPFS_SPEND_SUPPLIERS = new HashSet<SPFS_SPEND_SUPPLIERS>();
+            this.SPFS_USERSITES = new HashSet<SPFS_USERSITES>();
             this.SPFS_STAGING_SUPPLIER_RATINGS = new HashSet<SPFS_STAGING_SUPPLIER_RATINGS>();
             this.SPFS_SUPPLIER_RATINGS = new HashSet<SPFS_SUPPLIER_RATINGS>();
-            this.SPFS_USERSITES = new HashSet<SPFS_USERSITES>();
         }
     
         public int SiteID { get; set; }
@@ -44,10 +44,10 @@ namespace SPFS.Model
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SPFS_SPEND_SUPPLIERS> SPFS_SPEND_SUPPLIERS { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<SPFS_USERSITES> SPFS_USERSITES { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SPFS_STAGING_SUPPLIER_RATINGS> SPFS_STAGING_SUPPLIER_RATINGS { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SPFS_SUPPLIER_RATINGS> SPFS_SUPPLIER_RATINGS { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<SPFS_USERSITES> SPFS_USERSITES { get; set; }
     }
 }

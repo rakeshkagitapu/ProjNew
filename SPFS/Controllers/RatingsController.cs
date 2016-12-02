@@ -66,12 +66,14 @@ namespace SPFS.Controllers
         {
             RatingsViewModel excelViewModel = new RatingsViewModel();
             var historicalRecords = new List<HistoricalRecordsCheck>();
-            DateTime date = new DateTime(ratingModel.Year, ratingModel.Month, 01);
+            // DateTime date = new DateTime(ratingModel.Year, ratingModel.Month, 01);
+            int CheckingDate = Convert.ToInt32("" + ratingModel.Year + ratingModel.Month);
+
             Utilities util = new Utilities();
             using (Repository Rep = new Repository())
             {
                 historicalRecords = (from ratings in Rep.Context.SPFS_SUPPLIER_RATINGS
-                                     where ratings.SiteID == ratingModel.SiteID && ratings.Initial_submission_date == date
+                                     where ratings.SiteID == ratingModel.SiteID && ratings.Rating_period == CheckingDate
                                      select new HistoricalRecordsCheck()
                                      {
                                          SiteID = ratings.SiteID,
@@ -79,7 +81,7 @@ namespace SPFS.Controllers
                                          Initial_submission_date = ratings.Initial_submission_date
                                      }).ToList().Union
                                      (from ratings in Rep.Context.SPFS_STAGING_SUPPLIER_RATINGS
-                                      where ratings.SiteID == ratingModel.SiteID && ratings.Initial_submission_date == date
+                                      where ratings.SiteID == ratingModel.SiteID && ratings.Rating_period == CheckingDate
                                       select new HistoricalRecordsCheck()
                                       {
                                           SiteID = ratings.SiteID,
@@ -154,8 +156,7 @@ namespace SPFS.Controllers
                                  Reject_incident_count = child.Reject_incident_count,
                                  Reject_parts_count = child.Reject_parts_count,
                                  Total_Spend = m == null ? 0 : m.Total_Spend,
-                                 SupplierName = child.SupplierName,
-                                 Temp_Upload_ = true
+                                 SupplierName = child.SupplierName
 
                              }).ToList();
 

@@ -17,11 +17,12 @@
 {
     <h2>Uploaded Records</h2>
     <hr />
-
+    if (count > 0)
+    {
     <div class="alert alert-warning" id="ErrorCount" value="@count">
         <strong>Warning!</strong> there are @count error records in this Upload.
     </div>
-
+    }
     <div class="row col-md-12">
         <div class="pull-right">
             @*<a href="@Url.Action("Save", "ExcelUpload")" class="btn btn-primary btn">
@@ -29,7 +30,7 @@
                 </a>*@
             @*@if (ViewBag.ShowMerge)
                 {*@
-            <a href="@Url.Action("Merge", "ExcelUpload")" class="btn btn-primary btn Merge" style="display: none;">
+            <a href="@Url.Action("Merge", "ExcelUpload", Model)" class="btn btn-primary btn Merge" style="display: none;">
                 <span class="glyphicon glyphicon-random"></span> Merge
             </a>
 

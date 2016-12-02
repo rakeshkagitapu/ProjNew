@@ -15,7 +15,7 @@ namespace SPFS.Model
     public partial class SPFS_SUPPLIER_RATINGS
     {
         public int RatingsID { get; set; }
-        public System.DateTime Rating_period { get; set; }
+        public int Rating_period { get; set; }
         public int SiteID { get; set; }
         public int CID { get; set; }
         public int Inbound_parts { get; set; }

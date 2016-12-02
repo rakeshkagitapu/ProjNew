@@ -271,23 +271,30 @@ namespace SPFS.Controllers
                     ratingModel = ProcessExcelDataintoViewModel(ratingModel, result);
                     ViewBag.Suppliers = selectSuppliers;
                     var count = 0;
-                    foreach (var record in ratingModel.RatingRecords)
+                    if (ratingModel.RatingRecords.Count > 0)
                     {
-                        if ((record.ErrorInformation != null ? record.ErrorInformation.Count : 0) > 1)
+                        foreach (var record in ratingModel.RatingRecords)
                         {
-                            count++;
+                            if ((record.ErrorInformation != null ? record.ErrorInformation.Count : 0) > 1)
+                            {
+                                count++;
+                            }
                         }
-                    }
-                    if (count > 0)
-                    {
-                        ViewBag.Count = count;
-                        ViewBag.ShowMerge = false;
+                        if (count > 0)
+                        {
+                            ViewBag.Count = count;
+                            ViewBag.ShowMerge = false;
+                        }
+                        else
+                        {
+                            ViewBag.ShowMerge = true;
+                        }
                     }
                     else
                     {
+                        ViewBag.Count = count;
                         ViewBag.ShowMerge = true;
                     }
-
                 }
                 else
                 {
@@ -504,7 +511,7 @@ namespace SPFS.Controllers
                               Inbound_parts = record.Inbound_parts
                           }).ToList();
 
-            ExportToExcel(result, fileName + DateTime.Now.ToShortDateString());
+            ExportToExcel(result, fileName + DateTime.Now);
 
 
         }
@@ -535,25 +542,33 @@ namespace SPFS.Controllers
             return exportStatus;
         }
 
+        #region Merge
         public ActionResult Merge(ExcelRatingsViewModel RatingModel)
         {
             List<RatingRecord> Records = (List<RatingRecord>)TempData["RatingRecords"];
+            ExcelRatingsViewModel AggregatedModel = AggregateRecords(RatingModel, Records);
+            List<RatingRecord> ISORecords = IncidentSpendOrder(RatingModel);
+            //List<RatingRecord> HistoryRecords = IncidentSpendOrder(RatingModel);
+            List<RatingRecord> MergedRecords = new List<RatingRecord>();
 
-            List<RatingRecord> GroupedRecords = Records
-                        .GroupBy(r => r.CID)// new { r.CID,r.DUNS })
-                        .Select(g => new RatingRecord
-                        {
-                            CID = g.Key,
-                            DUNS = g.First().DUNS,
-                            Gdis_org_entity_ID = g.First().Gdis_org_entity_ID,
-                            Inbound_parts = g.Sum(s => s.Inbound_parts),
-                            OTD = g.Sum(s => s.OTD),
-                            OTR = g.Sum(s => s.OTR),
-                            PFR = g.Sum(s => s.PFR),
-                            ErrorInformation = g.SelectMany((s=>s.ErrorInformation != null ? s.ErrorInformation: new List<ErrorDetails> () )).ToList()
-                        }).ToList();
+            var query = from x in ISORecords
+                        join y in AggregatedModel.RatingRecords
+                        on x.CID equals y.CID
+                        select new { x, y };
 
-            RatingModel.RatingRecords = GroupedRecords;
+            foreach(var match in query)
+            {
+                match.x.Inbound_parts = match.y.Inbound_parts;
+                match.x.OTD = match.y.OTD;
+                match.x.OTR = match.y.OTR;
+                match.x.PFR = match.y.PFR;
+                match.x.Temp_Upload_ = match.y.Temp_Upload_;
+                match.x.ErrorInformation = match.y.ErrorInformation;
+
+               
+            }
+
+            MergedRecords = ISORecords;
             //var count = 0;
             //foreach (var record in GroupedRecords)
             //{
@@ -564,7 +579,95 @@ namespace SPFS.Controllers
             //}
             return View();
         }
+        private ExcelRatingsViewModel AggregateRecords(ExcelRatingsViewModel RatingModel, List<RatingRecord> Records)
+        {
+            List<RatingRecord> GroupedRecords = Records
+                                    .GroupBy(r => r.CID)// new { r.CID,r.DUNS })
+                                    .Select(g => new RatingRecord
+                                    {
+                                        CID = g.Key,
+                                        DUNS = g.First().DUNS,
+                                        Gdis_org_entity_ID = g.First().Gdis_org_entity_ID,
+                                        Inbound_parts = g.Sum(s => s.Inbound_parts),
+                                        OTD = g.Sum(s => s.OTD),
+                                        OTR = g.Sum(s => s.OTR),
+                                        PFR = g.Sum(s => s.PFR),
+                                        ErrorInformation = g.SelectMany((s => s.ErrorInformation != null ? s.ErrorInformation : new List<ErrorDetails>())).ToList(),                                       
+                                        Temp_Upload_ = g.First().Temp_Upload_
+                                    }).ToList();
 
+            RatingModel.RatingRecords = GroupedRecords;
+            return RatingModel;
+        }
+
+        public List<RatingRecord> IncidentSpendOrder(ExcelRatingsViewModel RatingModel)
+        {
+            List<RatingRecord> recordsChild = new List<RatingRecord>();
+            List<RatingRecord> recordsParent = new List<RatingRecord>();
+            List<RatingRecord> Mergedrecords = new List<RatingRecord>();
+            List<RatingRecord> Sortedrecords = new List<RatingRecord>();
+            using (Repository Rep = new Repository())
+            {
+                recordsChild = (from site in Rep.Context.SPFS_SITES
+                                join spend in Rep.Context.SPFS_SPEND_SUPPLIERS on site.SiteID equals spend.SiteID
+                                join sup in Rep.Context.SPFS_SUPPLIERS on spend.CID equals sup.CID
+                                where spend.SiteID == RatingModel.SiteID
+                                select new RatingRecord
+                                {
+                                    CID = spend.CID,
+                                    SiteID = spend.SiteID,
+                                    Gdis_org_entity_ID = site.Gdis_org_entity_ID,
+                                    Gdis_org_Parent_ID = site.Gdis_org_Parent_ID,
+                                    Reject_incident_count = spend.Reject_incident_count,
+                                    Reject_parts_count = spend.Reject_parts_count,
+                                    SupplierName = sup.Name,
+                                    DUNS = sup.Duns
+
+                                }).ToList();
+
+                var parentID = recordsChild.Max(p => p.Gdis_org_Parent_ID);
+
+
+                recordsParent = (from spend in Rep.Context.SPFS_SPEND_SUPPLIERS
+                                 where spend.Gdis_org_Parent_ID == parentID
+                                 group spend by new { spend.CID, spend.Gdis_org_Parent_ID } into g
+                                 select new RatingRecord
+                                 {
+                                     CID = g.Key.CID,
+                                     Gdis_org_Parent_ID = g.Key.Gdis_org_Parent_ID,
+                                     Total_Spend = g.Sum(x => x.Total_Spend)
+
+
+                                 }).ToList();
+
+            }
+            Mergedrecords = (from child in recordsChild
+                             join parent in recordsParent on
+                             new { child.CID, child.Gdis_org_Parent_ID } equals
+                             new { parent.CID, parent.Gdis_org_Parent_ID } into merged
+                             from m in merged.DefaultIfEmpty()
+                             select new RatingRecord
+                             {
+                                 CID = child.CID,
+                                 DUNS = child.DUNS,
+                                 SiteID = child.SiteID,
+                                 Gdis_org_entity_ID = child.Gdis_org_entity_ID,
+                                 Gdis_org_Parent_ID = child.Gdis_org_Parent_ID,
+                                 Reject_incident_count = child.Reject_incident_count,
+                                 Reject_parts_count = child.Reject_parts_count,
+                                 Total_Spend = m == null ? 0 : m.Total_Spend,
+                                 SupplierName = child.SupplierName
+
+                             }).ToList();
+
+            Mergedrecords.ForEach(z => z.DUNS = z.DUNS.Replace("\0", "").Trim());
+            Sortedrecords = Mergedrecords.OrderByDescending(x => x.Reject_incident_count).ThenByDescending(x => x.Total_Spend).ToList();
+
+            return Sortedrecords;
+
+        }
+        #endregion
+      
         #region popup
 
         /// <summary>
@@ -598,6 +701,7 @@ namespace SPFS.Controllers
             UpdatedRec.CID = CID;
             UpdatedRec.DUNS = GetDUNSfromCID(CID);
             UpdatedRec.SupplierName = Name;
+            UpdatedRec.Temp_Upload_ = true;
             UpdateErrors(UpdatedRec, ErrorInfo);
 
 
