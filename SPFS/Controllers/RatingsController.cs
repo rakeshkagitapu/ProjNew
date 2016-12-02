@@ -147,14 +147,15 @@ namespace SPFS.Controllers
                              select new RatingRecord
                              {
                                  CID = child.CID,
-                                 DUNS =child.DUNS,
+                                 DUNS = child.DUNS,
                                  SiteID = child.SiteID,
                                  Gdis_org_entity_ID = child.Gdis_org_entity_ID,
                                  Gdis_org_Parent_ID = child.Gdis_org_Parent_ID,
                                  Reject_incident_count = child.Reject_incident_count,
                                  Reject_parts_count = child.Reject_parts_count,
                                  Total_Spend = m == null ? 0 : m.Total_Spend,
-                                 SupplierName = child.SupplierName
+                                 SupplierName = child.SupplierName,
+                                 Temp_Upload_ = true
 
                              }).ToList();
 

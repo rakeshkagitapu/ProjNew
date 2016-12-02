@@ -269,32 +269,36 @@ namespace SPFS.Controllers
                         return View();
                     }
                     ratingModel = ProcessExcelDataintoViewModel(ratingModel, result);
+                    ViewBag.Suppliers = selectSuppliers;
+                    var count = 0;
+                    foreach (var record in ratingModel.RatingRecords)
+                    {
+                        if ((record.ErrorInformation != null ? record.ErrorInformation.Count : 0) > 1)
+                        {
+                            count++;
+                        }
+                    }
+                    if (count > 0)
+                    {
+                        ViewBag.Count = count;
+                        ViewBag.ShowMerge = false;
+                    }
+                    else
+                    {
+                        ViewBag.ShowMerge = true;
+                    }
+
                 }
                 else
                 {
-                    ModelState.AddModelError("File", "Please Upload Your file");
+                    ModelState.AddModelError("UploadFile", "Please Upload Your file");
+                    CreateListViewBags();
+                    return View("Index",ratingModel );
                 }
             }
-            ViewBag.Suppliers = selectSuppliers;
-            var count = 0;
-            foreach (var record in ratingModel.RatingRecords)
-            {
-                if ((record.ErrorInformation != null ? record.ErrorInformation.Count : 0) > 1)
-                {
-                    count++;
-                }
-            }
-            if (count > 0)
-            {
-                ViewBag.Count = count;
-                ViewBag.ShowMerge = false;
-            }
-            else
-            {
-                ViewBag.ShowMerge = true;
-            }
-
-            return View("ExcelReview", ratingModel);
+            
+                return View("ExcelReview", ratingModel);
+            
         }
 
         private ExcelRatingsViewModel ProcessExcelDataintoViewModel(ExcelRatingsViewModel ratingModel, DataSet result)

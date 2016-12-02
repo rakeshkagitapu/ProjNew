@@ -174,8 +174,10 @@
 
                     //update DUNS which is the 2nd td element
                     supplierRow.cells[1].innerHTML = data.DUNS;
+
+                    var spanstring = '<span class="glyphicon glyphicon-ok fixedClass" id="status">  Fixed</span>'
                     
-                    var spanstring = '<span class="glyphicon glyphicon-ok fixedClass" title="row updated" rel="tooltip" id="status">  Fixed</span>'
+                    //var spanstring = '<span class="glyphicon glyphicon-ok fixedClass" title="row updated" rel="tooltip" id="status">  Fixed</span>'
                     //var spanstring = '<h4><span class="label label-success">Success</span></h4>'
                     supplierRow.cells[7].innerHTML = spanstring;
 

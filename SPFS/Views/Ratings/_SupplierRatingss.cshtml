@@ -1,15 +1,7 @@
 ﻿@model SPFS.Models.RatingsViewModel
-
-
-<!-- IE < 10 does not like giving a tbody a height.  The workaround here applies the scrolling to a wrapped <div>. -->
-<!--[if lte IE 9]>
-<div class="old_ie_wrapper">
-<!--<![endif]-->
-
-<table class="fixed_headers table-condensed table-hover">
-    @*<col>
-        <colgroup span="2"></colgroup>
-        <colgroup span="2"></colgroup>*@
+    @using SPFS.Helpers
+    <table class="fixed_headers">
+   
     <thead>
         @*<tr>
                 <th colspan="2"></th>
@@ -39,35 +31,40 @@
             <th></th>
             <th></th>
             <th></th>
-
-
+           
+            
         </tr>
 
     </thead>
-    <tbody style="padding-top:2px">
+    <tbody>
         @foreach (var item in Model.RatingRecords)
         {
             <tr id="part1">
-                <td>@Html.DisplayFor(modelItem => item.SupplierName)</td>
+                <td>
+                    <div class="form-horizontal">
+                        @item.SupplierName.SplitCamelCase().Left(22)
+                        <span class="glyphicon glyphicon-info-sign alert-warning" style="float:right" title="@item.SupplierName"></span>
+                    </div>
+                
+                
+             </td>
                 <td>@Html.DisplayFor(modelItem => item.Total_Spend)</td>
                 <td rowspan="2">@Html.DisplayFor(modelItem => item.Reject_incident_count)</td>
                 <td rowspan="2">@Html.DisplayFor(modelItem => item.Reject_parts_count)</td>
-                <td rowspan="2">
-                    @Html.TextBoxFor(modelItem => item.Inbound_parts, null, new { @class = "form-control", style = "width:80px" })
-                </td>
+                <td rowspan = "2">                                         
+                @Html.TextBoxFor(modelItem => item.Inbound_parts,null, new { @class = "form-control", style="width:100%"})</td>
                 @*<td rowspan="2"> @Html.DisplayFor(modelItem => item.Inbound_parts)</td>*@
                 <td rowspan="2"> @Html.DisplayFor(modelItem => item.PPM)</td>
                 <td rowspan="2">@Html.DisplayFor(modelItem => item.IPM)</td>
-                <td rowspan="2">@Html.DisplayFor(modelItem => item.OTR)</td>
-                <td rowspan="2"> @Html.DisplayFor(modelItem => item.OTD)</td>
-                @*<td rowspan="2">@Html.EditorFor(modelItem => item.OTR)</td>
-                    <td rowspan="2"> @Html.EditorFor(modelItem => item.OTD)</td>*@
+                @*<td rowspan="2">@Html.DisplayFor(modelItem => item.OTR)</td>
+                <td rowspan="2"> @Html.DisplayFor(modelItem => item.OTD)</td>*@
+                <td rowspan="2">@Html.TextBoxFor(modelItem => item.OTR, null, new { @class = "form-control", style = "width:100%" })</td>
+                <td rowspan="2"> @Html.TextBoxFor(modelItem => item.OTD, null, new { @class = "form-control", style = "width:100%" })</td>
                 <td rowspan="2"> @Html.DisplayFor(modelItem => item.PCT)</td>
-                <td rowspan="2"> @Html.DisplayFor(modelItem => item.PFR)</td>
-                @*<td rowspan="2"> @Html.EditorFor(modelItem => item.PFR)</td>*@
+                @*<td rowspan="2"> @Html.DisplayFor(modelItem => item.PFR)</td>*@
+                <td rowspan="2"> @Html.TextBoxFor(modelItem => item.PFR, null, new { @class = "form-control", style = "width:100%" })</td>
 
-
-            </tr>
+                </tr>
             <tr id="part2">
                 <td>@Html.DisplayFor(modelItem => item.CID)</td>
                 <td>@Html.DisplayFor(modelItem => item.DUNS)</td>
@@ -80,6 +77,4 @@
     </tbody>
 </table>
 
-<!--[if lte IE 9]>
-</div>
-<!--<![endif]-->
+

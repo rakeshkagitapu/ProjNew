@@ -389,12 +389,14 @@
     </Content>
     <Content Include="Scripts\bootstrap-select.js.map" />
     <Content Include="Content\bootstrap-select.css.map" />
+    <None Include="Properties\PublishProfiles\QA Deploy Review.pubxml" />
     <None Include="Properties\PublishProfiles\QA Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\SPFS QA.pubxml">
       <SubType>Designer</SubType>
     </None>
     <None Include="Properties\PublishProfiles\SPFS_QA.pubxml" />
     <None Include="Scripts\jquery-1.12.4.intellisense.js" />
+    <Content Include="Scripts\fxheader2.js" />
     <Content Include="Scripts\i18n\defaults-ar_AR.js" />
     <Content Include="Scripts\i18n\defaults-ar_AR.min.js" />
     <Content Include="Scripts\i18n\defaults-bg_BG.js" />
@@ -531,8 +533,10 @@
     <Content Include="Views\ExcelUpload\ExcelReview.cshtml" />
     <Content Include="Views\ExcelUpload\_ExcelList.cshtml" />
     <Content Include="Views\ExcelUpload\_SelectSupplier.cshtml" />
-    <Content Include="Views\Ratings\_SupplierRatings.cshtml" />
+    <Content Include="Views\Ratings\_SupplierRatingsss.cshtml" />
     <Content Include="Views\Ratings\_SupplierRatingss.cshtml" />
+    <Content Include="Views\Ratings\_SupplierRatings.cshtml" />
+    <Content Include="Views\Ratings\_SupplierRatings1.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

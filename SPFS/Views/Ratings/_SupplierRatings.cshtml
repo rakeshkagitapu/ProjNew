@@ -1,55 +1,78 @@
-﻿@model SPFS.Models.RatingsViewModel
+﻿
+<style type="text/css">
+     .mt {
+        padding: 0px;
+        font-family: Tahoma, sans-serif;
+        font-size: 0.9em;
+    }
+
+  
+    table.mt {
+        border-width: 1px;
+        border-spacing: 0px;
+        border-style: solid;
+        border-color: #cfcfcf;
+        border-collapse: collapse;
+        background-color: transparent;
+    }
+
+        table.mt th {
+            border-width: 1px;
+            padding: 0px;
+            border-style: solid;
+            border-color: #cfcfcf;
+            white-space: normal;
+            background-color: #afafaf;
+            text-align: center;
+        }
+
+        table.mt td {
+            border-width: 1px;
+            padding: 1px;
+            border-style: solid;
+            border-color: #cfcfcf;
+            text-align: center;
+            vertical-align: middle;
+            white-space: nowrap;
+        }
+</style>
+
+        <table id="dataTable" style="width:100%" class="mt">
+            <thead>
+                <tr>
+                    <th colspan="2" rowspan="2" style="width:17%">Supplier Name</th>
+                    <th colspan="1" rowspan="2" style="width:8%">Total Spend (US$) </th>
+                    <th colspan="5">Quality</th>
+                    <th colspan="4">On Time Delivery</th>
+                </tr>
+
+                <tr>
+                    
+                    <th rowspan="2" style="width:8%"> Reject Incidents</th>
+                    <th rowspan="2" style="width:8%"> Reject Parts</th>
+                    <th rowspan="2" style="width:8%">Inbound Parts</th>
+                    <th rowspan="2" style="width:8%">PPMmm</th>
+                    <th rowspan="2" style="width:8%">IPMmm</th>
+                    <th rowspan="2" style="width:8%">QTY Received</th>
+                    <th rowspan="2" style="width:8%">QTY Due</th>
+                    <th rowspan="2" style="width:8%"> PCT</th>
+                    <th rowspan="2" style="width:8%"> PFR</th>
+
+                </tr>
+                <tr>
+                    <th colspan="2">CID</th>
+                    <th colspan="1">DUNS</th>
 
 
-<script src="~/Scripts/table-fixed-header.js"></script>
-<div class="container">
-    <h1>Table Fixed Header</h1>
-    <table id="mytable" class="table table-bordered table-striped table-fixed-header">
-        <thead class="header">
-            <tr>
-                <th>Column 1</th>
-                <th>Column 2</th>
-                <th>Column 3</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>Data Column 1</td>
-                <td>Data Column 2</td>
-                <td>Data Column 3</td>
-            </tr>
-        </tbody>
-    </table>
-    @*<h1>Another table</h1>
-    <table id="mytable2" class="table table-bordered table-striped table-fixed-header">
-        <thead class="header">
-            <tr style="color:#00f;">
-                <th>Column 11</th>
-                <th>Column 22</th>
-                <th>Column 33</th>
-                <th>Column 44</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>Data Column 11</td>
-                <td>Data Column 22</td>
-                <td>Data Column 33</td>
-                <td>Data Column 44</td>
-            </tr>
-        </tbody>
-    </table>*@
-</div>
-<script language="javascript" type="text/javascript">
-    $(document).ready(function(){
-      // add 30 more rows to the table
-      var row = $('table#mytable > tbody > tr:first');
-      var row2 = $('table#mytable2 > tbody > tr:first');
-      for (i=0; i<30; i++) {
-        $('table#mytable > tbody').append(row.clone());
-        $('table#mytable2 > tbody').append(row2.clone());
-      }
-      // make the header fixed on scroll
-      $('.table-fixed-header').fixedHeader();
-    });
-</script>
+                </tr>
+
+            </thead>
+           
+        </table>
+        <p>Bottom Content</p>
+   
+    
+<script src="~/Scripts/fxheader2.js"></script>
+    <script type="text/javascript">
+          fxheaderInit('dataTable',300);
+    </script>

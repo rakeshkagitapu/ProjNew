@@ -150,6 +150,14 @@
 
             if (form.valid()) {
                 $("#dlgsave").dialog('open');
+               
+            }
+        }
+        function OnBeginPostBack_Upload(sender) {
+            var form = $(sender).parents('form');
+
+            if (form.valid()) {
+             
                 $("#dlgupload").dialog('open');
             }
         }

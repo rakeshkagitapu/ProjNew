@@ -2,9 +2,11 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Razor;
 
@@ -84,6 +86,22 @@ namespace SPFS.Helpers
                 errorProperty.SetValue(item, Convert.ChangeType(errors, errorProperty.PropertyType), null);
             }
             return item;
+        }
+
+
+        public static string Left(this string value, int length)
+        {
+            return value != null && value.Length > length ? value.Substring(0, length) : value;
+        }
+        public static string SplitCamelCase(this string inputString)
+        {
+            TextInfo myTI = new CultureInfo("en-US", false).TextInfo;
+            if (!string.IsNullOrEmpty(inputString))
+            {
+                return myTI.ToTitleCase(inputString.ToLower());
+            }
+            else
+                return inputString;
         }
 
 
