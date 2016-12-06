@@ -3,10 +3,11 @@
 @{
     ViewBag.Title = "Ratings";
     var count = Model.RatingRecords != null ? Model.RatingRecords.Count : 0;
+    var val = Json.Encode(Model);
 }
 
 @*@using (Html.BeginForm(new { enctype = "multipart/form-data" }))*@
-@using (Html.BeginForm(null, null, FormMethod.Post, new { enctype = "multipart/form-data" }))
+@using (Html.BeginForm(null, null, FormMethod.Post, new { enctype = "multipart/form-data" ,@id="Ratings"}))
 {
     @Html.AntiForgeryToken()
     @Html.HiddenFor(m => m.isUpload)
@@ -56,36 +57,84 @@
     {
 
         <div id="output" class="col-md-12">
-            @Html.Partial("_SupplierRatingss", Model)
+            @Html.Partial("_SupplierRatings", Model)
         </div>
 
-        <br/>
-        <div>
-            <button type="button" value="Add" class="btn btn-primary btn-md btnSearch">
-                <span class="glyphicon glyphicon-plus"> Add New Rating</span>
-            </button>
-        </div>
-            <div class="row col-md-12">
-                <div class="pull-right">
-                    <a href="@Url.Action("SaveData", "RatingsController")" class="btn btn-primary btn-md">
-                        <span class="glyphicon glyphicon-floppy-save"></span> Save
-                    </a>
+        <br />
+        <div class="row col-md-12">
+            <div class="pull-left">
 
-                    <a href="@Url.Action("Submit", "RatingsController")" class="btn btn-primary btn-md">
-                        <span class="glyphicon glyphicon-send"></span> Submit Ratings
-                    </a>
+                <button type="button" value="Add New Supplier to Rate" class="btn btn-default btn-md btnAdd">
+                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>Add New Supplier to Rate
+                </button>
+                @*<a href="@Url.Action("SupplierToRate", "Ratings")" class="btn btn-default btn-md add-item">
+
+                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add New Supplier to Rate
+                </a>*@
+
+            </div>
+            <div class="pull-right">
+                <a href="@Url.Action("SaveData", "Ratings")" class="btn btn-primary btn-md">
+                    <span class="glyphicon glyphicon-floppy-save"></span> Save
+                </a>
+
+                <a href="@Url.Action("Submit", "Ratings")" class="btn btn-primary btn-md">
+                    <span class="glyphicon glyphicon-send"></span> Submit Ratings
+                </a>
+            </div>
+
+        </div>
+    }
+    @*<div id="popSup" style="overflow: auto;">
+
+        <div class="row col-md-12" style="margin-top: 10px">
+            <div class="form-group">
+                Select Supplier :
+                @Html.DropDownList("selectSuppliers", ViewBag.Suppliers as IEnumerable<SelectListItem>,"",
+               new { @class = "selectpicker", data_live_search = "true", data_size = "10", data_width = "30%", required = "true", id = "SelectSupplierID" })
+               
+              
+           </div>
+                    
+
+        </div>
+
+    </div>*@
+    <div id="popSup" style="overflow: auto;">
+
+        <div class="row col-md-12" style="margin-top: 10px">
+            <div class="row">
+                <div class="col-md-10 input-group">
+                    @*@Html.Label("Search by")*@
+
+                    @Html.TextBox("search", "", new { @class = "form-control", id = "SupplierID", maxlength = "30", placeholder = "Search by Supplier Name ..." })
+                    <span class="input-group-btn">
+                        <button id="btnFilter" type="button" value="Search" class="btn btn-primary ">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </span>
+                </div>
+                <div class="col-md-2">
+                    <button type="button" class="btn btn-primary btnOKNotes">
+                        <span class="glyphicon glyphicon-floppy-save"></span>
+                        <span>OK</span>
+                    </button>
                 </div>
 
             </div>
-    }
-    <div class="col-md-12">
-        <div id="Header"></div>
+            <br />
+            <div class="row">
+                <div class="col-md-9">
+                    <div class="form-group">
+                        @Html.DropDownList("selectSuppliers", ViewBag.Suppliers as IEnumerable<SelectListItem>, new { @class = "form-control", style = "width: 500px ; border-radius:5px", size = 10, id = "selectSupplierID" })
+                    </div>
+                </div>
 
+            </div>
 
+        </div>
 
     </div>
-
-
 
 
 }
@@ -105,7 +154,116 @@
 
         });
 
+        var CID = $("#SelectSupplierID option:selected").val();
+        //Load Cluster information when area change.
+        //$('#SupplierID').change(function () {
+        //    var SupName = $('#SupplierID').val();
+        //    SearchSupplierByName(SupName);
 
+        //});
+
+          //Sorting
+         $(document).on("click", "#btnFilter", function () {
+             var SupName = $('#SupplierID').val();
+                SearchSupplierByName(SupName);
+
+            });
+
+            function SearchSupplierByName(SupName) {
+                $.ajax({
+                    url: '@Url.Action("GetSupplierbyName", "ExcelUpload")',
+                    //Passes the content of an input up
+                    data: { nameString: SupName },
+                    contentType: "application/json; charset=utf-8",
+                    type: 'GET',
+                    async: false,
+                    cache: true,
+
+                    success: function (data) {
+                        $('#selectSupplierID').find('option').remove();
+                        $.each(data, function (i, optionData) {
+                            $('#selectSupplierID').append($('<option></option>').val(optionData.Value).html(optionData.Text));
+                        });
+                    }
+                });
+            };
+
+        $('.btnAdd').bind("click", function () {
+                $("#popSup").dialog('option', 'title', "Select Supplier");
+                $("#popSup").dialog("open");
+
+            });
+ 
+            $('.btnOKNotes').bind("click", function () {
+
+               
+                var model = @Html.Raw(val);
+                var selectedText = $("#selectSupplierID").find("option:selected").text();
+                var selectedValue = $("#selectSupplierID").val();
+
+                debugger
+                $.ajax({
+                    url: '@Url.Action("AddRowReload", "Ratings")',
+                    //Passes the content of an input up
+                    data: '{CID:' + selectedValue + ', RatingModel:'+JSON.stringify(model) + '}',
+                    contentType: "application/json; charset=utf-8",
+                    type: 'GET',
+                    cache: false,
+                    async: false,
+                    success: function (data) {
+
+                          $("#popSup").closest('.ui-dialog-content').dialog("close");
+                    },
+                    error: function(ts) { alert(ts.responseText) }
+                });
+
+            });
+        @*function AddRow(CID) {
+
+            //$("#dlgmodal").dialog('open');
+            //$('#dlgmodal span').text('Adding ...');
+            var url = '@Url.Action("SupplierToRate", "Ratings")';
+            $.ajax({
+                type: "GET",
+                url: url,
+                data: { CID: CID, RatingModel:@Model },
+                success: function (data) {
+
+                    $("#popSup").closest('.ui-dialog-content').dialog("close");
+
+                },
+                complete:
+                  function (jqXHR, textStatus) {
+                      //$("#dlgmodal").closest('.ui-dialog-content').dialog("close");
+                  },
+                error: function (data) {
+
+                }
+            });
+        }
+        //Will refresh
+
+        $('#SelectSupplierID').change(function () {
+            var CID = $("#SelectSupplierID option:selected").val();
+            if (CID != "") {
+
+                $(this).valid();
+                AddRow(CID);
+               
+            }
+
+        });*@
+        $('#popSup').dialog({
+            autoOpen: false,
+            width: 600,
+            height: 300,
+            resizable: false,
+            title: 'Select Supplier',
+            modal: true,
+            open: function (event, ui) {
+
+            }
+        });
     });
 
 </script>

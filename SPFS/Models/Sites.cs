@@ -52,5 +52,7 @@ namespace SPFS.Models
         public int Gdis_org_entity_ID { get; set; }
 
         public Nullable<int> Gdis_org_Parent_ID { get; set; }
+
+        public string Name { get; set; }
     }
 }

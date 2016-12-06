@@ -21,22 +21,35 @@ namespace SPFS.Controllers
 
         private static DateTime _cacheLastChecked;
 
+        private static DateTime _cacheLastCheckedSup;
+
+
         //private static List<SupplierCacheViewModel> selectSuppliers;
         private static List<SelectListItem> selectSuppliers;
 
         private static List<SelectSiteGDIS> selectGDIS;
+
+        
         public ExcelUploadController()
         {
             if (supplierCacheObj == null)
             {
                 supplierCacheObj = GetSupplierCacheData();
-                selectSuppliers = GetSupplierListData();
                 selectGDIS = GetSiteListData();
                 _cacheLastChecked = DateTime.Now;
             }
             else
             {
                 CheckCache();
+            }
+            if(selectSuppliers == null)
+            {
+                selectSuppliers = GetSupplierListData();
+                _cacheLastCheckedSup = DateTime.Now;
+            }
+            else
+            {
+                CheckSupCache();
             }
         }
 
@@ -48,9 +61,19 @@ namespace SPFS.Controllers
             if (_cacheLastChecked.AddMinutes(cacheRefresh) < DateTime.Now)
             {
                 supplierCacheObj = GetSupplierCacheData();
-                selectSuppliers = GetSupplierListData();
-                selectGDIS = GetSiteListData();
+                 selectGDIS = GetSiteListData();
                 _cacheLastChecked = DateTime.Now;
+            }
+        }
+        public void CheckSupCache()
+        {
+            int cacheRefreshSup;
+            if (!int.TryParse(System.Configuration.ConfigurationManager.AppSettings["CacheRefreshSup"], out cacheRefreshSup))
+                cacheRefreshSup = 55;
+            if (_cacheLastCheckedSup.AddMinutes(cacheRefreshSup) < DateTime.Now)
+            {                
+                selectSuppliers = GetSupplierListData();
+                 _cacheLastCheckedSup = DateTime.Now;
             }
         }
         private List<SupplierCacheViewModel> GetSupplierCacheData()
@@ -148,7 +171,7 @@ namespace SPFS.Controllers
             using (Repository repository = new Repository())
             {
                 sites = (from site in repository.Context.SPFS_SITES
-                         select new SelectSiteGDIS { Gdis_org_entity_ID = site.Gdis_org_entity_ID, SiteID = site.SiteID, Gdis_org_Parent_ID = site.Gdis_org_Parent_ID }).ToList();
+                         select new SelectSiteGDIS { Gdis_org_entity_ID = site.Gdis_org_entity_ID, SiteID = site.SiteID, Gdis_org_Parent_ID = site.Gdis_org_Parent_ID,Name=site.Name }).ToList();
             }
             return sites;
         }
@@ -206,6 +229,7 @@ namespace SPFS.Controllers
         {
             Utilities util = new Utilities();
             List<SelectListItem> sites;
+            int userID = util.GetCurrentUser().UserID;
             //List<SelectListItem> suppliers;
             using (Repository UserRep = new Repository())
             {
@@ -219,7 +243,7 @@ namespace SPFS.Controllers
                 {
                     sites = (from ste in UserRep.Context.SPFS_SITES
                              join uste in UserRep.Context.SPFS_USERSITES on ste.SiteID equals uste.SiteID
-                             where uste.UserID == util.GetCurrentUser().UserID
+                             where uste.UserID == userID
                              select new SelectListItem { Value = ste.SiteID.ToString(), Text = ste.Name }).ToList();
                 }
 
@@ -283,17 +307,19 @@ namespace SPFS.Controllers
                         if (count > 0)
                         {
                             ViewBag.Count = count;
-                            ViewBag.ShowMerge = false;
+                            //ViewBag.ShowMerge = false;
                         }
                         else
                         {
-                            ViewBag.ShowMerge = true;
+                            ViewBag.Count = count;
+                           // ViewBag.ShowMerge = true;
                         }
                     }
                     else
                     {
-                        ViewBag.Count = count;
-                        ViewBag.ShowMerge = true;
+                        ModelState.AddModelError("UploadFile", "Please upload Valid File");
+                        CreateListViewBags();
+                        return View("Index", ratingModel);
                     }
                 }
                 else
@@ -446,7 +472,9 @@ namespace SPFS.Controllers
                     SelectSiteGDIS gdis = selectGDIS.Where(g => g.SiteID.Equals(ratingsModel.SiteID)).FirstOrDefault();
                     //RatingRecord ratingRecord = new RatingRecord();
                     // ratingRecord.CID = int.TryParse(item.CID,)
-                    gdis.Gdis_org_entity_ID = item.Gdis_org_entity_ID;
+                     item.Gdis_org_entity_ID = gdis.Gdis_org_entity_ID;
+                    item.Gdis_org_Parent_ID = gdis.Gdis_org_Parent_ID;
+                    
                     ratings.Add(item);
                 }
 
@@ -499,6 +527,7 @@ namespace SPFS.Controllers
         public void ExportData(string fileName)
         {
             List<RatingRecord> Records = (List<RatingRecord>)TempData["RatingRecords"];
+            TempData.Keep("RatingRecords");
             var result = (from record in Records
                           select new ExportedRecord
                           {
@@ -511,7 +540,9 @@ namespace SPFS.Controllers
                               Inbound_parts = record.Inbound_parts
                           }).ToList();
 
-            ExportToExcel(result, fileName + DateTime.Now);
+            Utilities util = new Utilities();
+            string User = util.CurrentUserName;
+            ExportToExcel(result, fileName + User + DateTime.Now);
 
 
         }
@@ -547,6 +578,8 @@ namespace SPFS.Controllers
         {
             List<RatingRecord> Records = (List<RatingRecord>)TempData["RatingRecords"];
             ExcelRatingsViewModel AggregatedModel = AggregateRecords(RatingModel, Records);
+            RatingsViewModel ConvertedModel = new RatingsViewModel();
+          
             List<RatingRecord> ISORecords = IncidentSpendOrder(RatingModel);
             //List<RatingRecord> HistoryRecords = IncidentSpendOrder(RatingModel);
             List<RatingRecord> MergedRecords = new List<RatingRecord>();
@@ -569,6 +602,14 @@ namespace SPFS.Controllers
             }
 
             MergedRecords = ISORecords;
+            ConvertedModel.RatingRecords = MergedRecords;
+            ConvertedModel.isUpload = true;
+            ConvertedModel.Month = RatingModel.Month;
+            ConvertedModel.Year = RatingModel.Year;
+            ConvertedModel.SiteID = RatingModel.SiteID;
+            SelectSiteGDIS gdis = selectGDIS.Where(g => g.SiteID.Equals(RatingModel.SiteID)).FirstOrDefault();
+
+            ConvertedModel.SiteName = gdis.Name;
             //var count = 0;
             //foreach (var record in GroupedRecords)
             //{
@@ -577,8 +618,11 @@ namespace SPFS.Controllers
             //        count++;
             //    }
             //}
-            return View();
+            return View("UploadIndex", ConvertedModel);
         }
+
+        
+
         private ExcelRatingsViewModel AggregateRecords(ExcelRatingsViewModel RatingModel, List<RatingRecord> Records)
         {
             List<RatingRecord> GroupedRecords = Records
@@ -703,8 +747,7 @@ namespace SPFS.Controllers
             UpdatedRec.SupplierName = Name;
             UpdatedRec.Temp_Upload_ = true;
             UpdateErrors(UpdatedRec, ErrorInfo);
-
-
+                        
             Records.Add(UpdatedRec);
             //RatingRecord 
 
@@ -722,6 +765,80 @@ namespace SPFS.Controllers
 
             item.ErrorInformation = ErrorInfo;
         }
+
+        public JsonResult RemoveRecord(int Rowid)
+        {
+            List<RatingRecord> Records = (List<RatingRecord>)TempData["RatingRecords"];
+
+            RatingRecord RemoveRec = new RatingRecord();
+
+            RemoveRec = Records.Where(r => r.ExcelDiferentiatorID.Equals(Rowid)).FirstOrDefault();
+
+            Records.Remove(RemoveRec);
+
+            // UpdatedRecords = Records;         
+            //RatingRecord 
+
+            TempData["RatingRecords"] = Records;
+           
+                              
+
+            return Json(true, JsonRequestBehavior.AllowGet);
+
+        }
+        //public ActionResult RemoveRecord(int Rowid,int SiteID, int Month,int Year)
+        //{
+        //    List<RatingRecord> Records = (List<RatingRecord>)TempData["RatingRecords"];
+
+        //    //List<RatingRecord> UpdatedRecords = (List<RatingRecord>)TempData["RatingRecords"];
+        //    ExcelRatingsViewModel RatingModel = new ExcelRatingsViewModel();
+
+        //    RatingRecord RemoveRec = new RatingRecord();
+
+        //    RemoveRec = Records.Where(r => r.ExcelDiferentiatorID.Equals(Rowid)).FirstOrDefault();
+
+        //    Records.Remove(RemoveRec);
+
+        //   // UpdatedRecords = Records;         
+        //    //RatingRecord 
+
+        //    TempData["RatingRecords"] = Records;
+        //    RatingModel.RatingRecords = Records;
+        //    RatingModel.SiteID = SiteID;
+        //    RatingModel.Month = Month;
+        //    RatingModel.Year = Year;
+        //    ViewBag.Suppliers = selectSuppliers;
+        //    var count = 0;
+        //    if (RatingModel.RatingRecords.Count > 0)
+        //    {
+        //        foreach (var record in RatingModel.RatingRecords)
+        //        {
+        //            if ((record.ErrorInformation != null ? record.ErrorInformation.Count : 0) > 1)
+        //            {
+        //                count++;
+        //            }
+        //        }
+        //        if (count > 0)
+        //        {
+        //            ViewBag.Count = count;
+        //            //ViewBag.ShowMerge = false;
+        //        }
+        //        else
+        //        {
+        //            ViewBag.Count = count;
+        //            // ViewBag.ShowMerge = true;
+        //        }
+        //    }
+        //    else
+        //    {
+        //        ModelState.AddModelError("UploadFile", "Please upload Valid File");
+        //        CreateListViewBags();
+        //        return View("Index", RatingModel);
+        //    }
+
+        //    return View("ExcelReview", RatingModel);
+
+        //}
         //public void UpdateRecord( int CID, string Name, int Rowid)
         //{
         //    List<RatingRecord> Records = (List<RatingRecord>)TempData["RatingRecords"];

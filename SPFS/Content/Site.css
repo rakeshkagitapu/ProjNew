@@ -418,3 +418,15 @@ table .header-fixed {
     border-bottom: 3px solid #1398d0;
 }
 /*#endregion Scrollable header*/
+.add-item  {
+   
+    color:  #1398d0;  
+    border: 1px solid #1398d0;
+    border-radius: 10px 10px;
+}
+.btn-default:hover, .btn-default:focus, .btn-default:active, .active.btn-default .add-item
+{
+    color:white;
+    background-color:#1398d0;
+    border-color:white;
+}

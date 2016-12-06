@@ -54,7 +54,7 @@
             }
             else
             {
-
+                int i = 0;
                 foreach (var item in Model.RatingRecords)
                 {
 
@@ -107,7 +107,7 @@
                                         <span class="glyphicon glyphicon-search"></span>
                                     </button>
 
-                                    <button type="button" value="Remove" id="btnRemoveRow" class="btn btn-danger btn-sm help-button" data-toggle="tooltip" data-placement="top" title="Remove Record" rel="tooltip">
+                                    <button type="button" value="Remove" data-RowId="@item.ExcelDiferentiatorID" class="btn btn-danger btn-sm btnRemove" data-toggle="tooltip" data-placement="top" title="Remove Record" rel="tooltip">
                                         <span class="glyphicon glyphicon-remove"></span>
                                     </button>
 

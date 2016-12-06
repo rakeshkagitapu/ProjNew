@@ -1,6 +1,7 @@
 ﻿using SPFS.Model;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
@@ -75,8 +76,15 @@ namespace SPFS.Models
         {
             get
             {
-                var data = ErrorInformation.Select(hm => hm.ErrorMessage);
-                return string.Join("\r\n", data);
+                if (ErrorInformation!=null)
+                {
+                    var data = ErrorInformation.Select(hm => hm.ErrorMessage);
+                    return string.Join("\r\n", data);
+                }
+                else
+                {
+                    return "Nothing found";
+                }
             }
         }
         public List<ErrorDetails> ErrorInformation { get; set; }
@@ -120,18 +128,23 @@ namespace SPFS.Models
         public int CID { get; set; }
         public string DUNS { get; set; }
 
+        [DisplayName("ERP_Supplier_ID")]
         [Display(Name = "ERP_Supplier_ID")]
         public string ERP_Supplier_ID { get; set; }
 
+        [DisplayName("Inbound")]
         [Display(Name = "Inbound")]
         public int Inbound_parts { get; set; }
 
+        [DisplayName("OnTime Quantity")]
         [Display(Name = "OnTime Quantity")]
         public int OTR { get; set; }
 
+        [DisplayName("OnTime Quantity Due")]
         [Display(Name = "OnTime Quantity Due")]
         public int OTD { get; set; }
 
+        [DisplayName("Premium Freight")]
         [Display(Name = "Premium Freight")]
         public int PFR { get; set; }
 

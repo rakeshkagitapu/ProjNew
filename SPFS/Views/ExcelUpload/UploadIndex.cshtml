@@ -1,0 +1,79 @@
+﻿@model SPFS.Models.RatingsViewModel
+
+@{
+    ViewBag.Title = "Uplaoded Ratings";
+    var count = Model.RatingRecords != null ? Model.RatingRecords.Count : 0;
+   
+
+}
+
+@using (Html.BeginForm(null, null, FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.isUpload)
+    @Html.HiddenFor(m => m.SiteID)
+    <h2>Ratings Page -Upload</h2>
+    <hr />
+    <div class="row col-md-12" style="padding-top:15px">
+        <div class="col-md-6">
+            <div class="form-group">
+                @Html.LabelFor(model => model.SiteID, new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Model.SiteName
+                </div>
+            </div>
+
+        </div>
+        <div class="col-md-6">
+            <div class="form-group col-md-6">
+                @Html.LabelFor(model => model.Month, new { @class = "control-label col-md-3" })
+                <div class="col-md-9">
+                      @*@Model.Month*@
+                    @System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(Model.Month)
+                </div>
+            </div>
+            <div class="form-group form-group-tight col-md-6">
+                @Html.LabelFor(model => model.Year, new { @class = "control-label col-md-3" })
+                <div class="input-group">
+                    @Model.Year
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <hr />
+
+
+    if (count > 0)
+    {
+
+        <div id="output" class="col-md-12">
+            @Html.Partial("_SupplierRatings", Model)
+        </div>
+
+        <br />
+       
+        <div class="row col-md-12">
+            <div class="pull-left">
+                <a href="@Url.Action("SupplierToRate", "ExcelUpload")" class="btn btn-default btn-md add-item">
+
+                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add New Supplier to Rate
+                </a>
+
+            </div>
+            <div class="pull-right">
+                <a href="@Url.Action("SaveData", "ExcelUpload")" class="btn btn-primary btn-md">
+                    <span class="glyphicon glyphicon-floppy-save"></span> Save
+                </a>
+
+                <a href="@Url.Action("Submit", "ExcelUpload")" class="btn btn-primary btn-md">
+                    <span class="glyphicon glyphicon-send"></span> Submit Ratings
+                </a>
+            </div>
+
+        </div>
+    }
+}

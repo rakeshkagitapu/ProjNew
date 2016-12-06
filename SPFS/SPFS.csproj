@@ -533,10 +533,8 @@
     <Content Include="Views\ExcelUpload\ExcelReview.cshtml" />
     <Content Include="Views\ExcelUpload\_ExcelList.cshtml" />
     <Content Include="Views\ExcelUpload\_SelectSupplier.cshtml" />
-    <Content Include="Views\Ratings\_SupplierRatingsss.cshtml" />
-    <Content Include="Views\Ratings\_SupplierRatingss.cshtml" />
-    <Content Include="Views\Ratings\_SupplierRatings.cshtml" />
-    <Content Include="Views\Ratings\_SupplierRatings1.cshtml" />
+    <Content Include="Views\Shared\_SupplierRatings.cshtml" />
+    <Content Include="Views\ExcelUpload\UploadIndex.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -11,6 +11,13 @@
         </script>
 
     }
+    else
+    {
+        <script type="text/javascript">
+            $(".Merge").show();
+            $(".Merge").focus();
+        </script>
+    }
 }
 
 @using (Html.BeginForm())
@@ -22,20 +29,15 @@
     <div class="alert alert-warning" id="ErrorCount" value="@count">
         <strong>Warning!</strong> there are @count error records in this Upload.
     </div>
-    }
-    <div class="row col-md-12">
+       <div class="row col-md-12">
         <div class="pull-right">
-            @*<a href="@Url.Action("Save", "ExcelUpload")" class="btn btn-primary btn">
-                    <span class="glyphicon glyphicon-floppy-save"></span> Save
-                </a>*@
-            @*@if (ViewBag.ShowMerge)
-                {*@
+          
             <a href="@Url.Action("Merge", "ExcelUpload", Model)" class="btn btn-primary btn Merge" style="display: none;">
                 <span class="glyphicon glyphicon-random"></span> Merge
             </a>
 
 
-            <a href="@Url.Action("ExportData", "ExcelUpload", new { fileName = "UploadedFile", Records = Model.RatingRecords })" class="btn btn-primary btn">
+            <a href="@Url.Action("ExportData", "ExcelUpload", new { fileName = "SPFS_UploadedFile", Records = Model.RatingRecords })" class="btn btn-primary btn">
                 <span class="glyphicon glyphicon-export"></span> Export
             </a>
         </div>
@@ -45,12 +47,9 @@
 
     </div>
 
-        <div class="row col-md-12">
+        <div class="row col-md-12" id="footerbtns">
             <div class="pull-right">
-                @*<a href="@Url.Action("Save", "ExcelUpload")" class="btn btn-primary btn">
-                        <span class="glyphicon glyphicon-floppy-save"></span> Save
-                    </a>*@
-
+               
                 <a href="@Url.Action("Merge", "ExcelUpload")" class="btn btn-primary btn Merge" style="display: none;">
                     <span class="glyphicon glyphicon-random"></span> Merge
                 </a>
@@ -99,6 +98,26 @@
             </div>
 
         </div>
+    }
+    else
+    {
+        <div class="alert alert-info" id="Info">
+            <strong>Info!</strong> There are no Primary Validation Errors(CID,DUNS) in this upload. Please proceed by clicking on Merge.
+        </div>
+        <div class="row col-md-12">
+            <div class="pull-right">
+             
+                <a href="@Url.Action("Merge", "ExcelUpload", Model)" class="btn btn-primary btn Merge">
+                    <span class="glyphicon glyphicon-random"></span> Merge
+                </a>
+
+
+                <a href="@Url.Action("ExportData", "ExcelUpload", new { fileName = "SPFS_UploadedFile", Records = Model.RatingRecords })" class="btn btn-primary btn">
+                    <span class="glyphicon glyphicon-export"></span> Export
+                </a>
+            </div>
+        </div>
+    }
 }
 <script type="text/javascript">
 
@@ -139,24 +158,18 @@
         $('.btnSearch').bind("click", function () {
             var rowIndex = $(this).attr('data-RowId');
             rowID = rowIndex;
-            //$('#SupplierID').val('');
-            //SearchSupplierByName('');
-            //assignNotesId = "Sessions_" + $(this).attr('data-iid') + "__" + $(this).attr('data-idName');
-            //$("#popupNotes").val($("#" + assignNotesId + "")[0].value);
+       
             $("#popm3").dialog('option', 'title', "Select Supplier");
             $("#popm3").dialog("open");
 
         });
 
-        var Rcount = 0;
+        var Ucount = 0;
         $('.btnOKNotes').bind("click", function () {
 
-            //$("#popupNotes").val($("#" + assignNotesId + "")[0].value);
-            //var notes = $(this).parent().parent().children().find(".assignmentNotemsg")[0].value;
-            //var SessionStartTime = $(this).parent('td').parent('tr').find('td:eq(2) select option:selected').val();
+           
             var selectedText = $("#selectSupplierID").find("option:selected").text();
             var selectedValue = $("#selectSupplierID").val();
-
 
             $.ajax({
                 url: '@Url.Action("UpdateRecord", "ExcelUpload")',
@@ -177,15 +190,15 @@
                     supplierRow.cells[1].innerHTML = data.DUNS;
 
                     var spanstring = '<span class="glyphicon glyphicon-ok fixedClass" id="status">  Fixed</span>'
-                    
+
                     //var spanstring = '<span class="glyphicon glyphicon-ok fixedClass" title="row updated" rel="tooltip" id="status">  Fixed</span>'
                     //var spanstring = '<h4><span class="label label-success">Success</span></h4>'
                     supplierRow.cells[7].innerHTML = spanstring;
 
-                    Rcount++;
+                    Ucount++;
 
                     var jcount = parseInt($("#ErrorCount").attr('value'), 10);
-                    jcount = jcount - Rcount;
+                    jcount = jcount - Ucount;
 
                     if (jcount > 0) {
                         $("#ErrorCount").html(" <strong>Warning!</strong> there are " + jcount + " error record(s) in this Upload now.");
@@ -203,8 +216,104 @@
             });
 
         });
+        var Rcount=0;
+        $(document).ready(function(){
+               $("#errortable").on('click','.btnRemove',function(){
+                   if (confirm('Are you sure you want to Remove?')) {
+       
+                       $(this).closest('tr').remove();
+                       $('#tooltip').remove();
+                       var rowIndex = $(this).attr('data-RowId');
+                       rowID = rowIndex;
+                       $.ajax({
+                           url: '@Url.Action("RemoveRecord", "ExcelUpload")',
+                           //Passes the content of an input up
+                           //data: { Rowid: rowID ,SiteID: siteID,Month:month,Year:year },
+                           data: { Rowid: rowID },
+                           contentType: "application/json; charset=utf-8",
+                           type: 'GET',
+                           cache: false,
+                           //async: false,
+                           success: function (data) {
+                   
+                   
+                               Rcount++;
+
+                               var jcount = parseInt($("#ErrorCount").attr('value'), 10);
+                               jcount = jcount - Rcount;
+                    
+
+                               if (jcount > 0) {
+                                   $("#ErrorCount").html(" <strong>Warning!</strong> there are " + jcount + " error record(s) in this Upload now.");
+
+                               }
+                               else {
+                                   $("#ErrorCount").html(" <strong>Success!</strong> All records are fixed Now. Please proceed to merge.");
+                                   $("#ErrorCount").removeClass("alert alert-warning").addClass("alert alert-success");
+                                   $(".Merge").show();
+                                   $("#divexcellist").remove();
+                                   $("#footerbtns").remove();
+                                   $("#tooltip").remove();
+                        
+                               }
 
 
+                           }
+                       });
+                   }
+            });
+
+               
+                
+
+        });
+        
+        @*$('.btnRemove').bind("click", function () {
+        //$("#errortable").on('click','.btnRemove',function() {           
+            var siteID = @Html.Raw(Json.Encode(Model.SiteID));
+            var month =@Html.Raw(Json.Encode(Model.Month));
+            var year = @Html.Raw(Json.Encode(Model.Year));
+            if (confirm('Are you sure you want to Remove?')) {
+
+                var rowIndex = $(this).attr('data-RowId');
+                rowID = rowIndex;
+                $.ajax({
+                    url: '@Url.Action("RemoveRecord", "ExcelUpload")',
+                    //Passes the content of an input up
+                    //data: { Rowid: rowID ,SiteID: siteID,Month:month,Year:year },
+                    data: { Rowid: rowID },
+                    contentType: "application/json; charset=utf-8",
+                    type: 'GET',
+                    cache: false,
+                    //async: false,
+                    success: function (data) {
+                   
+                   
+                        Rcount++;
+
+                        var jcount = parseInt($("#ErrorCount").attr('value'), 10);
+                        jcount = jcount - Rcount;
+                    
+
+                        if (jcount > 0) {
+                            $("#ErrorCount").html(" <strong>Warning!</strong> there are " + jcount + " error record(s) in this Upload now.");
+
+                        }
+                        else {
+                            $("#ErrorCount").html(" <strong>Success!</strong> All records are fixed Now. Please proceed to merge.");
+                            $("#ErrorCount").removeClass("alert alert-warning").addClass("alert alert-success");
+                            $(".Merge").show();
+                            $("#divexcellist").remove();
+                            $("#footerbtns").remove();
+                            $("#tooltip").remove();
+                        
+                        }
+
+
+                    }
+                });
+            }
+        });*@
 
         $('#popm3').dialog({
             autoOpen: false,
@@ -217,19 +326,6 @@
 
             }
         });
-        //var tableOffset = $("#errortable").offset().top;
-        //var $header = $("#errortable > thead").clone();
-        //var $fixedHeader = $("#header-fixed").append($header);
-
-        //$(window).bind("scroll", function () {
-        //    var offset = $(this).scrollTop();
-
-        //    if (offset >= tableOffset && $fixedHeader.is(":hidden")) {
-        //        $fixedHeader.show();
-        //    }
-        //    else if (offset < tableOffset) {
-        //        $fixedHeader.hide();
-        //    }
-        //});
+      
     })
 </script>
