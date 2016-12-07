@@ -370,15 +370,24 @@ table .header-fixed {
              width: 11%;
               text-align: center;
         }
-        .fixed_headers td:nth-child(10),
-        .fixed_headers th:nth-child(10) {
+        .fixed_headers td:nth-child(10){
             width: 6%;
              text-align: center;
         }
-        .fixed_headers td:nth-child(11),
+       
+        .fixed_headers th:nth-child(10) {
+            width: 6%;
+             text-align: left;
+        }
+       
         .fixed_headers th:nth-child(11) {
             width: 12%;
              text-align: center;
+        }
+         .fixed_headers td:nth-child(11){
+      
+            width: 12%;
+             text-align: right;
         }
     .fixed_headers thead {
         background-color: #1398d0;
@@ -418,15 +427,17 @@ table .header-fixed {
     border-bottom: 3px solid #1398d0;
 }
 /*#endregion Scrollable header*/
-.add-item  {
-   
+.add-item {
     color:  #1398d0;  
     border: 1px solid #1398d0;
     border-radius: 10px 10px;
 }
-.btn-default:hover, .btn-default:focus, .btn-default:active, .active.btn-default .add-item
+.add-item:hover
 {
     color:white;
     background-color:#1398d0;
     border-color:white;
+}
+.lefttext{
+    float:right;
 }

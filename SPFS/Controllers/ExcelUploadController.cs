@@ -16,165 +16,24 @@ namespace SPFS.Controllers
 {
     public class ExcelUploadController : BaseController
     {
-        private static List<SupplierCacheViewModel> supplierCacheObj;
+        private  List<SupplierCacheViewModel> supplierCacheObj;
+               
+      
+        private List<SelectListItem> selectSuppliers;
 
-
-        private static DateTime _cacheLastChecked;
-
-        private static DateTime _cacheLastCheckedSup;
-
-
-        //private static List<SupplierCacheViewModel> selectSuppliers;
-        private static List<SelectListItem> selectSuppliers;
-
-        private static List<SelectSiteGDIS> selectGDIS;
+        private List<SelectSiteGDIS> selectGDIS;
 
         
         public ExcelUploadController()
         {
-            if (supplierCacheObj == null)
-            {
-                supplierCacheObj = GetSupplierCacheData();
-                selectGDIS = GetSiteListData();
-                _cacheLastChecked = DateTime.Now;
-            }
-            else
-            {
-                CheckCache();
-            }
-            if(selectSuppliers == null)
-            {
-                selectSuppliers = GetSupplierListData();
-                _cacheLastCheckedSup = DateTime.Now;
-            }
-            else
-            {
-                CheckSupCache();
-            }
+            CacheObjects obj = new CacheObjects();
+
+            selectGDIS = obj.GetSites;
+            selectSuppliers = obj.GetSuppliers;
+            supplierCacheObj = obj.GetSuppliersCache;
+          
         }
 
-        public void CheckCache()
-        {
-            int cacheRefresh;
-            if (!int.TryParse(System.Configuration.ConfigurationManager.AppSettings["CacheRefresh"], out cacheRefresh))
-                cacheRefresh = 12 * 60;
-            if (_cacheLastChecked.AddMinutes(cacheRefresh) < DateTime.Now)
-            {
-                supplierCacheObj = GetSupplierCacheData();
-                 selectGDIS = GetSiteListData();
-                _cacheLastChecked = DateTime.Now;
-            }
-        }
-        public void CheckSupCache()
-        {
-            int cacheRefreshSup;
-            if (!int.TryParse(System.Configuration.ConfigurationManager.AppSettings["CacheRefreshSup"], out cacheRefreshSup))
-                cacheRefreshSup = 55;
-            if (_cacheLastCheckedSup.AddMinutes(cacheRefreshSup) < DateTime.Now)
-            {                
-                selectSuppliers = GetSupplierListData();
-                 _cacheLastCheckedSup = DateTime.Now;
-            }
-        }
-        private List<SupplierCacheViewModel> GetSupplierCacheData()
-        {
-            List<SupplierCacheViewModel> result = new List<SupplierCacheViewModel>();
-            List<SupplierCacheViewModel> Formatedresult = new List<SupplierCacheViewModel>();
-            using (Repository repository = new Repository())
-            {
-                var MultipleLeftJoin = from spend in (from supSpend in
-                                          (from sup in repository.Context.SPFS_SUPPLIERS
-                                           join spendSup in repository.Context.SPFS_SPEND_SUPPLIERS on sup.CID equals spendSup.CID into JoinedSupSpend
-                                           from spendSup in JoinedSupSpend.DefaultIfEmpty()
-                                           select new
-                                           {
-                                               CID = sup.CID,
-                                               Duns = sup.Duns,
-                                               SpendSupplierID = spendSup != null ? spendSup.Spend_supplier_ID : 0,
-                                               SiteID = spendSup != null ? spendSup.SiteID : 0
-
-                                           })
-                                                      join erp in repository.Context.SPFS_LINK_ERP on supSpend.SpendSupplierID equals erp.Spend_supplier_ID into JoinedErp
-                                                      from erp in JoinedErp.DefaultIfEmpty()
-                                                      select new
-                                                      {
-                                                          CID = supSpend.CID,
-                                                          Duns = supSpend.Duns, //.Replace("\0", "").Trim(),
-                                                          ERPSupplierID = erp.Erp_supplier_ID,
-                                                          SiteID = supSpend.SiteID
-                                                      })
-                                       join site in repository.Context.SPFS_SITES on spend.SiteID equals site.SiteID into JoinedSite
-                                       from site in JoinedSite.DefaultIfEmpty()
-                                       select new SupplierCacheViewModel
-                                       {
-                                           CID = spend.CID,
-                                           Duns = spend.Duns, //.Replace("\0", "").Trim(),
-                                           ERPSupplierID = spend.ERPSupplierID.Trim(),
-                                           Gdis_org_entity_ID = site != null ? site.Gdis_org_entity_ID : 0
-
-                                       };
-
-
-                result = MultipleLeftJoin.ToList();
-
-                //result = (from sup in repository.Context.SPFS_SUPPLIERS
-                //          join spendSup in repository.Context.SPFS_SPEND_SUPPLIERS on sup.CID equals spendSup.CID
-                //          join erpsup in repository.Context.SPFS_LINK_ERP on spendSup.Spend_supplier_ID equals erpsup.Spend_supplier_ID into tmpErp
-                //          from erp in tmpErp.DefaultIfEmpty()
-
-                //          select new SupplierCacheViewModel
-                //          {
-                //              CID = sup.CID,
-                //              Duns = sup.Duns.Trim(),
-                //              ERPSupplierID = erp != null ? erp.Erp_supplier_ID : 0,
-                //          }).Distinct().ToList();
-
-            }
-
-
-            result.ForEach(z => z.Duns = z.Duns.Replace("\0", "").Trim());
-
-
-
-            //            result.ForEach(x => {
-            //    x.CreateTime = DateTime.Now.AddMonths(-1);
-            //    x.LastUpdateTime = DateTime.Now;
-            //});
-
-            //foreach (var item in result)
-            //{
-            //    SupplierCacheViewModel scv = new SupplierCacheViewModel();
-            //    scv.CID = item.CID;
-            //    scv.Duns = item.Duns.Replace("\0", "").Trim();
-            //    scv.ERPSupplierID = item.ERPSupplierID;
-            //    Formatedresult.Add(scv);
-            //}
-            //return Formatedresult;
-
-            return result;
-        }
-
-        private List<SelectListItem> GetSupplierListData()
-        {
-            List<SelectListItem> suppliers;
-            using (Repository repository = new Repository())
-            {
-                suppliers = (from supplier in repository.Context.SPFS_SUPPLIERS
-                             select new SelectListItem { Value = supplier.CID.ToString(), Text = supplier.Name }).ToList();
-            }
-            return suppliers;
-        }
-
-        private List<SelectSiteGDIS> GetSiteListData()
-        {
-            List<SelectSiteGDIS> sites;
-            using (Repository repository = new Repository())
-            {
-                sites = (from site in repository.Context.SPFS_SITES
-                         select new SelectSiteGDIS { Gdis_org_entity_ID = site.Gdis_org_entity_ID, SiteID = site.SiteID, Gdis_org_Parent_ID = site.Gdis_org_Parent_ID,Name=site.Name }).ToList();
-            }
-            return sites;
-        }
         //private List<SupplierCacheViewModel> GetSupplierListData()
         //{
         //    List<SupplierCacheViewModel> result = new List<SupplierCacheViewModel>();
@@ -574,7 +433,15 @@ namespace SPFS.Controllers
         }
 
         #region Merge
-        public ActionResult Merge(ExcelRatingsViewModel RatingModel)
+        public ActionResult UploadIndex(ExcelRatingsViewModel RatingModel)
+        {
+            RatingsViewModel rating = new RatingsViewModel();
+            rating = Merge(RatingModel);
+            ViewBag.Suppliers = selectSuppliers;
+            return View("UploadIndex", rating);
+        }      
+    
+        private RatingsViewModel Merge(ExcelRatingsViewModel RatingModel)
         {
             List<RatingRecord> Records = (List<RatingRecord>)TempData["RatingRecords"];
             ExcelRatingsViewModel AggregatedModel = AggregateRecords(RatingModel, Records);
@@ -583,9 +450,10 @@ namespace SPFS.Controllers
             List<RatingRecord> ISORecords = IncidentSpendOrder(RatingModel);
             //List<RatingRecord> HistoryRecords = IncidentSpendOrder(RatingModel);
             List<RatingRecord> MergedRecords = new List<RatingRecord>();
+            List<RatingRecord> UnMatchedRecords = new List<RatingRecord>();
 
-            var query = from x in ISORecords
-                        join y in AggregatedModel.RatingRecords
+            var query = from x in ISORecords 
+                        join y in AggregatedModel.RatingRecords 
                         on x.CID equals y.CID
                         select new { x, y };
 
@@ -599,6 +467,15 @@ namespace SPFS.Controllers
                 match.x.ErrorInformation = match.y.ErrorInformation;
 
                
+            }
+
+          //  MergedRecords = ISORecords;
+            var unmatch = (from agrr in AggregatedModel.RatingRecords
+                           where !(ISORecords.Any(i => i.CID == agrr.CID))
+                           select agrr).ToList();
+            if (unmatch != null)
+            {
+                ISORecords.AddRange(unmatch);
             }
 
             MergedRecords = ISORecords;
@@ -618,7 +495,7 @@ namespace SPFS.Controllers
             //        count++;
             //    }
             //}
-            return View("UploadIndex", ConvertedModel);
+            return ConvertedModel;
         }
 
         
@@ -712,7 +589,7 @@ namespace SPFS.Controllers
         }
         #endregion
       
-        #region popup
+        
 
         /// <summary>
         /// Get Supplier by Search.
@@ -786,87 +663,27 @@ namespace SPFS.Controllers
             return Json(true, JsonRequestBehavior.AllowGet);
 
         }
-        //public ActionResult RemoveRecord(int Rowid,int SiteID, int Month,int Year)
-        //{
-        //    List<RatingRecord> Records = (List<RatingRecord>)TempData["RatingRecords"];
 
-        //    //List<RatingRecord> UpdatedRecords = (List<RatingRecord>)TempData["RatingRecords"];
-        //    ExcelRatingsViewModel RatingModel = new ExcelRatingsViewModel();
+        [HttpPost]
+        [MultipleSubmitAttribute(Name = "action", Argument = "SaveData")]
+        public ActionResult SaveData(RatingsViewModel ratingModel)
+        {
 
-        //    RatingRecord RemoveRec = new RatingRecord();
+            
 
-        //    RemoveRec = Records.Where(r => r.ExcelDiferentiatorID.Equals(Rowid)).FirstOrDefault();
+            return View("UploadIndex", ratingModel);
 
-        //    Records.Remove(RemoveRec);
+        }
 
-        //   // UpdatedRecords = Records;         
-        //    //RatingRecord 
-
-        //    TempData["RatingRecords"] = Records;
-        //    RatingModel.RatingRecords = Records;
-        //    RatingModel.SiteID = SiteID;
-        //    RatingModel.Month = Month;
-        //    RatingModel.Year = Year;
-        //    ViewBag.Suppliers = selectSuppliers;
-        //    var count = 0;
-        //    if (RatingModel.RatingRecords.Count > 0)
-        //    {
-        //        foreach (var record in RatingModel.RatingRecords)
-        //        {
-        //            if ((record.ErrorInformation != null ? record.ErrorInformation.Count : 0) > 1)
-        //            {
-        //                count++;
-        //            }
-        //        }
-        //        if (count > 0)
-        //        {
-        //            ViewBag.Count = count;
-        //            //ViewBag.ShowMerge = false;
-        //        }
-        //        else
-        //        {
-        //            ViewBag.Count = count;
-        //            // ViewBag.ShowMerge = true;
-        //        }
-        //    }
-        //    else
-        //    {
-        //        ModelState.AddModelError("UploadFile", "Please upload Valid File");
-        //        CreateListViewBags();
-        //        return View("Index", RatingModel);
-        //    }
-
-        //    return View("ExcelReview", RatingModel);
-
-        //}
-        //public void UpdateRecord( int CID, string Name, int Rowid)
-        //{
-        //    List<RatingRecord> Records = (List<RatingRecord>)TempData["RatingRecords"];
-
-        //    RatingRecord OldRec = new RatingRecord();
-
-        //    RatingRecord UpdatedRec = new RatingRecord();
-
-        //    OldRec = Records.Where(r => r.ExcelDiferentiatorID.Equals(Rowid)).FirstOrDefault();
-
-        //    UpdatedRec = Records.Where(r => r.ExcelDiferentiatorID.Equals(Rowid)).FirstOrDefault();
-
-        //    Records.Remove(OldRec);
+        [HttpPost]
+        [MultipleSubmitAttribute(Name = "action", Argument = "SubmitData")]
+        public ActionResult SubmitData(RatingsViewModel ratingModel)
+        {
 
 
-        //    UpdatedRec.CID = CID;
-        //    UpdatedRec.DUNS = GetDUNSfromCID(CID);
-        //    UpdatedRec.SupplierName = Name;
-        //    UpdatedRec.ErrorInformation = null;
 
+            return View("UploadIndex", ratingModel);
 
-        //    Records.Add(UpdatedRec);
-        //    //RatingRecord 
-
-        //    TempData["RatingRecords"] = Records;
-        //}
-
-
-        #endregion
+        }
     }
 }

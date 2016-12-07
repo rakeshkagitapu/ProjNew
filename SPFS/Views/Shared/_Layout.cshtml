@@ -133,6 +133,22 @@
             </h4>
         </div>
     </div>
+    <div id="dlgsubmit" class="panel panel-default text-center" style="background-color: rgba(229, 245, 250, 0.701961); color: rgb(4, 135, 196); margin: 0; border-color: rgb(183, 225, 240);">
+        <div class="panel-body">
+            <h4>
+                <span class="glyphicon glyphicon-submit" style="top: 3px;"></span>
+                <span style="padding-left: 4px;">Submiting...</span>
+            </h4>
+        </div>
+    </div>
+    <div id="dlgmerge" class="panel panel-default text-center" style="background-color: rgba(229, 245, 250, 0.701961); color: rgb(4, 135, 196); margin: 0; border-color: rgb(183, 225, 240);">
+        <div class="panel-body">
+            <h4>
+                <span class="glyphicon glyphicon-random" style="top: 3px;"></span>
+                <span style="padding-left: 4px;">Merging...</span>
+            </h4>
+        </div>
+    </div>
 
     <div id="dlgupload" class="panel panel-default text-center" style="background-color: rgba(229, 245, 250, 0.701961); color: rgb(4, 135, 196); margin: 0; border-color: rgb(183, 225, 240);">
         <div class="panel-body">
@@ -154,6 +170,14 @@
                
             }
         }
+        function OnBeginPostBack_Search(sender) {
+            var form = $(sender).parents('form');
+
+            if (form.valid()) {
+                $("#dlgmodal").dialog('open');
+
+            }
+        }
         function OnBeginPostBack_Upload(sender) {
             var form = $(sender).parents('form');
 
@@ -162,47 +186,116 @@
                 $("#dlgupload").dialog('open');
             }
         }
-        $(document).ready(function () {
-            $("#dlgmodal").dialog({
-                autoOpen: false,
-                resizable: false,
-                width: "auto",
-                height: "auto",
-                show: { effect: 'drop', direction: "up" },
-                modal: true,
-                draggable: true,
-                open: function (event, ui) {
-                    $(".ui-dialog-titlebar").hide();
-                    $(".ui-dialog-titlebar-close").hide();
-                }
-            });
+        function OnBeginPostBack_Submit(sender) {
+            var form = $(sender).parents('form');
 
-            $("#dlgsave").dialog({
-                autoOpen: false,
-                resizable: false,
-                width: "auto",
-                height: "auto",
-                show: { effect: 'drop', direction: "up" },
-                modal: true,
-                draggable: true,
-                open: function (event, ui) {
-                    $(".ui-dialog-titlebar").hide();
-                    $(".ui-dialog-titlebar-close").hide();
-                }
-            });
-            $("#dlgupload").dialog({
-                autoOpen: false,
-                resizable: false,
-                width: "auto",
-                height: "auto",
-                show: { effect: 'drop', direction: "up" },
-                modal: true,
-                draggable: true,
-                open: function (event, ui) {
-                    $(".ui-dialog-titlebar").hide();
-                    $(".ui-dialog-titlebar-close").hide();
-                }
-            });
+            if (form.valid()) {
+
+                $("#dlgsubmit").dialog('open');
+            }
+        }
+        function OnBeginPostBack_Merge(sender) {
+            var form = $(sender).parents('form');
+
+            if (form.valid()) {
+
+                $("#dlgmerge").dialog('open');
+            }
+        }
+        $("#dlgmodal").dialog({
+            autoOpen: false,
+            resizable: false,
+            width: "auto",
+            height: "auto",
+            show: { effect: 'drop', direction: "up" },
+            modal: true,
+            draggable: true,
+            open: function (event, ui) {
+                $(".ui-dialog-titlebar").hide();
+                $(".ui-dialog-titlebar-close").hide();
+            }
+        });
+
+        $("#dlgsave").dialog({
+            autoOpen: false,
+            resizable: false,
+            width: "auto",
+            height: "auto",
+            show: { effect: 'drop', direction: "up" },
+            modal: true,
+            draggable: true,
+            open: function (event, ui) {
+                $(".ui-dialog-titlebar").hide();
+                $(".ui-dialog-titlebar-close").hide();
+            }
+        });
+        $("#dlgupload").dialog({
+            autoOpen: false,
+            resizable: false,
+            width: "auto",
+            height: "auto",
+            show: { effect: 'drop', direction: "up" },
+            modal: true,
+            draggable: true,
+            open: function (event, ui) {
+                $(".ui-dialog-titlebar").hide();
+                $(".ui-dialog-titlebar-close").hide();
+            }
+        });
+        $("#dlgmerge").dialog({
+            autoOpen: false,
+            resizable: false,
+            width: "auto",
+            height: "auto",
+            show: { effect: 'drop', direction: "up" },
+            modal: true,
+            draggable: true,
+            open: function (event, ui) {
+                $(".ui-dialog-titlebar").hide();
+                $(".ui-dialog-titlebar-close").hide();
+            }
+        });
+        $(document).ready(function () {
+            //$("#dlgmodal").dialog({
+            //    autoOpen: false,
+            //    resizable: false,
+            //    width: "auto",
+            //    height: "auto",
+            //    show: { effect: 'drop', direction: "up" },
+            //    modal: true,
+            //    draggable: true,
+            //    open: function (event, ui) {
+            //        $(".ui-dialog-titlebar").hide();
+            //        $(".ui-dialog-titlebar-close").hide();
+            //    }
+            //});
+
+            //$("#dlgsave").dialog({
+            //    autoOpen: false,
+            //    resizable: false,
+            //    width: "auto",
+            //    height: "auto",
+            //    show: { effect: 'drop', direction: "up" },
+            //    modal: true,
+            //    draggable: true,
+            //    open: function (event, ui) {
+            //        $(".ui-dialog-titlebar").hide();
+            //        $(".ui-dialog-titlebar-close").hide();
+            //    }
+            //});
+            //$("#dlgupload").dialog({
+            //    autoOpen: false,
+            //    resizable: false,
+            //    width: "auto",
+            //    height: "auto",
+            //    show: { effect: 'drop', direction: "up" },
+            //    modal: true,
+            //    draggable: true,
+            //    open: function (event, ui) {
+            //        $(".ui-dialog-titlebar").hide();
+            //        $(".ui-dialog-titlebar-close").hide();
+            //    }
+            //});
             
         });
 

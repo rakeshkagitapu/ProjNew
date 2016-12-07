@@ -32,7 +32,7 @@
        <div class="row col-md-12">
         <div class="pull-right">
           
-            <a href="@Url.Action("Merge", "ExcelUpload", Model)" class="btn btn-primary btn Merge" style="display: none;">
+            <a href="@Url.Action("UploadIndex", "ExcelUpload", Model)" class="btn btn-primary btn Merge" style="display: none;" onclick="OnBeginPostBack_Merge(this)">
                 <span class="glyphicon glyphicon-random"></span> Merge
             </a>
 
@@ -50,7 +50,7 @@
         <div class="row col-md-12" id="footerbtns">
             <div class="pull-right">
                
-                <a href="@Url.Action("Merge", "ExcelUpload")" class="btn btn-primary btn Merge" style="display: none;">
+                <a href="@Url.Action("UploadIndex", "ExcelUpload")" class="btn btn-primary btn Merge" style="display: none;" onclick="OnBeginPostBack_Merge(this)">
                     <span class="glyphicon glyphicon-random"></span> Merge
                 </a>
 
@@ -107,7 +107,7 @@
         <div class="row col-md-12">
             <div class="pull-right">
              
-                <a href="@Url.Action("Merge", "ExcelUpload", Model)" class="btn btn-primary btn Merge">
+                <a href="@Url.Action("UploadIndex", "ExcelUpload", Model)" class="btn btn-primary btn Merge" onclick="OnBeginPostBack_Merge(this)">
                     <span class="glyphicon glyphicon-random"></span> Merge
                 </a>
 

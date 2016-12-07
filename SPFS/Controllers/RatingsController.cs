@@ -15,30 +15,18 @@ namespace SPFS.Controllers
 {
     public class RatingsController :BaseController
     {
+        private List<SelectListItem> selectSuppliers;
+
+        private List<SelectSiteGDIS> selectGDIS;
         public RatingsController()
         {
-          
-            if (selectSuppliers == null)
-            {
-                selectSuppliers = GetSupplierListData();
-                _cacheLastCheckedSup = DateTime.Now;
-            }
-            else
-            {
-                CheckSupCache();
-            }
+            CacheObjects obj = new CacheObjects();
+
+            selectGDIS = obj.GetSites;
+            selectSuppliers = obj.GetSuppliers;
         }
 
-        private List<SelectListItem> GetSupplierListData()
-        {
-            List<SelectListItem> suppliers;
-            using (Repository repository = new Repository())
-            {
-                suppliers = (from supplier in repository.Context.SPFS_SUPPLIERS
-                             select new SelectListItem { Value = supplier.CID.ToString(), Text = supplier.Name }).ToList();
-            }
-            return suppliers;
-        }
+       
         // GET: Ratings
         public ActionResult Index(int? SiteID, bool isUpload = false)
         {
@@ -52,9 +40,7 @@ namespace SPFS.Controllers
             return View(ratingsViewModel);
         }
 
-        private static DateTime _cacheLastCheckedSup;
-
-        private static List<SelectListItem> selectSuppliers;
+       
         private void CreateListViewBags()
         {
             Utilities util = new Utilities();
@@ -84,17 +70,7 @@ namespace SPFS.Controllers
             ViewBag.Years = util.GetYears(false);
             ViewBag.Sites = sites;
         }
-        public void CheckSupCache()
-        {
-            int cacheRefreshSup;
-            if (!int.TryParse(System.Configuration.ConfigurationManager.AppSettings["CacheRefreshSup"], out cacheRefreshSup))
-                cacheRefreshSup = 55;
-            if (_cacheLastCheckedSup.AddMinutes(cacheRefreshSup) < DateTime.Now)
-            {
-                selectSuppliers = GetSupplierListData();
-                _cacheLastCheckedSup = DateTime.Now;
-            }
-        }
+      
         //checks if there are any existing uploads 
         // displays warning if there are existing uploads in same month
         // Initializes partial view
@@ -136,6 +112,14 @@ namespace SPFS.Controllers
             CreateListViewBags();
             ViewBag.Suppliers = selectSuppliers;
             ratingModel.RatingRecords = IncidentSpendOrder(ratingModel);
+            if(ratingModel.RatingRecords.Count > 0)
+            {
+                ViewBag.NewSite = false;
+            }
+            else
+            {
+                ViewBag.NewSite = true;
+            }
             return View("Index", ratingModel);
         }
 
@@ -215,28 +199,42 @@ namespace SPFS.Controllers
         //    ViewBag.Suppliers = selectSuppliers;
         //    return View("Index", RatingModel);
         //}
-        public JsonResult AddRowReload(int CID, RatingsViewModel RatingModel)
+        public ActionResult AddRowReload(int CID, int SiteID, int count)
         {
-            RatingRecord NewRec = GetSupplierDataByCID(CID, RatingModel);
-            RatingModel.RatingRecords.Add(NewRec);
+            
+            RatingRecord NewRec = GetSupplierDataByCID(CID, SiteID);
 
+            RatingsViewModel RatingModel = new RatingsViewModel();
 
-            CreateListViewBags();
-            ViewBag.Suppliers = selectSuppliers;
-            return Json(true, JsonRequestBehavior.AllowGet);
+            List<RatingRecord> Records = new List<RatingRecord>();
+                        
+            ViewBag.newIndex = count;
+            for(int i =0;i<count; i++)
+            {
+                RatingRecord empRec = new RatingRecord();
+                empRec.CID = 0;
+                Records.Add(empRec);
+
+            }
+
+            Records.Add(NewRec);
+
+            RatingModel.RatingRecords = Records;
+
+            return PartialView("_AppendRow", RatingModel);
         }
 
 
-        private RatingRecord GetSupplierDataByCID(int CID, RatingsViewModel RatingModel)
+        private RatingRecord GetSupplierDataByCID(int CID, int SiteID)
         {
             RatingRecord Rec = new RatingRecord();
-           
+            SelectSiteGDIS gdis = selectGDIS.Where(g => g.SiteID.Equals(SiteID)).FirstOrDefault();
             using (Repository Rep = new Repository())
             {
                Rec = (from site in Rep.Context.SPFS_SITES
                             join spend in Rep.Context.SPFS_SPEND_SUPPLIERS on site.SiteID equals spend.SiteID
                             join sup in Rep.Context.SPFS_SUPPLIERS on spend.CID equals sup.CID
-                            where spend.SiteID == RatingModel.SiteID && spend.CID == CID
+                            where spend.SiteID == SiteID && spend.CID == CID
                             select new RatingRecord
                             {
                                 CID = spend.CID,
@@ -258,9 +256,9 @@ namespace SPFS.Controllers
                                   select new RatingRecord
                                   {
                                       CID = sup.CID,
-                                      SiteID = RatingModel.SiteID.Value,
-                                      Gdis_org_entity_ID = (from site in Rep.Context.SPFS_SITES where site.SiteID == RatingModel.SiteID.Value select site.Gdis_org_entity_ID).FirstOrDefault(),
-                                      Gdis_org_Parent_ID = (from site in Rep.Context.SPFS_SITES where site.SiteID == RatingModel.SiteID.Value select site.Gdis_org_Parent_ID).FirstOrDefault(),
+                                      SiteID = SiteID,
+                                      Gdis_org_entity_ID =gdis.Gdis_org_entity_ID,
+                                      Gdis_org_Parent_ID = gdis.Gdis_org_Parent_ID,
                                       Reject_incident_count = 0,
                                       Reject_parts_count = 0,
                                       SupplierName = sup.Name,

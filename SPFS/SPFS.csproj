@@ -238,6 +238,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\CacheObjects.cs" />
     <Compile Include="Helpers\CSVHelper.cs" />
     <Compile Include="Helpers\Extensions.cs" />
     <Compile Include="Helpers\MultipleSubmitAttribute.cs" />
@@ -535,6 +536,8 @@
     <Content Include="Views\ExcelUpload\_SelectSupplier.cshtml" />
     <Content Include="Views\Shared\_SupplierRatings.cshtml" />
     <Content Include="Views\ExcelUpload\UploadIndex.cshtml" />
+    <Content Include="Views\Shared\_AppendRow.cshtml" />
+    <Content Include="Views\Shared\_SupplierRatingsNew.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

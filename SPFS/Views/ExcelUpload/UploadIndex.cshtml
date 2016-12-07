@@ -12,6 +12,10 @@
     @Html.AntiForgeryToken()
     @Html.HiddenFor(m => m.isUpload)
     @Html.HiddenFor(m => m.SiteID)
+    @Html.HiddenFor(m => m.Month)
+    @Html.HiddenFor(m => m.Year)
+    @Html.HiddenFor(m =>m.SiteName)
+    @Html.Hidden("noOfRecords",@count)
     <h2>Ratings Page -Upload</h2>
     <hr />
     <div class="row col-md-12" style="padding-top:15px">
@@ -58,22 +62,183 @@
        
         <div class="row col-md-12">
             <div class="pull-left">
-                <a href="@Url.Action("SupplierToRate", "ExcelUpload")" class="btn btn-default btn-md add-item">
-
-                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add New Supplier to Rate
-                </a>
+                <button type="button" value="Add New Supplier to Rate" class="btn btn-default btn-md btnAdd add-item ">
+                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add Unrated Supplier
+                </button>
 
             </div>
             <div class="pull-right">
-                <a href="@Url.Action("SaveData", "ExcelUpload")" class="btn btn-primary btn-md">
+                <a href="@Url.Action("Index","Home")" class="btn btn-danger" onclick="return confirm('Are you sure, all data will be lost')">
+                    <span class="glyphicon glyphicon-remove"></span> Cancel
+                </a>
+                <button type="submit" value="Save" onclick="OnBeginPostBack_Save(this)" name="action:SaveData" class="btn btn-primary">
                     <span class="glyphicon glyphicon-floppy-save"></span> Save
-                </a>
-
-                <a href="@Url.Action("Submit", "ExcelUpload")" class="btn btn-primary btn-md">
+                    
+                </button>
+                <button type="submit" value="Submit" onclick="OnBeginPostBack_Save(this)" name="action:SubmitData" class="btn btn-primary">
                     <span class="glyphicon glyphicon-send"></span> Submit Ratings
-                </a>
+
+                </button>
+               
+            </div>
+
+        </div>
+
+        <div id="popSup" style="overflow: auto;visibility:hidden">
+
+            <div class="row col-md-12" style="margin-top: 10px">
+                <div class="row">
+                    <div class="col-md-10 input-group">
+                        @*@Html.Label("Search by")*@
+
+                        @Html.TextBox("search", "", new { @class = "form-control", id = "SupplierID", maxlength = "30", placeholder = "Search by Supplier Name ..." })
+                        <span class="input-group-btn">
+                            <button id="btnFilter" type="button" value="Search" class="btn btn-primary ">
+                                <span class="glyphicon glyphicon-search"></span>
+                            </button>
+                        </span>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="button" class="btn btn-primary btnOKNotes">
+                            <span class="glyphicon glyphicon-floppy-save"></span>
+                            <span>OK</span>
+                        </button>
+                    </div>
+
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-md-9">
+                        <div class="form-group">
+                            @Html.DropDownList("selectSuppliers", ViewBag.Suppliers as IEnumerable<SelectListItem>, new { @class = "form-control", style = "width: 500px ; border-radius:5px", size = 10, id = "selectSupplierID" })
+                        </div>
+                    </div>
+
+                </div>
+
             </div>
 
         </div>
     }
 }
+<script type="text/javascript">
+    $(document).ready(function () {
+                            
+
+        var CID = $("#SelectSupplierID option:selected").val();
+
+        $('#SupplierID').change(function () {
+            var SupName = $('#SupplierID').val();
+            SearchSupplierByName(SupName);
+
+        });
+
+          //Sorting
+         $(document).on("click", "#btnFilter", function () {
+             var SupName = $('#SupplierID').val();
+                SearchSupplierByName(SupName);
+
+            });
+
+            function SearchSupplierByName(SupName) {
+                $.ajax({
+                    url: '@Url.Action("GetSupplierbyName", "ExcelUpload")',
+                    //Passes the content of an input up
+                    data: { nameString: SupName },
+                    contentType: "application/json; charset=utf-8",
+                    type: 'GET',
+                    async: false,
+                    cache: true,
+
+                    success: function (data) {
+                        $('#selectSupplierID').find('option').remove();
+                        $.each(data, function (i, optionData) {
+                            $('#selectSupplierID').append($('<option></option>').val(optionData.Value).html(optionData.Text));
+                        });
+                    }
+                });
+            };
+
+        $('.btnAdd').bind("click", function () {
+               $('#popSup').css("visibility", "visible");
+                $("#popSup").dialog('option', 'title', "Select Supplier");
+                $("#popSup").dialog("open");
+
+            });
+
+            $('.btnOKNotes').bind("click", function () {
+                var selectedText = $("#selectSupplierID").find("option:selected").text();
+                var selectedValue = $("#selectSupplierID").val();
+                var cont = $('#noOfRecords').val();
+                debugger
+                var incrementalCount = parseInt(cont) + 1;
+                var siteId = $("#SiteID").val();
+
+                debugger
+                $.ajax({
+                    url: '@Url.Action("AddRowReload", "Ratings")',
+                    //Passes the content of an input up
+                    data: {CID:selectedValue,SiteID:siteId,count:cont},
+                    contentType: "application/json; charset=utf-8",
+                    type: 'GET',
+                    cache: false,
+                    async: false,
+                    success: function (data) {
+                        debugger
+                        $('.fixed_headers tr:last').after(data);
+                        $('#noOfRecords').val(incrementalCount);
+                          $("#popSup").closest('.ui-dialog-content').dialog("close");
+                    },
+                    error: function(ts) { alert(ts.responseText) }
+                });
+
+            });
+        @*function AddRow(CID) {
+
+            //$("#dlgmodal").dialog('open');
+            //$('#dlgmodal span').text('Adding ...');
+            var url = '@Url.Action("SupplierToRate", "Ratings")';
+            $.ajax({
+                type: "GET",
+                url: url,
+                data: { CID: CID, RatingModel:@Model },
+                success: function (data) {
+
+                    $("#popSup").closest('.ui-dialog-content').dialog("close");
+
+                },
+                complete:
+                  function (jqXHR, textStatus) {
+                      //$("#dlgmodal").closest('.ui-dialog-content').dialog("close");
+                  },
+                error: function (data) {
+
+                }
+            });
+        }
+        //Will refresh
+
+        $('#SelectSupplierID').change(function () {
+            var CID = $("#SelectSupplierID option:selected").val();
+            if (CID != "") {
+
+                $(this).valid();
+                AddRow(CID);
+
+            }
+
+        });*@
+        $('#popSup').dialog({
+            autoOpen: false,
+            width: 600,
+            height: 300,
+            resizable: false,
+            title: 'Select Supplier',
+            modal: true,
+            open: function (event, ui) {
+
+            }
+        });
+    });
+
+</script>

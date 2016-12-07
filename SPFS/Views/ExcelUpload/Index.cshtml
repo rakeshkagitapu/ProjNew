@@ -38,7 +38,7 @@
                 <div class="input-group">
                     @Html.DropDownListFor(model => model.Year, ViewBag.Years as IEnumerable<SelectListItem>, new { @class = "form-control" })
                     <span class="input-group-btn" title="Search" rel="tooltip">
-                        <button type="submit" value="Search" name="action:Search" class="btn btn-warning">
+                        <button type="submit" value="Search" name="action:Search" class="btn btn-warning" onclick="OnBeginPostBack_Search(this)">
                             <span class="glyphicon glyphicon-search" />
                         </button>
                     </span>
