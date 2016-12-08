@@ -55,10 +55,12 @@
     <hr />
 
 
-    if (New == false && count > 0)
-    {
+    //if (New == false && count > 0)
+    //{
 
-        <div id="output" class="col-md-12">
+    if (ViewBag.ShowResult)
+    {        
+         <div id="output" class="col-md-12">
             @Html.Partial("_SupplierRatings", Model)
         </div>
 
@@ -76,7 +78,7 @@
 
             </div>
             <div class="pull-right">
-                <a href="@Url.Action("Index","Home")" class="btn btn-danger" onclick="return confirm('Are you sure, all data will be lost')">
+                <a href="@Url.Action("Index", "Home")" class="btn btn-danger" onclick="return confirm('Are you sure, all data will be lost')">
                     <span class="glyphicon glyphicon-remove"></span> Cancel
                 </a>
                 <button type="submit" value="Save" onclick="OnBeginPostBack_Save(this)" name="action:SaveData" class="btn btn-primary">
@@ -91,6 +93,11 @@
 
         </div>
     }
+    else
+    {
+        <h2>Select location and month and clickon search to show ratings </h2>
+    }
+    @*}
     else if (New == true)
     {
         <div id="output" class="col-md-12">
@@ -122,7 +129,7 @@
             </div>
 
         </div>
-    }
+    }*@
 
     // }
 
@@ -141,7 +148,7 @@
                     </span>
                 </div>
                 <div class="col-md-2">
-                    <button type="button" class="btn btn-primary btnOKNotes">
+                    <button type="button" class="btn btn-primary btnOK">
                         <span class="glyphicon glyphicon-floppy-save"></span>
                         <span>OK</span>
                     </button>
@@ -221,36 +228,22 @@
 
             });
  
-            $('.btnOKNotes').bind("click", function () {
+            $('.btnOK').bind("click", function () {
                 var selectedText = $("#selectSupplierID").find("option:selected").text();
                 var selectedValue = $("#selectSupplierID").val();
-                var cont = $('#noOfRecords').val();
-                var incrementalCount = parseInt(cont) + 1;
-                var siteId = $("#SiteID option:selected").val();
-               
-
-                debugger
+                
                 $.ajax({
                     url: '@Url.Action("AddRowReload", "Ratings")',
                     //Passes the content of an input up
-                    data: {CID:selectedValue,SiteID:siteId,count:cont},
+                    data: { CID: selectedValue }, //,SiteID:siteId,count:cont
                     contentType: "application/json; charset=utf-8",
                     type: 'GET',
                     cache: false,
                     async: false,
                     success: function (data) {
-                        debugger
-                        var tbody=$('.fixed_headers tbody');
-
-                        if (tbody.children().length == 0) {
-                            tbody.html(data);
-                        }
-                        else
-                        {
-                            $('.fixed_headers tr:last').after(data);
-                        }
-                            
-                        $('#noOfRecords').val(incrementalCount);
+                        $('#output').children().remove();
+                        $('#output').html(data);
+                                              
                           $("#popSup").closest('.ui-dialog-content').dialog("close");
                     },
                     error: function(ts) { alert(ts.responseText) }

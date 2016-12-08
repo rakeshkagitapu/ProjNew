@@ -99,7 +99,7 @@
                         </span>
                     </div>
                     <div class="col-md-2">
-                        <button type="button" class="btn btn-primary btnOKNotes">
+                        <button type="button" class="btn btn-primary btnOK">
                             <span class="glyphicon glyphicon-floppy-save"></span>
                             <span>OK</span>
                         </button>
@@ -123,7 +123,7 @@
 }
 <script type="text/javascript">
     $(document).ready(function () {
-                            
+
 
         var CID = $("#SelectSupplierID option:selected").val();
 
@@ -166,27 +166,29 @@
 
             });
 
-            $('.btnOKNotes').bind("click", function () {
+            $('.btnAdd').bind("click", function () {
+               $('#popSup').css("visibility", "visible");
+                $("#popSup").dialog('option', 'title', "Select Supplier");
+                $("#popSup").dialog("open");
+
+            });
+
+            $('.btnOK').bind("click", function () {
                 var selectedText = $("#selectSupplierID").find("option:selected").text();
                 var selectedValue = $("#selectSupplierID").val();
-                var cont = $('#noOfRecords').val();
-                debugger
-                var incrementalCount = parseInt(cont) + 1;
-                var siteId = $("#SiteID").val();
 
-                debugger
                 $.ajax({
-                    url: '@Url.Action("AddRowReload", "Ratings")',
+                    url: '@Url.Action("AddRowReload", "ExcelUpload")',
                     //Passes the content of an input up
-                    data: {CID:selectedValue,SiteID:siteId,count:cont},
+                    data: { CID: selectedValue }, //,SiteID:siteId,count:cont
                     contentType: "application/json; charset=utf-8",
                     type: 'GET',
                     cache: false,
                     async: false,
                     success: function (data) {
-                        debugger
-                        $('.fixed_headers tr:last').after(data);
-                        $('#noOfRecords').val(incrementalCount);
+                        $('#output').children().remove();
+                        $('#output').html(data);
+
                           $("#popSup").closest('.ui-dialog-content').dialog("close");
                     },
                     error: function(ts) { alert(ts.responseText) }

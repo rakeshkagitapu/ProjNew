@@ -30,13 +30,13 @@ namespace SPFS.Controllers
         // GET: Ratings
         public ActionResult Index(int? SiteID, bool isUpload = false)
         {
-            RatingsViewModel ratingsViewModel = new RatingsViewModel { SiteID = SiteID, isUpload = isUpload };
+            RatingsViewModel ratingsViewModel = new RatingsViewModel { SiteID = SiteID, isUpload = isUpload , RatingRecords = new List<RatingRecord>()};
             ratingsViewModel.Month = DateTime.Now.Month - 1;
             ratingsViewModel.Year = DateTime.Now.Year;
 
             CreateListViewBags();
             ViewBag.Suppliers = selectSuppliers;
-
+            ViewBag.ShowResult = false;
             return View(ratingsViewModel);
         }
 
@@ -112,14 +112,17 @@ namespace SPFS.Controllers
             CreateListViewBags();
             ViewBag.Suppliers = selectSuppliers;
             ratingModel.RatingRecords = IncidentSpendOrder(ratingModel);
-            if(ratingModel.RatingRecords.Count > 0)
-            {
-                ViewBag.NewSite = false;
-            }
-            else
-            {
-                ViewBag.NewSite = true;
-            }
+            //if(ratingModel.RatingRecords.Count > 0)
+            //{
+            //    ViewBag.NewSite = false;
+            //}
+            //else
+            //{
+            //    ViewBag.NewSite = true;
+            //}
+            ViewBag.ShowResult = true;
+            TempData["SearchedResults"] = ratingModel;
+
             return View("Index", ratingModel);
         }
 
@@ -199,29 +202,36 @@ namespace SPFS.Controllers
         //    ViewBag.Suppliers = selectSuppliers;
         //    return View("Index", RatingModel);
         //}
-        public ActionResult AddRowReload(int CID, int SiteID, int count)
+        //public ActionResult AddRowReload(int CID, int SiteID, int count)
+        public ActionResult AddRowReload(int CID)
         {
-            
-            RatingRecord NewRec = GetSupplierDataByCID(CID, SiteID);
+                       
 
-            RatingsViewModel RatingModel = new RatingsViewModel();
+            //RatingsViewModel RatingModel = new RatingsViewModel();
 
-            List<RatingRecord> Records = new List<RatingRecord>();
-                        
-            ViewBag.newIndex = count;
-            for(int i =0;i<count; i++)
-            {
-                RatingRecord empRec = new RatingRecord();
-                empRec.CID = 0;
-                Records.Add(empRec);
+            RatingsViewModel RatingModel = (RatingsViewModel)TempData["SearchedResults"];
 
-            }
+            RatingRecord NewRec = GetSupplierDataByCID(CID, RatingModel.SiteID.Value);
+            RatingModel.RatingRecords.Add(NewRec);
 
-            Records.Add(NewRec);
+            TempData["SearchedResults"] = RatingModel;
+            //List<RatingRecord> Records = new List<RatingRecord>();
 
-            RatingModel.RatingRecords = Records;
+            //ViewBag.newIndex = count;
+            //for(int i =0;i<count; i++)
+            //{
+            //    RatingRecord empRec = new RatingRecord();
+            //    empRec.CID = 0;
+            //    Records.Add(empRec);
 
-            return PartialView("_AppendRow", RatingModel);
+            //}
+
+            //Records.Add(NewRec);
+
+            //RatingModel.RatingRecords = Records;
+
+            //return PartialView("_AppendRow", RatingModel);
+            return PartialView("_SupplierRatings", RatingModel);
         }
 
 

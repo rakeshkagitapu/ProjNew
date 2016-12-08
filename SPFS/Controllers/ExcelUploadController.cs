@@ -380,6 +380,9 @@ namespace SPFS.Controllers
             }
 
             CreateListViewBags();
+
+            ViewBag.ShowResult = true;
+            TempData["SearchedResults"] = ratingModel;
             return View("Index", ratingModel);
         }
 
@@ -437,6 +440,7 @@ namespace SPFS.Controllers
         {
             RatingsViewModel rating = new RatingsViewModel();
             rating = Merge(RatingModel);
+            TempData["SearchedResults"] =rating;
             ViewBag.Suppliers = selectSuppliers;
             return View("UploadIndex", rating);
         }      
@@ -498,7 +502,82 @@ namespace SPFS.Controllers
             return ConvertedModel;
         }
 
-        
+        public ActionResult AddRowReload(int CID)
+        {
+
+
+            //RatingsViewModel RatingModel = new RatingsViewModel();
+
+            RatingsViewModel RatingModel = (RatingsViewModel)TempData["SearchedResults"];
+
+            RatingRecord NewRec = GetSupplierDataByCID(CID, RatingModel.SiteID.Value);
+            RatingModel.RatingRecords.Add(NewRec);
+
+            TempData["SearchedResults"] = RatingModel;
+            //List<RatingRecord> Records = new List<RatingRecord>();
+
+            //ViewBag.newIndex = count;
+            //for(int i =0;i<count; i++)
+            //{
+            //    RatingRecord empRec = new RatingRecord();
+            //    empRec.CID = 0;
+            //    Records.Add(empRec);
+
+            //}
+
+            //Records.Add(NewRec);
+
+            //RatingModel.RatingRecords = Records;
+
+            //return PartialView("_AppendRow", RatingModel);
+            return PartialView("_SupplierRatings", RatingModel);
+        }
+
+
+        private RatingRecord GetSupplierDataByCID(int CID, int SiteID)
+        {
+            RatingRecord Rec = new RatingRecord();
+            SelectSiteGDIS gdis = selectGDIS.Where(g => g.SiteID.Equals(SiteID)).FirstOrDefault();
+            using (Repository Rep = new Repository())
+            {
+                Rec = (from site in Rep.Context.SPFS_SITES
+                       join spend in Rep.Context.SPFS_SPEND_SUPPLIERS on site.SiteID equals spend.SiteID
+                       join sup in Rep.Context.SPFS_SUPPLIERS on spend.CID equals sup.CID
+                       where spend.SiteID == SiteID && spend.CID == CID
+                       select new RatingRecord
+                       {
+                           CID = spend.CID,
+                           SiteID = spend.SiteID,
+                           Gdis_org_entity_ID = site.Gdis_org_entity_ID,
+                           Gdis_org_Parent_ID = site.Gdis_org_Parent_ID,
+                           Reject_incident_count = spend.Reject_incident_count,
+                           Reject_parts_count = spend.Reject_parts_count,
+                           SupplierName = sup.Name,
+                           DUNS = sup.Duns
+
+                       }).FirstOrDefault();
+
+
+                if (Rec == null)
+                {
+                    Rec = (from sup in Rep.Context.SPFS_SUPPLIERS
+                           where sup.CID == CID
+                           select new RatingRecord
+                           {
+                               CID = sup.CID,
+                               SiteID = SiteID,
+                               Gdis_org_entity_ID = gdis.Gdis_org_entity_ID,
+                               Gdis_org_Parent_ID = gdis.Gdis_org_Parent_ID,
+                               Reject_incident_count = 0,
+                               Reject_parts_count = 0,
+                               SupplierName = sup.Name,
+                               DUNS = sup.Duns
+
+                           }).FirstOrDefault();
+                }
+            }
+            return Rec;
+        }
 
         private ExcelRatingsViewModel AggregateRecords(ExcelRatingsViewModel RatingModel, List<RatingRecord> Records)
         {
