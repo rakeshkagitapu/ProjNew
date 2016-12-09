@@ -11,6 +11,7 @@
     @Scripts.Render("~/bundles/modernizr")
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/bootstrap")
     @* @Scripts.Render("~/bundles/jqueryui")*@
     @*@Scripts.Render("~/bundles/bootstrapSPFS")
         @Scripts.Render("~/bundles/bootstrapSelect")*@
@@ -58,7 +59,7 @@
                                     </a>
                                     <ul class="dropdown-menu">
                                         <li>@Html.ActionLink("Ratings Manual", "Index", "Ratings", null, new { isUpload = false })</li>
-                                        <li>@Html.ActionLink("Ratings Upload", "Index", "ExcelUpload", null, new { isUpload = true })</li>
+                                        <li>@Html.ActionLink("Ratings Upload", "Index", "ExcelUpload", null, new { isUpload = true})</li>
                                     </ul>
                                 </li>
                             }
@@ -158,191 +159,256 @@
             </h4>
         </div>
     </div>
-    @Scripts.Render("~/bundles/bootstrap")
 
-    <script type="text/javascript">
+    <div id="dialog" title="Alert message" style="display: none">
+        <div class="ui-dialog-content ui-widget-content">
+            <p>
+                <span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0"></span>
+                <label id="lblMessage">
+                </label>
+            </p>
+        </div>
+    </div>
 
-        function OnBeginPostBack_Save(sender) {
-            var form = $(sender).parents('form');
+    @*<div id="ajaxLoaderDiv" style="position:fixed; top:40%; left:45%; z-index:1234; display:none;"></div>*@
+        @*@Scripts.Render("~/bundles/bootstrap")*@
 
-            if (form.valid()) {
-                $("#dlgsave").dialog('open');
-               
-            }
-        }
-        function OnBeginPostBack_Search(sender) {
-            var form = $(sender).parents('form');
+        <script type="text/javascript">
+            @*function showPageLoadingSpinner() {
+                $('#ajaxLoaderDiv').show();
+                $('#ajaxLoaderDiv').append(
+                           '<img src="@Url.Content("~/Images/ajax-loader.gif")" alt="Loading..."class="ajax-loader" />'
+                );
+            }*@
+            function ShowDialogBox(title, content, btn1text, btn2text, functionText, parameterList) {
+                var btn1css;
+                var btn2css;
 
-            if (form.valid()) {
-                $("#dlgmodal").dialog('open');
-
-            }
-        }
-        function OnBeginPostBack_Upload(sender) {
-            var form = $(sender).parents('form');
-
-            if (form.valid()) {
-             
-                $("#dlgupload").dialog('open');
-            }
-        }
-        function OnBeginPostBack_Submit(sender) {
-            var form = $(sender).parents('form');
-
-            if (form.valid()) {
-
-                $("#dlgsubmit").dialog('open');
-            }
-        }
-        function OnBeginPostBack_Merge(sender) {
-            var form = $(sender).parents('form');
-
-            if (form.valid()) {
-
-                $("#dlgmerge").dialog('open');
-            }
-        }
-       
-        $(document).ready(function () {
-            $("#dlgmodal").dialog({
-                autoOpen: false,
-                resizable: false,
-                width: "auto",
-                height: "auto",
-                show: { effect: 'drop', direction: "up" },
-                modal: true,
-                draggable: true,
-                open: function (event, ui) {
-                    $(".ui-dialog-titlebar").hide();
-                    $(".ui-dialog-titlebar-close").hide();
+                if (btn1text == '') {
+                    btn1css = "hidecss";
+                } else {
+                    btn1css = "showcss";
                 }
-            });
 
-            $("#dlgsave").dialog({
-                autoOpen: false,
-                resizable: false,
-                width: "auto",
-                height: "auto",
-                show: { effect: 'drop', direction: "up" },
-                modal: true,
-                draggable: true,
-                open: function (event, ui) {
-                    $(".ui-dialog-titlebar").hide();
-                    $(".ui-dialog-titlebar-close").hide();
+                if (btn2text == '') {
+                    btn2css = "hidecss";
+                } else {
+                    btn2css = "showcss";
                 }
-            });
-            $("#dlgupload").dialog({
-                autoOpen: false,
-                resizable: false,
-                width: "auto",
-                height: "auto",
-                show: { effect: 'drop', direction: "up" },
-                modal: true,
-                draggable: true,
-                open: function (event, ui) {
-                    $(".ui-dialog-titlebar").hide();
-                    $(".ui-dialog-titlebar-close").hide();
+                $("#lblMessage").html(content);
+
+                $("#dialog").dialog({
+                    resizable: false,
+                    title: title,
+                    modal: true,
+                    width: '400px',
+                    height: 'auto',
+                    bgiframe: false,
+                    hide: { effect: 'scale', duration: 400 },
+
+                    buttons: [
+                                    {
+                                        text: btn1text,
+                                        "class": btn1css,
+                                        click: function () {
+
+                                            $("#dialog").dialog('close');
+
+                                        }
+                                    },
+                                    {
+                                        text: btn2text,
+                                        "class": btn2css,
+                                        click: function () {
+                                            $("#dialog").dialog('close');
+                                        }
+                                    }
+                    ]
+                });
+            }
+
+
+            function OnBeginPostBack_Save(sender) {
+                var form = $(sender).parents('form');
+
+                if (form.valid()) {
+                    $("#dlgsave").dialog('open');
+
                 }
-            });
-            $("#dlgmerge").dialog({
-                autoOpen: false,
-                resizable: false,
-                width: "auto",
-                height: "auto",
-                show: { effect: 'drop', direction: "up" },
-                modal: true,
-                draggable: true,
-                open: function (event, ui) {
-                    $(".ui-dialog-titlebar").hide();
-                    $(".ui-dialog-titlebar-close").hide();
+            }
+            function OnBeginPostBack_Search(sender) {
+                var form = $(sender).parents('form');
+
+                if (form.valid()) {
+                    $("#dlgmodal").dialog('open');
+
                 }
-            });
-            $("#dlgsubmit").dialog({
-                autoOpen: false,
-                resizable: false,
-                width: "auto",
-                height: "auto",
-                show: { effect: 'drop', direction: "up" },
-                modal: true,
-                draggable: true,
-                open: function (event, ui) {
-                    $(".ui-dialog-titlebar").hide();
-                    $(".ui-dialog-titlebar-close").hide();
+            }
+            function OnBeginPostBack_Upload(sender) {
+                var form = $(sender).parents('form');
+
+                if (form.valid()) {
+
+                    $("#dlgupload").dialog('open');
                 }
-            });
-            
-        });
+            }
+            function OnBeginPostBack_Submit(sender) {
+                var form = $(sender).parents('form');
 
-        $(function () {
-            var targets = $('[rel~=tooltip]'),
-                target = false,
-                tooltip = false,
-                title = false;
+                if (form.valid()) {
 
-            targets.bind('mouseenter', function () {
-                target = $(this);
-                tip = target.attr('title');
-                tooltip = $('<div id="tooltip"></div>');
+                    $("#dlgsubmit").dialog('open');
+                }
+            }
+            function OnBeginPostBack_Merge(sender) {
+                var form = $(sender).parents('form');
 
-                if (!tip || tip == '')
-                    return false;
+                if (form.valid()) {
 
-                target.removeAttr('title');
-                tooltip.css('opacity', 0)
-                       .html(tip)
-                       .appendTo('body');
+                    $("#dlgmerge").dialog('open');
+                }
+            }
 
-                var init_tooltip = function () {
-                    if ($(window).width() < tooltip.outerWidth() * 1.5)
-                        tooltip.css('max-width', $(window).width() / 2);
-                    else
-                        tooltip.css('max-width', 340);
-
-                    var pos_left = target.offset().left + (target.outerWidth() / 2) - (tooltip.outerWidth() / 2),
-                        pos_top = target.offset().top - tooltip.outerHeight() - 20;
-
-                    if (pos_left < 0) {
-                        pos_left = target.offset().left + target.outerWidth() / 2 - 20;
-                        tooltip.addClass('left');
+            $(document).ready(function () {
+                $("#dlgmodal").dialog({
+                    autoOpen: false,
+                    resizable: false,
+                    width: "auto",
+                    height: "auto",
+                    show: { effect: 'drop', direction: "up" },
+                    modal: true,
+                    draggable: true,
+                    open: function (event, ui) {
+                        $(".ui-dialog-titlebar").hide();
+                        $(".ui-dialog-titlebar-close").hide();
                     }
-                    else
-                        tooltip.removeClass('left');
+                });
 
-                    if (pos_left + tooltip.outerWidth() > $(window).width()) {
-                        pos_left = target.offset().left - tooltip.outerWidth() + target.outerWidth() / 2 + 20;
-                        tooltip.addClass('right');
+                $("#dlgsave").dialog({
+                    autoOpen: false,
+                    resizable: false,
+                    width: "auto",
+                    height: "auto",
+                    show: { effect: 'drop', direction: "up" },
+                    modal: true,
+                    draggable: true,
+                    open: function (event, ui) {
+                        $(".ui-dialog-titlebar").hide();
+                        $(".ui-dialog-titlebar-close").hide();
                     }
-                    else
-                        tooltip.removeClass('right');
-
-                    if (pos_top < 0) {
-                        var pos_top = target.offset().top + target.outerHeight();
-                        tooltip.addClass('top');
+                });
+                $("#dlgupload").dialog({
+                    autoOpen: false,
+                    resizable: false,
+                    width: "auto",
+                    height: "auto",
+                    show: { effect: 'drop', direction: "up" },
+                    modal: true,
+                    draggable: true,
+                    open: function (event, ui) {
+                        $(".ui-dialog-titlebar").hide();
+                        $(".ui-dialog-titlebar-close").hide();
                     }
-                    else
-                        tooltip.removeClass('top');
+                });
+                $("#dlgmerge").dialog({
+                    autoOpen: false,
+                    resizable: false,
+                    width: "auto",
+                    height: "auto",
+                    show: { effect: 'drop', direction: "up" },
+                    modal: true,
+                    draggable: true,
+                    open: function (event, ui) {
+                        $(".ui-dialog-titlebar").hide();
+                        $(".ui-dialog-titlebar-close").hide();
+                    }
+                });
+                $("#dlgsubmit").dialog({
+                    autoOpen: false,
+                    resizable: false,
+                    width: "auto",
+                    height: "auto",
+                    show: { effect: 'drop', direction: "up" },
+                    modal: true,
+                    draggable: true,
+                    open: function (event, ui) {
+                        $(".ui-dialog-titlebar").hide();
+                        $(".ui-dialog-titlebar-close").hide();
+                    }
+                });
 
-                    tooltip.css({ left: pos_left, top: pos_top })
-                           .animate({ top: '+=10', opacity: 1 }, 50);
-                };
-
-                init_tooltip();
-                $(window).resize(init_tooltip);
-
-                var remove_tooltip = function () {
-                    tooltip.animate({ top: '-=10', opacity: 0 }, 50, function () {
-                        $(this).remove();
-                    });
-
-                    target.attr('title', tip);
-                };
-
-                target.bind('mouseleave', remove_tooltip);
-                tooltip.bind('click', remove_tooltip);
             });
-        });
-    </script>
-    @RenderSection("scripts", required: false)
+
+            $(function () {
+                var targets = $('[rel~=tooltip]'),
+                    target = false,
+                    tooltip = false,
+                    title = false;
+
+                targets.bind('mouseenter', function () {
+                    target = $(this);
+                    tip = target.attr('title');
+                    tooltip = $('<div id="tooltip"></div>');
+
+                    if (!tip || tip == '')
+                        return false;
+
+                    target.removeAttr('title');
+                    tooltip.css('opacity', 0)
+                           .html(tip)
+                           .appendTo('body');
+
+                    var init_tooltip = function () {
+                        if ($(window).width() < tooltip.outerWidth() * 1.5)
+                            tooltip.css('max-width', $(window).width() / 2);
+                        else
+                            tooltip.css('max-width', 340);
+
+                        var pos_left = target.offset().left + (target.outerWidth() / 2) - (tooltip.outerWidth() / 2),
+                            pos_top = target.offset().top - tooltip.outerHeight() - 20;
+
+                        if (pos_left < 0) {
+                            pos_left = target.offset().left + target.outerWidth() / 2 - 20;
+                            tooltip.addClass('left');
+                        }
+                        else
+                            tooltip.removeClass('left');
+
+                        if (pos_left + tooltip.outerWidth() > $(window).width()) {
+                            pos_left = target.offset().left - tooltip.outerWidth() + target.outerWidth() / 2 + 20;
+                            tooltip.addClass('right');
+                        }
+                        else
+                            tooltip.removeClass('right');
+
+                        if (pos_top < 0) {
+                            var pos_top = target.offset().top + target.outerHeight();
+                            tooltip.addClass('top');
+                        }
+                        else
+                            tooltip.removeClass('top');
+
+                        tooltip.css({ left: pos_left, top: pos_top })
+                               .animate({ top: '+=10', opacity: 1 }, 50);
+                    };
+
+                    init_tooltip();
+                    $(window).resize(init_tooltip);
+
+                    var remove_tooltip = function () {
+                        tooltip.animate({ top: '-=10', opacity: 0 }, 50, function () {
+                            $(this).remove();
+                        });
+
+                        target.attr('title', tip);
+                    };
+
+                    target.bind('mouseleave', remove_tooltip);
+                    tooltip.bind('click', remove_tooltip);
+                });
+            });
+        </script>
+        @RenderSection("scripts", required: false)
 
 
 </body>

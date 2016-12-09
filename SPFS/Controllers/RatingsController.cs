@@ -35,7 +35,7 @@ namespace SPFS.Controllers
             ratingsViewModel.Year = DateTime.Now.Year;
 
             CreateListViewBags();
-            ViewBag.Suppliers = selectSuppliers;
+            ViewBag.Suppliers = selectSuppliers.Select(r => new SelectListItem { Text = r.Text + " CID:" + r.Value, Value = r.Value }).ToList(); 
             ViewBag.ShowResult = false;
             return View(ratingsViewModel);
         }
@@ -110,8 +110,23 @@ namespace SPFS.Controllers
             }
 
             CreateListViewBags();
-            ViewBag.Suppliers = selectSuppliers;
+           // ViewBag.Suppliers = selectSuppliers;
             ratingModel.RatingRecords = IncidentSpendOrder(ratingModel);
+
+            var rateSuppliers = ratingModel.RatingRecords.Select(r => new SelectListItem { Text = r.SupplierName + " CID:" + r.CID, Value = r.CID.ToString() }).ToList();
+            var modifiedlist = selectSuppliers.Select(r => new SelectListItem { Text = r.Text + " CID:" + r.Value, Value = r.Value }).ToList();
+            ViewBag.RatingSuppliers = rateSuppliers;
+            var NotinListSuppliers = (from fulllist in modifiedlist
+                                      where !(rateSuppliers.Any(i => i.Value == fulllist.Value))
+                                      select fulllist).ToList();
+            if (NotinListSuppliers != null)
+            {
+                ViewBag.Suppliers = NotinListSuppliers;
+            }
+            else
+            {
+                ViewBag.Suppliers = modifiedlist;
+            }
             //if(ratingModel.RatingRecords.Count > 0)
             //{
             //    ViewBag.NewSite = false;
@@ -231,6 +246,9 @@ namespace SPFS.Controllers
             //RatingModel.RatingRecords = Records;
 
             //return PartialView("_AppendRow", RatingModel);
+            var rateSuppliers = RatingModel.RatingRecords.Select(r => new SelectListItem { Text = r.SupplierName + " CID:" + r.CID, Value = r.CID.ToString() }).ToList();
+            ViewBag.RatingSuppliers = rateSuppliers;
+            
             return PartialView("_SupplierRatings", RatingModel);
         }
 
@@ -278,6 +296,28 @@ namespace SPFS.Controllers
                 }
             }
             return Rec;
+        }
+
+        [HttpPost]
+        [MultipleSubmitAttribute(Name = "action", Argument = "SaveData")]
+        public ActionResult SaveData(RatingsViewModel ratingModel)
+        {
+
+
+
+            return View("Index", ratingModel);
+
+        }
+
+        [HttpPost]
+        [MultipleSubmitAttribute(Name = "action", Argument = "SubmitData")]
+        public ActionResult SubmitData(RatingsViewModel ratingModel)
+        {
+
+
+
+            return View("Index", ratingModel);
+
         }
     }
 }

@@ -99,7 +99,7 @@
                         </span>
                     </div>
                     <div class="col-md-2">
-                        <button type="button" class="btn btn-primary btnOK">
+                        <button type="button" class="btn btn-primary btnOK"  disabled>
                             <span class="glyphicon glyphicon-floppy-save"></span>
                             <span>OK</span>
                         </button>
@@ -163,73 +163,118 @@
                $('#popSup').css("visibility", "visible");
                 $("#popSup").dialog('option', 'title', "Select Supplier");
                 $("#popSup").dialog("open");
-
+                $('.btnOK').prop('disabled', true);
             });
 
-            $('.btnAdd').bind("click", function () {
-               $('#popSup').css("visibility", "visible");
-                $("#popSup").dialog('option', 'title', "Select Supplier");
-                $("#popSup").dialog("open");
+            //$('.btnAdd').bind("click", function () {
+            //   $('#popSup').css("visibility", "visible");
+            //    $("#popSup").dialog('option', 'title', "Select Supplier");
+            //    $("#popSup").dialog("open");
 
-            });
+            //});
 
             $('.btnOK').bind("click", function () {
                 var selectedText = $("#selectSupplierID").find("option:selected").text();
                 var selectedValue = $("#selectSupplierID").val();
-
-                $.ajax({
-                    url: '@Url.Action("AddRowReload", "ExcelUpload")',
-                    //Passes the content of an input up
-                    data: { CID: selectedValue }, //,SiteID:siteId,count:cont
-                    contentType: "application/json; charset=utf-8",
-                    type: 'GET',
-                    cache: false,
-                    async: false,
-                    success: function (data) {
-                        $('#output').children().remove();
-                        $('#output').html(data);
-
-                          $("#popSup").closest('.ui-dialog-content').dialog("close");
-                    },
-                    error: function(ts) { alert(ts.responseText) }
-                });
-
-            });
-        @*function AddRow(CID) {
-
-            //$("#dlgmodal").dialog('open');
-            //$('#dlgmodal span').text('Adding ...');
-            var url = '@Url.Action("SupplierToRate", "Ratings")';
-            $.ajax({
-                type: "GET",
-                url: url,
-                data: { CID: CID, RatingModel:@Model },
-                success: function (data) {
-
+                var tableRow = $("#ratings tr td:nth-child(1)").filter(function () {
+                    return $(this).is(":contains('" + selectedValue + "')");
+                }).closest("tr");
+                if (tableRow.length > 0) {
+                    $("#ratings").find('tr').removeClass('active');
+                    var oldrec = $("#selectedCid").closest('tr').attr("id", "");
                     $("#popSup").closest('.ui-dialog-content').dialog("close");
+                    ShowDialogBox('Warning', 'Supplier exists please check.', 'Ok', '', '', null);
+                    var row = tableRow.addClass('active');
+                    row.attr("id", "selectedCid");
 
-                },
-                complete:
-                  function (jqXHR, textStatus) {
-                      //$("#dlgmodal").closest('.ui-dialog-content').dialog("close");
-                  },
-                error: function (data) {
+                    var container = $('tbody');
+                    var scrollTo = $('#selectedCid');
 
+                    container.animate({
+                        scrollTop: (scrollTo.offset().top - 30) - container.offset().top + container.scrollTop()
+                    });
                 }
+                else {
+                    $.ajax({
+                        url: '@Url.Action("AddRowReload", "ExcelUpload")',
+                        //Passes the content of an input up
+                        data: { CID: selectedValue }, //,SiteID:siteId,count:cont
+                        contentType: "application/json; charset=utf-8",
+                        type: 'GET',
+                        cache: false,
+                        dataType: 'html',
+                        async: false,
+                        success: function (data) {
+                            var finaltext = selectedText + " Added to list";
+                           
+                            $("#selectSupplierID").find("option:selected").prop('selected', false);
+                            $('#output').children().remove();
+                            $('#output').html(data);
+                            $('.btnOK').prop('disabled', true);
+                            $("#popSup").closest('.ui-dialog-content').dialog("close");
+                            $('#RatingSuppliers').selectpicker('refresh');
+                        },
+                        error: function (ts) { alert(ts.responseText) }
+                    });
+                }
+
             });
-        }
-        //Will refresh
 
-        $('#SelectSupplierID').change(function () {
-            var CID = $("#SelectSupplierID option:selected").val();
-            if (CID != "") {
-
-                $(this).valid();
-                AddRow(CID);
-
+        $('#selectSupplierID').change(function () {
+            //debugger
+            if ($('#selectSupplierID').val() == '') {
+                $('.btnOK').prop('disabled', true);
+            } else {
+                $('.btnOK').prop('disabled', false);
             }
 
-        });*@
+        });
+        $('#selectSupplierID').val('').trigger('change');
+
+       
+        $('#RatingSuppliers').change(function () {
+            
+            var cid = $("#RatingSuppliers option:selected").val();
+            if (cid != "") {
+                $("#ratings").find('tr').removeClass('active');
+                var oldrec = $("#selectedCid").closest('tr').attr("id", "");
+                //oldrec.attr("id", "");
+                var tableRow = $("#ratings tr td:nth-child(1)").filter(function () {
+                    return $(this).is(":contains('"+ cid +"')");
+                   }).closest("tr");
+                var row = tableRow.addClass('active');
+               
+                row.attr("id", "selectedCid");
+                //$(".active").scrollIntoView();
+                var container = $('tbody');
+                var scrollTo = $('#selectedCid');
+
+               
+                container.animate({
+                    scrollTop: (scrollTo.offset().top-30) - container.offset().top + container.scrollTop()
+                });
+               
+
+                //var rowid = row.attr('id');
+                //$("#selectRow" + rowid + "").scrollIntoView();
+               
+
+                //tableRow.addClass('active');
+               //var table = $('table');
+               ////var row= tableRow.addClass('active');
+               // //var w = $(window);
+               // var row = $("#ratings").find('tr')
+               //           .removeClass('active')
+               //           .is(":contains('"+ cid +"')")
+               //           .addClass('active');
+                //var w = $("#ratings");
+                //if (row.length) {
+                //    w.scrollTop(row.offset().top - (w.height() / 2));
+                //}
+            }
+
+        });
+     
         $('#popSup').dialog({
             autoOpen: false,
             width: 600,
@@ -242,5 +287,34 @@
             }
         });
     });
+    $(document).ajaxComplete(function () {
+       
 
+        $('#RatingSuppliers').change(function () {
+
+            var cid = $("#RatingSuppliers option:selected").val();
+            if (cid != "") {
+                $("#ratings").find('tr').removeClass('active');
+                var oldrec = $("#selectedCid").closest('tr').attr("id", "");
+                //oldrec.attr("id", "");
+                var tableRow = $("#ratings tr td:nth-child(1)").filter(function () {
+                    return $(this).is(":contains('" + cid + "')");
+                }).closest("tr");
+                var row = tableRow.addClass('active');
+
+                row.attr("id", "selectedCid");
+                //$(".active").scrollIntoView();
+                var container = $('tbody');
+                var scrollTo = $('#selectedCid');
+
+
+                container.animate({
+                    scrollTop: (scrollTo.offset().top - 30) - container.offset().top + container.scrollTop()
+                });
+
+
+            }
+
+        });
+    });
 </script>

@@ -441,7 +441,22 @@ namespace SPFS.Controllers
             RatingsViewModel rating = new RatingsViewModel();
             rating = Merge(RatingModel);
             TempData["SearchedResults"] =rating;
-            ViewBag.Suppliers = selectSuppliers;
+           
+            var rateSuppliers = rating.RatingRecords.Select(r => new SelectListItem { Text=r.SupplierName +" CID:"+ r.CID,Value=r.CID.ToString()}).ToList();
+            var modifiedlist = selectSuppliers.Select(r => new SelectListItem { Text = r.Text + " CID:" + r.Value, Value = r.Value }).ToList();
+            ViewBag.RatingSuppliers = rateSuppliers;
+            var NotinListSuppliers = (from fulllist in modifiedlist
+                                      where !(rateSuppliers.Any(i => i.Value == fulllist.Value))
+                                      select fulllist).ToList();
+            if (NotinListSuppliers != null)
+            {
+                ViewBag.Suppliers = NotinListSuppliers;
+            }
+            else
+            {
+                ViewBag.Suppliers = modifiedlist;
+            }
+           // ViewBag.Suppliers = modifiedlist;
             return View("UploadIndex", rating);
         }      
     
@@ -530,6 +545,8 @@ namespace SPFS.Controllers
             //RatingModel.RatingRecords = Records;
 
             //return PartialView("_AppendRow", RatingModel);
+            var rateSuppliers = RatingModel.RatingRecords.Select(r => new SelectListItem { Text = r.SupplierName + " CID:" + r.CID, Value = r.CID.ToString() }).ToList();
+            ViewBag.RatingSuppliers = rateSuppliers;
             return PartialView("_SupplierRatings", RatingModel);
         }
 
@@ -587,6 +604,7 @@ namespace SPFS.Controllers
                                     {
                                         CID = g.Key,
                                         DUNS = g.First().DUNS,
+                                        SupplierName= selectSuppliers.Where(s=>s.Value ==g.Key.ToString()).First().Text,
                                         Gdis_org_entity_ID = g.First().Gdis_org_entity_ID,
                                         Inbound_parts = g.Sum(s => s.Inbound_parts),
                                         OTD = g.Sum(s => s.OTD),

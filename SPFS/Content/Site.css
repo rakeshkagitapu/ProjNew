@@ -316,7 +316,10 @@ table .header-fixed {
        
         
     }
-    
+    .fixed_headers tr.active{
+    color: #3c763d;
+    background-color: #dff0d8;
+    border-color: #d6e9c6;}
     .fixed_headers td {
         padding: 1px;
        
@@ -441,3 +444,5 @@ table .header-fixed {
 .lefttext{
     float:right;
 }
+  .showcss{ display:block;}
+  .hidecss{ display:none;}
