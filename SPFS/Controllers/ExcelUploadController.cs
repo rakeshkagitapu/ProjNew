@@ -96,13 +96,14 @@ namespace SPFS.Controllers
                 if (util.GetCurrentUser().RoleID == 1)
                 {
                     sites = (from ste in UserRep.Context.SPFS_SITES
+                             where ste.SPFS_Active==true
                              select new SelectListItem { Value = ste.SiteID.ToString(), Text = ste.Name }).ToList();
                 }
                 else
                 {
                     sites = (from ste in UserRep.Context.SPFS_SITES
                              join uste in UserRep.Context.SPFS_USERSITES on ste.SiteID equals uste.SiteID
-                             where uste.UserID == userID
+                             where uste.UserID == userID && ste.SPFS_Active == true
                              select new SelectListItem { Value = ste.SiteID.ToString(), Text = ste.Name }).ToList();
                 }
 

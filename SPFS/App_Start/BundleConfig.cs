@@ -39,10 +39,8 @@ namespace SPFS
                       "~/Content/bootstrap.css",
                       "~/Content/site.css"));
 
-            //bundles.Add(new ScriptBundle("~/bundles/bootstrapSPFS").Include(
-            //           "~/Scripts/jquery.bootstrap-duallistbox.js",
-            //         "~/Scripts/jquery.bootstrap-duallistbox.min.js"
-            //      ));
+            bundles.Add(new ScriptBundle("~/bundles/tooltip").Include(
+                       "~/Scripts/tooltip.js"));
             //bundles.Add(new ScriptBundle("~/bundles/bootstrapSelect").Include(
             //           "~/Scripts/bootstrap-select.js",
             //             "~/Scripts/bootstrap-select.min.js"

@@ -29,7 +29,7 @@ namespace SPFS.Controllers
             using (Repository SteRep = new Repository())
             {
                 siteIds = (from sit in SteRep.Context.SPFS_USERSITES
-                           where sit.UserID == userId
+                           where sit.UserID == userId 
                            select sit.SiteID).ToList();
             }
             viewModel.SelectedSiteIDs = siteIds;
@@ -43,8 +43,10 @@ namespace SPFS.Controllers
             using (Repository UserRep = new Repository())
             {
                 sites = (from ste in UserRep.Context.SPFS_SITES
+                         where ste.SPFS_Active == true
                          select new SelectListItem { Value = ste.SiteID.ToString(), Text = ste.Name }).ToList();
                 users = (from usr in UserRep.Context.SPFS_USERS
+                         where usr.SPFS_Active == true
                          select new SelectListItem { Value = usr.UserID.ToString(), Text = usr.UserName }).ToList();
             }
             ViewBag.Users = users;

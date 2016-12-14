@@ -63,6 +63,8 @@
 
     if (ViewBag.ShowResult)
     {
+        if (!ViewBag.OldResults)
+        {
         <div id="output" class="col-md-12">
             @Html.Partial("_SupplierRatings", Model)
         </div>
@@ -98,13 +100,44 @@
             </div>
 
         </div>
+        }
+        else
+        {
+            <div id="output" class="col-md-12">
+                @Html.Partial("_SupplierRatingsOld", Model)
+            </div>
+
+            <br />
+            <div class="row col-md-12">
+               
+                <div class="pull-right">
+                    <a href="@Url.Action("Index", "Home")" class="btn btn-danger" onclick="return confirm('Are you sure, all data will be lost')">
+                        <span class="glyphicon glyphicon-remove"></span> Cancel
+                    </a>
+                    <a href="@Url.Action("Index", "Ratings")" class="btn btn-warning" onclick="return confirm('Are you sure, all data will be lost')">
+                        <span class="glyphicon glyphicon-remove-sign"></span> Clear
+                    </a>
+                 
+                </div>
+
+            </div>
+        }
+
     }
     else
     {
+        if (ViewBag.EditMode)
+        {
         <h2>Select location and month and clickon search to show ratings </h2>
+        }
+        else
+        {
+            <div class="alert alert-warning"><strong>Info!</strong> There are no records found for this Search Criteria.</div>
+        }
     }
 
-
+    if (ViewBag.EditMode)
+    {
     <div id="popSup" style="overflow: auto;visibility:hidden">
 
         <div class="row col-md-12" style="margin-top: 10px">
@@ -140,6 +173,7 @@
         </div>
 
     </div>
+    }
 
 
 }

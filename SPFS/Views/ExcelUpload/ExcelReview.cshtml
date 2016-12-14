@@ -163,7 +163,7 @@
             $("#popm3").dialog("open");
 
         });
-
+        var Pcount = 0;
         var Ucount = 0;
         $('.btnOKNotes').bind("click", function () {
 
@@ -196,9 +196,15 @@
                     supplierRow.cells[7].innerHTML = spanstring;
 
                     Ucount++;
-
-                    var jcount = parseInt($("#ErrorCount").attr('value'), 10);
-                    jcount = jcount - Ucount;
+                    if (Pcount <= 0) {
+                        var jcount = parseInt($("#ErrorCount").attr('value'), 10);
+                        jcount = jcount - Ucount;
+                        Pcount = jcount;
+                    }
+                    else {
+                        var jcount = Pcount - Ucount;
+                        Pcount = jcount;
+                    }
 
                     if (jcount > 0) {
                         $("#ErrorCount").html(" <strong>Warning!</strong> there are " + jcount + " error record(s) in this Upload now.");
@@ -220,12 +226,13 @@
         $(document).ready(function(){
                $("#errortable").on('click','.btnRemove',function(){
                    if (confirm('Are you sure you want to Remove?')) {
-       
+                       debugger
                        $(this).closest('tr').remove();
                        $('#tooltip').remove();
                        var rowIndex = $(this).attr('data-RowId');
                        rowID = rowIndex;
                        $.ajax({
+                         
                            url: '@Url.Action("RemoveRecord", "ExcelUpload")',
                            //Passes the content of an input up
                            //data: { Rowid: rowID ,SiteID: siteID,Month:month,Year:year },
@@ -236,13 +243,20 @@
                            //async: false,
                            success: function (data) {
                    
-                   
+                               debugger
                                Rcount++;
 
-                               var jcount = parseInt($("#ErrorCount").attr('value'), 10);
-                               jcount = jcount - Rcount;
+                               if (Pcount <= 0) {
+                                   var jcount = parseInt($("#ErrorCount").attr('value'), 10);
+                                   jcount = jcount - Rcount;
+                                   Pcount = jcount;
+                               }
+                               else {
+                                   var jcount = Pcount - Rcount;
+                                   Pcount = jcount;
+                               }
                     
-
+                               
                                if (jcount > 0) {
                                    $("#ErrorCount").html(" <strong>Warning!</strong> there are " + jcount + " error record(s) in this Upload now.");
 

@@ -479,7 +479,7 @@
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
-    <Content Include="Scripts\table-fixed-header.js" />
+    <Content Include="Scripts\tooltip.js" />
     <Content Include="Scripts\_references.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
@@ -539,7 +539,7 @@
     <Content Include="Views\Shared\_SupplierRatings.cshtml" />
     <Content Include="Views\ExcelUpload\UploadIndex.cshtml" />
     <Content Include="Views\Shared\_AppendRow.cshtml" />
-    <Content Include="Views\Shared\_SupplierRatingsNew.cshtml" />
+    <Content Include="Views\Shared\_SupplierRatingsOld.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
