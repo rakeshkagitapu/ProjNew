@@ -538,7 +538,7 @@
     <Content Include="Views\ExcelUpload\_SelectSupplier.cshtml" />
     <Content Include="Views\Shared\_SupplierRatings.cshtml" />
     <Content Include="Views\ExcelUpload\UploadIndex.cshtml" />
-    <Content Include="Views\Shared\_AppendRow.cshtml" />
+    <Content Include="Views\Shared\_AddSupplier.cshtml" />
     <Content Include="Views\Shared\_SupplierRatingsOld.cshtml" />
   </ItemGroup>
   <ItemGroup>

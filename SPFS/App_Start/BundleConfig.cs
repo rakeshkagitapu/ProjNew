@@ -27,8 +27,8 @@ namespace SPFS
             bundles.Add(new ScriptBundle("~/bundles/bootstrap").Include(
                       "~/Scripts/jquery-ui-{version}.js",
                       "~/Scripts/bootstrap.js",
-                      "~/Scripts/jquery.bootstrap-duallistbox.min.js",
-                       "~/Scripts/bootstrap-select.min.js",
+                      "~/Scripts/jquery.bootstrap-duallistbox.js",
+                       "~/Scripts/bootstrap-select.js",
                       "~/Scripts/respond.js"
                       ));
 

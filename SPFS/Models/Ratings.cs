@@ -23,6 +23,19 @@ namespace SPFS.Models
         [Display(Name = "Entry Type:")]
         public bool isUpload { get; set; }
         public virtual List<RatingRecord> RatingRecords { get; set; }
+
+        public bool IsCurrentRatings { get; set; }
+        public bool IsStagingRatings { get; set; }
+        public bool IsPreviousRatings { get; set; }
+        public bool IsPreviousStagingRatings { get; set; }
+
+        public bool IsAlert { get; set; }
+
+        public bool EditMode { get; set; }
+
+        public bool ShowResult { get; set; }
+
+        public bool OldResults { get; set; }
     }
     public class ExcelRatingsViewModel : RatingsViewModel
     {

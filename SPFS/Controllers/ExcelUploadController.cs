@@ -60,7 +60,8 @@ namespace SPFS.Controllers
             ExcelRatingsViewModel ratingsViewModel = new ExcelRatingsViewModel { SiteID = SiteID, isUpload = isUpload };
             ratingsViewModel.Month = DateTime.Now.Month - 1;
             ratingsViewModel.Year = DateTime.Now.Year;
-
+            ratingsViewModel.ShowResult = false;
+            ratingsViewModel.EditMode = true;
             CreateListViewBags();
 
             return View(ratingsViewModel);
@@ -351,40 +352,179 @@ namespace SPFS.Controllers
         [MultipleSubmitAttribute(Name = "action", Argument = "Search")]
         public ActionResult Search(ExcelRatingsViewModel ratingModel)
         {
-            ExcelRatingsViewModel excelViewModel = new ExcelRatingsViewModel();
-            var historicalRecords = new List<HistoricalRecordsCheck>();
             DateTime date = new DateTime(ratingModel.Year, ratingModel.Month, 01);
-            Utilities util = new Utilities();
+            DateTime current = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 01);
+           
+            if (current.AddMonths(-4) < date)
+            {
+                int CheckingDate = Convert.ToInt32("" + ratingModel.Year + ratingModel.Month.ToString().PadLeft(2, '0'));
+                List<RatingRecord> StagingRecords = new List<RatingRecord>();
+                List<RatingRecord> CurrentRecords = new List<RatingRecord>();
+                List<RatingRecord> PreviousMonthRecords = new List<RatingRecord>();
+                List<RatingRecord> PreviousMonthRecordsStaging = new List<RatingRecord>();
+                
+                using (Repository Rep = new Repository())
+                {
+                    CurrentRecords = ProdRecords(ratingModel, CheckingDate, Rep);
+                    int CurrentCount = CurrentRecords != null ? CurrentRecords.Count : 0;
+                    if (CurrentCount <= 0)
+                    {
+                        StagingRecords = StageRecords(ratingModel, CheckingDate, Rep);
+
+                        if (StagingRecords.Count > 0)
+                        {
+                            ratingModel.IsStagingRatings = true;
+                            ratingModel.IsAlert = true;
+                            ViewBag.alertmsg = "Data exists for this rating period that has <strong>Not</strong> been <strong>Submitted</strong> Do you wish to <strong>Upload</strong> again";
+                            //There are existing records submitted for this month
+                            //display data from staging
+                            CreateListViewBags();
+                            ratingModel.ShowResult = false;
+                            ratingModel.EditMode = false;
+                            TempData["SearchedResults"] = ratingModel;
+                            return View("Index", ratingModel);
+                        }
+                        else
+                        {
+                            if (current.AddMonths(-1) <= date)
+                            {
+                                int CheckingDate_Previous = Convert.ToInt32("" + date.Year + (date.Month - 1).ToString().PadLeft(2, '0'));
+
+                                PreviousMonthRecords = ProdRecords(ratingModel, CheckingDate_Previous, Rep);
+
+                                if (PreviousMonthRecords.Count > 0)
+                                {
+                                    //Allow Upload
+                                    ratingModel.IsPreviousRatings = true;
+                                    ratingModel.ShowResult = true;
+                                    ratingModel.EditMode = true;
+                                    ViewBag.divmsg = "Last month data check was succesfull";
+                                    CreateListViewBags();
+                                    TempData["SearchedResults"] = ratingModel;
+                                    return View("Index", ratingModel);
+                                }
+                                else
+                                {
+                                    PreviousMonthRecordsStaging = StageRecords(ratingModel, CheckingDate_Previous, Rep);
+
+                                    if (PreviousMonthRecordsStaging.Count > 0)
+                                    {
+                                        //you havent submitted last months data. would you like to finish
+                                        //Yes - Load last months data
+                                        //No - Continue with current ratings
+                                        ratingModel.IsAlert = true;
+                                        ratingModel.IsPreviousStagingRatings = true;
+                                        ViewBag.alertmsg = "Data exists for last ratings period which has <strong>Not</strong> been <strong>Submitted!</strong>";
+                                        CreateListViewBags();
+                                        ratingModel.ShowResult = false;
+                                        ratingModel.EditMode = false;
+                                        TempData["SearchedResults"] = ratingModel;
+                                        return View("Index", ratingModel);
+                                    }
+                                    else
+                                    {
+                                        //Allow Upload
+                                        ratingModel.ShowResult = true;
+                                        ratingModel.EditMode = true;
+                                        CreateListViewBags();
+                                        TempData["SearchedResults"] = ratingModel;
+                                        return View("Index", ratingModel);
+                                    }
+
+                                }
+                            }
+                            else
+                            {
+                                //Allow Upload
+                                ratingModel.ShowResult = true;
+                                ratingModel.EditMode = true;
+                                ViewBag.divmsg = "This is not current period";
+                                CreateListViewBags();
+                                TempData["SearchedResults"] = ratingModel;
+                                return View("Index", ratingModel);
+                               
+                                
+                            }
+                        }
+                    }
+                    else
+                    {
+                        //data exists for you and any changes will overwrite existing data. Press clear to stop editing submittedratings
+                        ratingModel.IsAlert = true;
+                        ratingModel.IsCurrentRatings = true;
+                        ViewBag.alertmsg = "Data exists and has been <strong>Submitted</strong> for this rating period. Do you wish to <strong>Upload</strong> again and any overlay previously <strong>Submitted</strong> ratings?";
+                        TempData["SearchedResults"] = ratingModel;
+                        ratingModel.ShowResult = false;
+                        ratingModel.EditMode = false;
+                        CreateListViewBags();
+                        return View("Index", ratingModel);
+                    }
+                }
+
+
+            }
+            else
+            {
+                    ratingModel.ShowResult = false;
+                    ratingModel.EditMode = false;
+                    TempData["SearchedResults"] = ratingModel;
+                    CreateListViewBags();
+                    return View("Index", ratingModel);
+                
+
+            }
+           
+        }
+
+        public ActionResult ClearStaging(int SiteID, int Year, int Month)
+        {
+            ExcelRatingsViewModel ratingModel = new ExcelRatingsViewModel() { SiteID = SiteID, Year = Year, Month = Month };
+            int CheckingDate = Convert.ToInt32("" + ratingModel.Year + ratingModel.Month.ToString().PadLeft(2, '0'));
             using (Repository Rep = new Repository())
             {
-                historicalRecords = (from ratings in Rep.Context.SPFS_SUPPLIER_RATINGS
-                                     where ratings.SiteID == ratingModel.SiteID && ratings.Initial_submission_date == date
-                                     select new HistoricalRecordsCheck()
-                                     {
-                                         SiteID = ratings.SiteID,
-                                         CID = ratings.CID,
-                                         Initial_submission_date = ratings.Initial_submission_date
-                                     }).ToList().Union
-                                     (from ratings in Rep.Context.SPFS_STAGING_SUPPLIER_RATINGS
-                                      where ratings.SiteID == ratingModel.SiteID && ratings.Initial_submission_date == date
-                                      select new HistoricalRecordsCheck()
-                                      {
-                                          SiteID = ratings.SiteID,
-                                          CID = ratings.CID,
-                                          Initial_submission_date = ratings.Initial_submission_date
-                                      }).ToList();
+                Rep.Context.SPFS_STAGING_SUPPLIER_RATINGS.RemoveRange(Rep.Context.SPFS_STAGING_SUPPLIER_RATINGS.Where(s => s.SiteID == ratingModel.SiteID && s.Rating_period == CheckingDate));
+
+                Rep.Context.SaveChanges();
+
 
             }
-            if (historicalRecords.Count > 0)
-            {
-                util.GetDivElements("There are existing records uploaded for this month", "alert alert-warning", "Warning ! ");
-            }
-
             CreateListViewBags();
-
-            ViewBag.ShowResult = true;
+            ratingModel.ShowResult = true;
+            ratingModel.EditMode = true;
             TempData["SearchedResults"] = ratingModel;
             return View("Index", ratingModel);
+        }
+
+        
+       
+        private static List<RatingRecord> StageRecords(ExcelRatingsViewModel ratingModel, int CheckingDate, Repository Rep)
+        {
+            return (from ratings in Rep.Context.SPFS_STAGING_SUPPLIER_RATINGS
+                    where ratings.SiteID == ratingModel.SiteID && ratings.Rating_period == CheckingDate
+                    select new RatingRecord
+                    {
+                        CID = ratings.CID,
+                        SiteID = ratings.SiteID,
+                        Inbound_parts = ratings.Inbound_parts,
+                        OTR = ratings.OTR,
+                        OTD = ratings.OTD,
+                        PFR = ratings.PFR
+                    }).ToList();
+        }
+
+        private static List<RatingRecord> ProdRecords(ExcelRatingsViewModel ratingModel, int CheckingDate, Repository Rep)
+        {
+            return (from ratings in Rep.Context.SPFS_SUPPLIER_RATINGS
+                    where ratings.SiteID == ratingModel.SiteID && ratings.Rating_period == CheckingDate
+                    select new RatingRecord
+                    {
+                        CID = ratings.CID,
+                        SiteID = ratings.SiteID,
+                        Inbound_parts = ratings.Inbound_parts,
+                        OTR = ratings.OTR,
+                        OTD = ratings.OTD,
+                        PFR = ratings.PFR
+                    }).ToList();
         }
 
         public void ExportData(string fileName)

@@ -17,6 +17,8 @@ namespace SPFS.Controllers
     {
         private List<SelectListItem> selectSuppliers;
 
+        private List<SelectListItem> selectSupplierscid;
+
         private List<SelectSiteGDIS> selectGDIS;
         public RatingsController()
         {
@@ -24,6 +26,7 @@ namespace SPFS.Controllers
 
             selectGDIS = obj.GetSites;
             selectSuppliers = obj.GetSuppliers;
+            selectSupplierscid = obj.GetSuppliersCID;
         }
 
 
@@ -36,9 +39,9 @@ namespace SPFS.Controllers
 
             CreateListViewBags();
             ViewBag.Suppliers = selectSuppliers.Select(r => new SelectListItem { Text = r.Text + " CID:" + r.Value, Value = r.Value }).ToList();
-            ViewBag.ShowResult = false;
-            ViewBag.OldResults = false;
-            ViewBag.EditMode = true;
+            ratingsViewModel.ShowResult = false;
+            ratingsViewModel.OldResults = false;
+            ratingsViewModel.EditMode = true;
             return View(ratingsViewModel);
         }
 
@@ -84,7 +87,7 @@ namespace SPFS.Controllers
             RatingsViewModel excelViewModel = new RatingsViewModel();
             var historicalRecords = new List<HistoricalRecordsCheck>();
             DateTime date = new DateTime(ratingModel.Year, ratingModel.Month, 01);
-            DateTime current = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
+            DateTime current = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 01);
             // ratingModel.Month  = Convert.ToInt32(ratingModel.Month.ToString().PadLeft(2, '0'));
             if (current.AddMonths(-4) < date)
             {
@@ -96,81 +99,61 @@ namespace SPFS.Controllers
                 Utilities util = new Utilities();
                 using (Repository Rep = new Repository())
                 {
-                    CurrentRecords = (from ratings in Rep.Context.SPFS_SUPPLIER_RATINGS
-                                      where ratings.SiteID == ratingModel.SiteID && ratings.Rating_period == CheckingDate
-                                      select new RatingRecord
-                                      {
-                                          CID = ratings.CID,
-                                          SiteID = ratings.SiteID,
-                                          Inbound_parts = ratings.Inbound_parts,
-                                          OTR = ratings.OTR,
-                                          OTD = ratings.OTD,
-                                          PFR = ratings.PFR
-                                      }).ToList();
+                    CurrentRecords = ProdRecords(ratingModel, CheckingDate, Rep);
 
-
-                    if (CurrentRecords.Count < 0)
+                    int CurrentCount = CurrentRecords != null ? CurrentRecords.Count : 0;
+                    if (CurrentCount <= 0)
                     {
-                        StagingRecords = (from ratings in Rep.Context.SPFS_STAGING_SUPPLIER_RATINGS
-                                          where ratings.SiteID == ratingModel.SiteID && ratings.Rating_period == CheckingDate
-                                          select new RatingRecord
-                                          {
-                                              CID = ratings.CID,
-                                              SiteID = ratings.SiteID,
-                                              Inbound_parts = ratings.Inbound_parts,
-                                              OTR = ratings.OTR,
-                                              OTD = ratings.OTD,
-                                              PFR = ratings.PFR
-                                          }).ToList();
+                        StagingRecords = StageRecords(ratingModel, CheckingDate, Rep);
+
                         if (StagingRecords.Count > 0)
                         {
+                            ratingModel.IsStagingRatings = true;
+                            ratingModel.RatingRecords = StagingRecords;
+                            ViewBag.divmsg = "There are non submitted ratings for this period. Please submit them first";
                             //There are existing records submitted for this month
                             //display data from staging
+                            return LoadData(ratingModel,ratingModel.IsStagingRatings);
                         }
                         else
                         {
                             if (current.AddMonths(-1) <= date)
                             {
-                                int CheckingDate_Previous = Convert.ToInt32("" + date.Year + (date.Month-1).ToString().PadLeft(2, '0'));
-                               
-                                PreviousMonthRecords = (from ratings in Rep.Context.SPFS_SUPPLIER_RATINGS
-                                                        where ratings.SiteID == ratingModel.SiteID && ratings.Rating_period == CheckingDate
-                                                        select new RatingRecord
-                                                        {
-                                                            CID = ratings.CID,
-                                                            SiteID = ratings.SiteID,
-                                                            Inbound_parts = ratings.Inbound_parts,
-                                                            OTR = ratings.OTR,
-                                                            OTD = ratings.OTD,
-                                                            PFR = ratings.PFR
-                                                        }).ToList();
-                                if(PreviousMonthRecords.Count > 0)
+                                int CheckingDate_Previous = Convert.ToInt32("" + date.Year + (date.Month - 1).ToString().PadLeft(2, '0'));
+
+                                PreviousMonthRecords = ProdRecords(ratingModel, CheckingDate_Previous, Rep);
+
+                                if (PreviousMonthRecords.Count > 0)
                                 {
                                     //display current months grid
+                                    ratingModel.IsPreviousRatings = true;
+                                    ratingModel.RatingRecords = CurrentRecords;
+                                    ViewBag.divmsg = "Last month data check was succesfull";
+                                    return LoadData(ratingModel, false);
                                 }
                                 else
                                 {
-                                    PreviousMonthRecordsStaging = (from ratings in Rep.Context.SPFS_STAGING_SUPPLIER_RATINGS
-                                                            where ratings.SiteID == ratingModel.SiteID && ratings.Rating_period == CheckingDate
-                                                            select new RatingRecord
-                                                            {
-                                                                CID = ratings.CID,
-                                                                SiteID = ratings.SiteID,
-                                                                Inbound_parts = ratings.Inbound_parts,
-                                                                OTR = ratings.OTR,
-                                                                OTD = ratings.OTD,
-                                                                PFR = ratings.PFR
-                                                            }).ToList();
+                                    PreviousMonthRecordsStaging = StageRecords(ratingModel, CheckingDate_Previous, Rep);
 
-                                    if(PreviousMonthRecordsStaging.Count>0)
+                                    if (PreviousMonthRecordsStaging.Count > 0)
                                     {
                                         //you havent submitted last months data. would you like to finish
                                         //Yes - Load last months data
                                         //No - Continue with current ratings
+                                        ratingModel.IsAlert = true;
+                                        ratingModel.IsPreviousStagingRatings = true;
+                                        ViewBag.alertmsg = "You havent submitted last months data. would you like to finish";
+                                        ratingModel.ShowResult = false;
+                                        ratingModel.EditMode = false;
+                                        CreateListViewBags();
+                                        return View("Index", ratingModel);
                                     }
                                     else
                                     {
                                         //display current months grid
+                                        ratingModel.RatingRecords = CurrentRecords;
+                                        ViewBag.divmsg = "This is not current period";
+                                        return LoadData(ratingModel, false);
                                     }
 
                                 }
@@ -178,60 +161,34 @@ namespace SPFS.Controllers
                             else
                             {
                                 //display grid
+                                ratingModel.RatingRecords = CurrentRecords;
+                                ViewBag.divmsg = "This is not current period";
+                                return LoadData(ratingModel, false);
                             }
                         }
                     }
                     else
                     {
                         //data exists for you and any changes will overwrite existing data. Press clear to stop editing submittedratings
+                        ratingModel.IsAlert = true;
+                        ratingModel.IsCurrentRatings = true;
+                        ViewBag.alertmsg = "Data exists for you and any changes will overwrite existing data";
+                        ratingModel.ShowResult = false;
+                        ratingModel.EditMode = false;
+                        CreateListViewBags();
+                        return View("Index", ratingModel);
                     }
                 }
-             
-                CreateListViewBags();
-                // ViewBag.Suppliers = selectSuppliers;
-                ratingModel.RatingRecords = IncidentSpendOrder(ratingModel);
 
-                var rateSuppliers = ratingModel.RatingRecords.Select(r => new SelectListItem { Text = r.SupplierName + " CID:" + r.CID, Value = r.CID.ToString() }).ToList();
-                var modifiedlist = selectSuppliers.Select(r => new SelectListItem { Text = r.Text + " CID:" + r.Value, Value = r.Value }).ToList();
-                ViewBag.RatingSuppliers = rateSuppliers;
-                var NotinListSuppliers = (from fulllist in modifiedlist
-                                          where !(rateSuppliers.Any(i => i.Value == fulllist.Value))
-                                          select fulllist).ToList();
-                if (NotinListSuppliers != null)
-                {
-                    ViewBag.Suppliers = NotinListSuppliers;
-                }
-                else
-                {
-                    ViewBag.Suppliers = modifiedlist;
-                }
-
-                ViewBag.ShowResult = true;
-                ViewBag.OldResults = false;
-                ViewBag.EditMode = true;
-                TempData["SearchedResults"] = ratingModel;
-
-                return View("Index", ratingModel);
+                
             }
             else
             {
                 int CheckingDate = Convert.ToInt32("" + ratingModel.Year + ratingModel.Month.ToString().PadLeft(2, '0'));
                 List<RatingRecord> OldRecords = new List<RatingRecord>();
-                Utilities util = new Utilities();
                 using (Repository Rep = new Repository())
                 {
-                    OldRecords = (from ratings in Rep.Context.SPFS_SUPPLIER_RATINGS
-                                  where ratings.SiteID == ratingModel.SiteID && ratings.Rating_period == CheckingDate
-                                  select new RatingRecord()
-                                  {
-                                      CID = ratings.CID,
-                                      SiteID = ratings.SiteID,
-                                      Inbound_parts = ratings.Inbound_parts,
-                                      OTR = ratings.OTR,
-                                      OTD = ratings.OTD,
-                                      PFR = ratings.PFR
-
-                                  }).ToList();
+                    OldRecords = ProdRecords(ratingModel, CheckingDate, Rep);
 
                 }
                 if (OldRecords.Count > 0)
@@ -252,16 +209,16 @@ namespace SPFS.Controllers
                     var rateSuppliers = UpdatedModel.RatingRecords.Select(r => new SelectListItem { Text = r.SupplierName + " CID:" + r.CID, Value = r.CID.ToString() }).ToList();
                     var modifiedlist = selectSuppliers.Select(r => new SelectListItem { Text = r.Text + " CID:" + r.Value, Value = r.Value }).ToList();
                     ViewBag.RatingSuppliers = rateSuppliers;
-                    ViewBag.ShowResult = true;
-                    ViewBag.OldResults = true;
-                    ViewBag.EditMode = false;
+                    ratingModel.ShowResult = true;
+                    ratingModel.OldResults = true;
+                    ratingModel.EditMode = false;
                     return View("Index", UpdatedModel);
                 }
                 else
                 {
 
-                    ViewBag.ShowResult = false;
-                    ViewBag.EditMode = false;
+                    ratingModel.ShowResult = false;
+                    ratingModel.EditMode = false;
                     CreateListViewBags();
                     return View("Index", ratingModel);
                 }
@@ -269,6 +226,125 @@ namespace SPFS.Controllers
             }
         }
 
+        private ActionResult LoadData(RatingsViewModel ratingModel,bool dataExists)
+        {
+            CreateListViewBags();
+            RatingsViewModel UpdatedModel = new RatingsViewModel();
+            // ViewBag.Suppliers = selectSuppliers;  ratingModel.RatingRecords = IncidentSpendOrder(ratingModel);
+            if (dataExists)
+            {
+                 UpdatedModel = Merge(ratingModel);
+
+                var rateSuppliers = UpdatedModel.RatingRecords.Select(r => new SelectListItem { Text = r.SupplierName + " CID:" + r.CID, Value = r.CID.ToString() }).ToList();
+                LoadDropdowns(rateSuppliers);
+            }
+            else
+            {
+                
+                UpdatedModel.RatingRecords = IncidentSpendOrder(ratingModel);
+                var rateSuppliers = ratingModel.RatingRecords.Select(r => new SelectListItem { Text = r.SupplierName + " CID:" + r.CID, Value = r.CID.ToString() }).ToList();
+                LoadDropdowns(rateSuppliers);
+            }
+
+
+
+            UpdatedModel.ShowResult = true;
+            UpdatedModel.OldResults = false;
+            UpdatedModel.EditMode = true;
+            TempData["SearchedResults"] = UpdatedModel;
+
+            return View("Index", UpdatedModel);
+        }
+        //public ActionResult LoadAlertData(RatingsViewModel RatingModel, bool isStaging ,bool isLastmonth)
+        public ActionResult LoadAlertData(int SiteID,int Year,int Month, bool isStaging, bool isLastmonth)
+        {
+            RatingsViewModel RatingModel = new RatingsViewModel() { SiteID=SiteID,Year=Year,Month=Month};
+           
+            using (Repository Rep = new Repository())
+            {
+                int CheckingDate; 
+                if (isStaging)
+                {
+                   
+                    if (isLastmonth)
+                    {
+                         CheckingDate = Convert.ToInt32("" + RatingModel.Year + (RatingModel.Month - 1).ToString().PadLeft(2, '0'));
+                    }
+                    else
+                    {
+                         CheckingDate = Convert.ToInt32("" + RatingModel.Year + (RatingModel.Month).ToString().PadLeft(2, '0'));
+                    }
+                    RatingModel.RatingRecords = StageRecords(RatingModel, CheckingDate, Rep);
+                }
+                else
+                {
+                    CheckingDate = Convert.ToInt32("" + RatingModel.Year + (RatingModel.Month).ToString().PadLeft(2, '0'));
+                    RatingModel.RatingRecords = ProdRecords(RatingModel, CheckingDate, Rep);
+                }
+            }
+            CreateListViewBags();
+            // ViewBag.Suppliers = selectSuppliers;  ratingModel.RatingRecords = IncidentSpendOrder(ratingModel);
+           
+                RatingsViewModel UpdatedModel = Merge(RatingModel);
+
+                var rateSuppliers = UpdatedModel.RatingRecords.Select(r => new SelectListItem { Text = r.SupplierName + " CID:" + r.CID, Value = r.CID.ToString() }).ToList();
+                LoadDropdowns(rateSuppliers);
+
+            UpdatedModel.ShowResult = true;
+            UpdatedModel.OldResults = false;
+            UpdatedModel.EditMode = true;
+            TempData["SearchedResults"] = UpdatedModel;
+
+            return View("Index", UpdatedModel);
+        }
+
+        private void LoadDropdowns(List<SelectListItem> rateSuppliers)
+        {
+            //var modifiedlist = selectSuppliers.Select(r => new SelectListItem { Text = r.Text + " CID:" + r.Value, Value = r.Value }).ToList();
+            var modifiedlist = selectSupplierscid;
+            ViewBag.RatingSuppliers = rateSuppliers;
+            var NotinListSuppliers = (from fulllist in modifiedlist
+                                      where !(rateSuppliers.Any(i => i.Value == fulllist.Value))
+                                      select fulllist).ToList();
+            if (NotinListSuppliers != null)
+            {
+                ViewBag.Suppliers = NotinListSuppliers;
+            }
+            else
+            {
+                ViewBag.Suppliers = modifiedlist;
+            }
+        }
+
+        private static List<RatingRecord> StageRecords(RatingsViewModel ratingModel, int CheckingDate, Repository Rep)
+        {
+            return (from ratings in Rep.Context.SPFS_STAGING_SUPPLIER_RATINGS
+                    where ratings.SiteID == ratingModel.SiteID && ratings.Rating_period == CheckingDate
+                    select new RatingRecord
+                    {
+                        CID = ratings.CID,
+                        SiteID = ratings.SiteID,
+                        Inbound_parts = ratings.Inbound_parts,
+                        OTR = ratings.OTR,
+                        OTD = ratings.OTD,
+                        PFR = ratings.PFR
+                    }).ToList();
+        }
+
+        private static List<RatingRecord> ProdRecords(RatingsViewModel ratingModel, int CheckingDate, Repository Rep)
+        {
+            return (from ratings in Rep.Context.SPFS_SUPPLIER_RATINGS
+                    where ratings.SiteID == ratingModel.SiteID && ratings.Rating_period == CheckingDate
+                    select new RatingRecord
+                    {
+                        CID = ratings.CID,
+                        SiteID = ratings.SiteID,
+                        Inbound_parts = ratings.Inbound_parts,
+                        OTR = ratings.OTR,
+                        OTD = ratings.OTD,
+                        PFR = ratings.PFR
+                    }).ToList();
+        }
 
         private string GetDUNSfromCID(int CID)
         {
@@ -508,6 +584,71 @@ namespace SPFS.Controllers
 
             return View("Index", ratingModel);
 
+        }
+
+
+        public ActionResult LoadSuppliers()
+        {
+            RatingsViewModel RatingModel = (RatingsViewModel)TempData["SearchedResults"];
+            if (RatingModel != null)
+            {
+                var rateSuppliers = RatingModel.RatingRecords.Select(r => new SelectListItem { Text = r.SupplierName + " CID:" + r.CID, Value = r.CID.ToString() }).ToList();
+                //var modifiedlist = selectSuppliers.Select(r => new SelectListItem { Text = r.Text + " CID:" + r.Value, Value = r.Value }).ToList();
+                var modifiedlist = selectSupplierscid;
+                var NotinListSuppliers = (from fulllist in modifiedlist
+                                          where !(rateSuppliers.Any(i => i.Value == fulllist.Value))
+                                          select fulllist).ToList();
+                if (NotinListSuppliers != null)
+                {
+                    ViewBag.Suppliers = NotinListSuppliers;
+                }
+                else
+                {
+                    ViewBag.Suppliers = modifiedlist;
+                }
+            }
+            else
+             {
+                var modifiedlist = selectSupplierscid;
+                ViewBag.Suppliers = modifiedlist;
+
+            }
+            return PartialView("_AddSupplier");
+        }
+
+        public JsonResult GetSupplierbyName(string nameString)
+        {
+            RatingsViewModel RatingModel = (RatingsViewModel)TempData["SearchedResults"];
+            List<SelectListItem> SupplierList;
+            if (RatingModel!= null)
+            {
+                var rateSuppliers = RatingModel.RatingRecords.Select(r => new SelectListItem { Text = r.SupplierName + " CID:" + r.CID, Value = r.CID.ToString() }).ToList();
+                var modifiedlist = selectSupplierscid;
+                var NotinListSuppliers = (from fulllist in modifiedlist
+                                          where !(rateSuppliers.Any(i => i.Value == fulllist.Value))
+                                          select fulllist).ToList();
+
+               
+                if (NotinListSuppliers != null)
+                {
+                    SupplierList = NotinListSuppliers;
+                }
+                else
+                {
+                    SupplierList = modifiedlist;
+                }
+            }
+            else
+            {
+                var modifiedlist = selectSupplierscid;
+                SupplierList = modifiedlist;
+            }
+            
+            
+
+                var newSuppliercache = string.IsNullOrWhiteSpace(nameString) ? SupplierList :
+                SupplierList.Where(s => s.Text.StartsWith(nameString, StringComparison.InvariantCultureIgnoreCase));
+            return Json(newSuppliercache, JsonRequestBehavior.AllowGet);
         }
     }
 }

@@ -160,7 +160,14 @@
             </h4>
         </div>
     </div>
-
+    <div id="dlgsearch" class="panel panel-default text-center" style="background-color: rgba(229, 245, 250, 0.701961); color: rgb(4, 135, 196); margin: 0; border-color: rgb(183, 225, 240);">
+        <div class="panel-body">
+            <h4>
+                <span class="glyphicon glyphicon-search" style="top: 3px;"></span>
+                <span style="padding-left: 4px;">Searching...</span>
+            </h4>
+        </div>
+    </div>
     <div id="dialog" title="Alert message" style="display: none">
         <div class="ui-dialog-content ui-widget-content">
             <p>
@@ -241,7 +248,7 @@
                 var form = $(sender).parents('form');
 
                 if (form.valid()) {
-                    $("#dlgmodal").dialog('open');
+                    $("#dlgsearch").dialog('open');
 
                 }
             }
@@ -325,6 +332,19 @@
                     }
                 });
                 $("#dlgsubmit").dialog({
+                    autoOpen: false,
+                    resizable: false,
+                    width: "auto",
+                    height: "auto",
+                    show: { effect: 'drop', direction: "up" },
+                    modal: true,
+                    draggable: true,
+                    open: function (event, ui) {
+                        $(".ui-dialog-titlebar").hide();
+                        $(".ui-dialog-titlebar-close").hide();
+                    }
+                });
+                $("#dlgsearch").dialog({
                     autoOpen: false,
                     resizable: false,
                     width: "auto",

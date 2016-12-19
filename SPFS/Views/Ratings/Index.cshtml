@@ -3,7 +3,7 @@
 @{
     ViewBag.Title = "Ratings";
     var count = Model.RatingRecords != null ? Model.RatingRecords.Count : 0;
-    var New = ViewBag.NewSite;
+ 
 
 }
 
@@ -13,6 +13,16 @@
     @Html.AntiForgeryToken()
     @Html.HiddenFor(m => m.isUpload)
     @Html.Hidden("noOfRecords", @count)
+    @Html.HiddenFor(m => m.isUpload)
+    @Html.HiddenFor(m => m.IsAlert)
+    @Html.HiddenFor(m => m.IsStagingRatings)
+    @Html.HiddenFor(m => m.IsCurrentRatings)   
+    @Html.HiddenFor(m => m.IsPreviousRatings)
+    @Html.HiddenFor(m => m.IsPreviousStagingRatings)
+
+    @Html.HiddenFor(m => m.OldResults)
+    @Html.HiddenFor(m =>m.EditMode)
+    @Html.HiddenFor(m => m.ShowResult)
     <h2>Ratings Page</h2>
     <hr />
     <div class="row col-md-12 header" style="padding-top:15px">
@@ -39,7 +49,7 @@
                 @Html.LabelFor(model => model.Year, new { @class = "control-label col-md-3" })
                 <div class="input-group">
                     @Html.DropDownListFor(model => model.Year, ViewBag.Years as IEnumerable<SelectListItem>, new { @class = "form-control" })
-                    @if(!ViewBag.ShowResult)
+                    @if(!Model.ShowResult)
                     {
                     <span class="input-group-btn" title="Search">
                         <button type="submit" value="Search" name="action:Search" class="btn btn-warning" onclick="OnBeginPostBack_Search(this)">
@@ -57,14 +67,38 @@
 
     <hr />
 
-
-    //if (New == false && count > 0)
-    //{
-
-    if (ViewBag.ShowResult)
+    if (Model.IsAlert)
     {
-        if (!ViewBag.OldResults)
+
+        <div class="panel panel-default panel-primary">
+            <div class="panel-heading panel-primary">
+                <h3 class="panel-title">Please select</h3>
+            </div>
+            <div class="panel-body" id="Alertpanel">
+                @ViewBag.alertmsg
+
+                <div class="btn-group pull-right">
+                    @if (Model.IsPreviousStagingRatings)
+                    {
+                       
+                    <a href="@Url.Action("LoadAlertData", "Ratings", new { SiteID =Model.SiteID,Year=Model.Year,Month=Model.Month, isStaging = true ,isLastmonth=true})" class="btn btn-success btn-md">Yes - Load last months data </a>
+                    <a href="@Url.Action("LoadAlertData", "Ratings", new { SiteID =Model.SiteID,Year=Model.Year,Month=Model.Month, isStaging = false, isLastmonth = false})" class="btn btn-danger btn-md">No - Continue with current ratings</a>
+                    }
+                    @if(Model.IsCurrentRatings)
+                    {
+                    <a href="@Url.Action("LoadAlertData", "Ratings", new { SiteID =Model.SiteID,Year=Model.Year,Month=Model.Month, isStaging = false,isLastmonth=false})" class="btn btn-success btn-smd">Yes - Overwrite existing data </a>
+                    <a href="@Url.Action("Index", "Ratings")" class="btn btn-danger btn-md">No - Clear Search criteria</a>
+                    }
+                    
+                </div>
+            </div>
+        </div>
+   
+    }
+    else if (Model.ShowResult)
         {
+            if (!Model.OldResults)
+            {
         <div id="output" class="col-md-12">
             @Html.Partial("_SupplierRatings", Model)
         </div>
@@ -100,9 +134,9 @@
             </div>
 
         </div>
-        }
-        else
-        {
+            }
+            else
+            {
             <div id="output" class="col-md-12">
                 @Html.Partial("_SupplierRatingsOld", Model)
             </div>
@@ -121,68 +155,70 @@
                 </div>
 
             </div>
-        }
+            }
 
-    }
-    else
-    {
-        if (ViewBag.EditMode)
-        {
-        <h2>Select location and month and clickon search to show ratings </h2>
         }
         else
         {
-            <div class="alert alert-warning"><strong>Info!</strong> There are no records found for this Search Criteria.</div>
+            if (Model.EditMode)
+            {
+               <h2>Select location and month and click on search to show ratings </h2>
+            }
+            else
+            {
+                 <div class="alert alert-warning"><strong>Info!</strong> There are no records found for this Search Criteria.</div>
+            }
         }
-    }
 
-    if (ViewBag.EditMode)
-    {
-    <div id="popSup" style="overflow: auto;visibility:hidden">
+        if (Model.EditMode)
+        {
+    @*<div id="popSup" style="overflow: auto;visibility:hidden">
 
-        <div class="row col-md-12" style="margin-top: 10px">
-            <div class="row">
-                <div class="col-md-10 input-group">
-                    @*@Html.Label("Search by")*@
+        
 
-                    @Html.TextBox("search", "", new { @class = "form-control", id = "SupplierID", maxlength = "30", placeholder = "Search by Supplier Name ..." })
-                    <span class="input-group-btn">
-                        <button id="btnFilter" type="button" value="Search" class="btn btn-primary ">
-                            <span class="glyphicon glyphicon-search"></span>
-                        </button>
-                    </span>
-                </div>
-                <div class="col-md-2">
-                    <button type="button" class="btn btn-primary btnOK" disabled>
-                        <span class="glyphicon glyphicon-floppy-save"></span>
-                        <span>OK</span>
-                    </button>
-                </div>
-
-            </div>
-            <br />
-            <div class="row">
-                <div class="col-md-9">
-                    <div class="form-group">
-                        @Html.DropDownList("selectSuppliers", ViewBag.Suppliers as IEnumerable<SelectListItem>, new { @class = "form-control", style = "width: 500px ; border-radius:5px", size = 10, id = "selectSupplierID" })
-                    </div>
-                </div>
-
-            </div>
-
-        </div>
+    </div>*@
+    <div id="popSup" title="Search Supplier" style="overflow: auto;">
 
     </div>
-    }
+        }
 
-
+    
 }
 
 <script type="text/javascript">
     $(document).ready(function () {
 
-        var siteId = $("#SiteID option:selected").val();
+        $('#popSup').dialog({
+            autoOpen: false,
+            width: 470,
+            height: 440,
+            resizable: false,
+            title: 'Search Supplier',
+            modal: true,
+            open: function (event, ui) {
 
+            }
+        });
+
+
+     if('@Model.IsAlert'=='True')
+        {
+        var bgColor = '#f2dede';
+        var bgOriginal = $('#Alertpanel').css('background-color');
+        var inTime = 1000;
+        var outTime = 2000;
+
+
+        $(':animated').promise().done(function () {
+            $('#Alertpanel').animate({ backgroundColor: bgColor }, inTime, function () {
+                $('#Alertpanel').animate({ backgroundColor: bgOriginal }, outTime);
+            });
+
+        });
+    }
+
+
+        var siteId = $("#SiteID option:selected").val();
         $('#SiteID').change(function () {
             var siteId = $("#SiteID option:selected").val();
             if (siteId != "") {
@@ -195,11 +231,11 @@
 
         var CID = $("#SelectSupplierID option:selected").val();
 
-        $('#SupplierID').change(function () {
-            var SupName = $('#SupplierID').val();
-            SearchSupplierByName(SupName);
+        //$('#SupplierID').change(function () {
+        //    var SupName = $('#SupplierID').val();
+        //    SearchSupplierByName(SupName);
 
-        });
+        //});
 
         //Sorting
         $(document).on("click", "#btnFilter", function () {
@@ -228,15 +264,36 @@
         };
 
         $('.btnAdd').bind("click", function () {
-            $('#popSup').css("visibility", "visible");
-            $("#popSup").dialog('option', 'title', "Select Supplier");
+
+            $.ajax({
+                url: '@Url.Action("LoadSuppliers", "Ratings")',
+                //Passes the content of an input up
+                contentType: "application/json; charset=utf-8",
+                type: 'GET',
+                cache: false,
+                success: function (data) {
+                    $('#popSup').children().remove();
+                    $('#popSup').html(data);
+                }
+            });
+
+            $("#popSup").dialog('option', 'title', 'Select Supplier');
             $("#popSup").dialog("open");
-            $('.btnOK').prop('disabled', true);
+
         });
 
-      $('.btnOK').bind("click", function () {
+        //$('.btnAdd').bind("click", function () {
+        //    $('#popSup').css("visibility", "visible");
+        //    $("#popSup").dialog('option', 'title', "Select Supplier");
+        //    $("#popSup").dialog("open");
+        //    $('.btnOK').prop('disabled', true);
+        //});
+
+        $('.btnOK').bind("click", function () {
+            debugger
                 var selectedText = $("#selectSupplierID").find("option:selected").text();
                 var selectedValue = $("#selectSupplierID").val();
+          
                 var tableRow = $("#ratings tr td:nth-child(1)").filter(function () {
                     return $(this).is(":contains('" + selectedValue + "')");
                 }).closest("tr");
@@ -245,7 +302,7 @@
                     $("#ratings").find('tr').removeClass('active');
                     var oldrec = $("#selectedCid").closest('tr').attr("id", "");
                     $("#popSup").closest('.ui-dialog-content').dialog("close");
-                  
+
                     ShowDialogBox('Warning', 'Supplier exists please check.', 'Ok', '', '', null);
                     var row = tableRow.addClass('active');
                     row.attr("id", "selectedCid");
@@ -272,7 +329,6 @@
                             $("#selectSupplierID").find("option:selected").prop('selected', false);
                             $('#output').children().remove();
                             $('#output').html(data);
-                            $('.btnOK').prop('disabled', true);
                             $("#popSup").closest('.ui-dialog-content').dialog("close");
                             $('#RatingSuppliers').selectpicker('refresh');
                         },
@@ -282,20 +338,20 @@
 
             });
 
+        //$('#selectSupplierID').change(function () {
+        //    debugger
+        //    if ($('#selectSupplierID').val() == '') {
+        //        $('.btnOK').prop('disabled', true);
+        //    } else {
+        //        $('.btnOK').prop('disabled', false);
+        //    }
 
+        //});
+       
+        //debugger
+        //$('#selectSupplierID').val('').trigger('change');
 
-        $('#selectSupplierID').change(function () {
-            //debugger
-            if ($('#selectSupplierID').val() == '') {
-                $('.btnOK').prop('disabled', true);
-            } else {
-                $('.btnOK').prop('disabled', false);
-            }
-
-        });
-        $('#selectSupplierID').val('').trigger('change');
-
-
+      
 
 
 $('#RatingSuppliers').change(function () {
