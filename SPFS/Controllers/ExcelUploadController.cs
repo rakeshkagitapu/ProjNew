@@ -17,8 +17,9 @@ namespace SPFS.Controllers
     public class ExcelUploadController : BaseController
     {
         private  List<SupplierCacheViewModel> supplierCacheObj;
-               
-      
+
+        private List<SelectListItem> selectSupplierscid;
+
         private List<SelectListItem> selectSuppliers;
 
         private List<SelectSiteGDIS> selectGDIS;
@@ -31,7 +32,9 @@ namespace SPFS.Controllers
             selectGDIS = obj.GetSites;
             selectSuppliers = obj.GetSuppliers;
             supplierCacheObj = obj.GetSuppliersCache;
-          
+            selectSupplierscid = obj.GetSuppliersCID;
+
+
         }
 
         //private List<SupplierCacheViewModel> GetSupplierListData()
@@ -65,6 +68,18 @@ namespace SPFS.Controllers
             CreateListViewBags();
 
             return View(ratingsViewModel);
+        }
+
+        public ActionResult LoadUploadIndex(int SiteID, int Year, int Month)
+        {
+            ExcelRatingsViewModel ratingsViewModel = new ExcelRatingsViewModel { SiteID = SiteID, isUpload =true };
+            ratingsViewModel.Month =Month;
+            ratingsViewModel.Year = Year;
+            ratingsViewModel.ShowResult = true;
+            ratingsViewModel.EditMode = false;
+            CreateListViewBags();
+
+            return View("Index",ratingsViewModel);
         }
         //public ActionResult Index(ExcelRatingsViewModel exratingsViewModel)
         //{
@@ -604,6 +619,7 @@ namespace SPFS.Controllers
         private RatingsViewModel Merge(ExcelRatingsViewModel RatingModel)
         {
             List<RatingRecord> Records = (List<RatingRecord>)TempData["RatingRecords"];
+            //TempData.Keep("RatingRecords");
             ExcelRatingsViewModel AggregatedModel = AggregateRecords(RatingModel, Records);
             RatingsViewModel ConvertedModel = new RatingsViewModel();
           
@@ -660,8 +676,7 @@ namespace SPFS.Controllers
 
         public ActionResult AddRowReload(int CID)
         {
-
-
+            
             //RatingsViewModel RatingModel = new RatingsViewModel();
 
             RatingsViewModel RatingModel = (RatingsViewModel)TempData["SearchedResults"];
@@ -826,19 +841,96 @@ namespace SPFS.Controllers
 
         }
         #endregion
-      
-        
+
+
 
         /// <summary>
         /// Get Supplier by Search.
         /// </summary>
         /// <param name="search">search</param>
         /// <returns></returns>
-        public JsonResult GetSupplierbyName(string nameString)
+        /// 
+        public ActionResult LoadSuppliers(bool? errorCheck)
         {
-            var newSuppliercache = string.IsNullOrWhiteSpace(nameString) ? selectSuppliers :
-                selectSuppliers.Where(s => s.Text.StartsWith(nameString, StringComparison.InvariantCultureIgnoreCase));
-            return Json(newSuppliercache, JsonRequestBehavior.AllowGet);
+            if (!errorCheck.HasValue)
+            {
+                RatingsViewModel RatingModel = (RatingsViewModel)TempData["SearchedResults"];
+                TempData.Keep("SearchedResults");
+                if (RatingModel != null)
+                {
+                    var rateSuppliers = RatingModel.RatingRecords.Select(r => new SelectListItem { Text = r.SupplierName + " CID:" + r.CID, Value = r.CID.ToString() }).ToList();
+                    //var modifiedlist = selectSuppliers.Select(r => new SelectListItem { Text = r.Text + " CID:" + r.Value, Value = r.Value }).ToList();
+                    var modifiedlist = selectSupplierscid;
+                    var NotinListSuppliers = (from fulllist in modifiedlist
+                                              where !(rateSuppliers.Any(i => i.Value == fulllist.Value))
+                                              select fulllist).ToList();
+                    if (NotinListSuppliers != null)
+                    {
+                        ViewBag.Suppliers = NotinListSuppliers;
+                    }
+                    else
+                    {
+                        ViewBag.Suppliers = modifiedlist;
+                    }
+                }
+                else
+                {
+                    var modifiedlist = selectSupplierscid;
+                    ViewBag.Suppliers = modifiedlist;
+
+                }
+
+                return PartialView("_AddSupplier");
+            }
+            else
+            {
+                ViewBag.Suppliers = selectSupplierscid;
+                return PartialView("_AddSupplier");
+            }
+        }
+        public JsonResult GetSupplierbyName(string nameString, bool? errorCheck)
+        {
+            if (!errorCheck.HasValue)
+            {
+                RatingsViewModel RatingModel = (RatingsViewModel)TempData["SearchedResults"];
+                TempData.Keep("SearchedResults");
+                List<SelectListItem> SupplierList;
+                if (RatingModel != null)
+                {
+                    var rateSuppliers = RatingModel.RatingRecords.Select(r => new SelectListItem { Text = r.SupplierName + " CID:" + r.CID, Value = r.CID.ToString() }).ToList();
+                    var modifiedlist = selectSupplierscid;
+                    var NotinListSuppliers = (from fulllist in modifiedlist
+                                              where !(rateSuppliers.Any(i => i.Value == fulllist.Value))
+                                              select fulllist).ToList();
+
+
+                    if (NotinListSuppliers != null)
+                    {
+                        SupplierList = NotinListSuppliers;
+                    }
+                    else
+                    {
+                        SupplierList = modifiedlist;
+                    }
+                }
+                else
+                {
+                    var modifiedlist = selectSupplierscid;
+                    SupplierList = modifiedlist;
+                }
+
+                var newSuppliercache = string.IsNullOrWhiteSpace(nameString) ? SupplierList :
+                SupplierList.Where(s => s.Text.StartsWith(nameString, StringComparison.InvariantCultureIgnoreCase));
+                return Json(newSuppliercache, JsonRequestBehavior.AllowGet);
+            }
+            else
+            {
+                var newSuppliercache = string.IsNullOrWhiteSpace(nameString) ? selectSupplierscid :
+               selectSupplierscid.Where(s => s.Text.StartsWith(nameString, StringComparison.InvariantCultureIgnoreCase));
+                return Json(newSuppliercache, JsonRequestBehavior.AllowGet);
+            }
+           
+       
         }
 
         public JsonResult UpdateRecord(int CID, string Name, int Rowid)

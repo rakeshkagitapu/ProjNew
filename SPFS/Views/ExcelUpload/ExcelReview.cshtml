@@ -63,39 +63,7 @@
                                                         new { @class = "selectpicker col-md-10", data_live_search = "true", data_size = "10" })
             </div>*@
 
-        <div id="popm3" style="overflow: auto;">
-
-            <div class="row col-md-12" style="margin-top: 10px">
-                <div class="row">
-                    <div class="col-md-10 input-group">
-                        @*@Html.Label("Search by")*@
-
-                        @Html.TextBox("search", "", new { @class = "form-control", id = "SupplierID", maxlength = "30", placeholder = "Search by Supplier Name ..." })
-                        <span class="input-group-btn">
-                            <button id="btnFilter" type="button" value="Search" class="btn btn-primary ">
-                                <span class="glyphicon glyphicon-search"></span>
-                            </button>
-                        </span>
-                    </div>
-                    <div class="col-md-2">
-                        <button type="button" class="btn btn-primary btnOKNotes">
-                            <span class="glyphicon glyphicon-floppy-save"></span>
-                            <span>OK</span>
-                        </button>
-                    </div>
-
-                </div>
-                <br />
-                <div class="row">
-                    <div class="col-md-9">
-                        <div class="form-group">
-                            @Html.DropDownList("selectSuppliers", ViewBag.Suppliers as IEnumerable<SelectListItem>, new { @class = "form-control", style = "width: 500px ; border-radius:5px", size = 10, id = "selectSupplierID" })
-                        </div>
-                    </div>
-
-                </div>
-
-            </div>
+        <div id="popSup" title="Search Supplier" style="overflow: auto;">
 
         </div>
     }
@@ -121,16 +89,11 @@
 }
 <script type="text/javascript">
 
-    //Load Cluster information when area change.
-    //$('#SupplierID').change(function () {
-    //    var SupName = $('#SupplierID').val();
-    //    SearchSupplierByName(SupName);
-
-    //});
-
+   
     $(function () {
         //Sorting
         $(document).on("click", "#btnFilter", function () {
+            debugger
             var SupName = $('#SupplierID').val();
             SearchSupplierByName(SupName);
 
@@ -140,7 +103,7 @@
             $.ajax({
                 url: '@Url.Action("GetSupplierbyName", "ExcelUpload")',
                 //Passes the content of an input up
-                data: { nameString: SupName },
+                data: { nameString: SupName,errorCheck: true},
                 contentType: "application/json; charset=utf-8",
                 type: 'GET',
                 async: false,
@@ -158,16 +121,29 @@
         $('.btnSearch').bind("click", function () {
             var rowIndex = $(this).attr('data-RowId');
             rowID = rowIndex;
-       
-            $("#popm3").dialog('option', 'title', "Select Supplier");
-            $("#popm3").dialog("open");
 
+            $.ajax({
+                url: '@Url.Action("LoadSuppliers", "ExcelUpload")',
+                //Passes the content of an input up
+                data: { errorCheck: true },
+                contentType: "application/json; charset=utf-8",
+                type: 'GET',
+                cache: false,
+                success: function (data) {
+                    $('#popSup').children().remove();
+                    $('#popSup').html(data);
+                }
+            });
+
+            $("#popSup").dialog('option', 'title', 'Select Supplier');
+            $("#popSup").dialog("open");
         });
         var Pcount = 0;
         var Ucount = 0;
-        $('.btnOKNotes').bind("click", function () {
+        //$('.btnOK').live("click", function ()
+        $('#popSup').on("click", ".btnOK", function (e) {
 
-           
+
             var selectedText = $("#selectSupplierID").find("option:selected").text();
             var selectedValue = $("#selectSupplierID").val();
 
@@ -217,7 +193,7 @@
                         $(".Merge").show();
                     }
 
-                    $("#popm3").closest('.ui-dialog-content').dialog("close");
+                    $("#popSup").closest('.ui-dialog-content').dialog("close");
                 }
             });
 
@@ -226,13 +202,13 @@
         $(document).ready(function(){
                $("#errortable").on('click','.btnRemove',function(){
                    if (confirm('Are you sure you want to Remove?')) {
-                       debugger
+                      // debugger
                        $(this).closest('tr').remove();
                        $('#tooltip').remove();
                        var rowIndex = $(this).attr('data-RowId');
                        rowID = rowIndex;
                        $.ajax({
-                         
+
                            url: '@Url.Action("RemoveRecord", "ExcelUpload")',
                            //Passes the content of an input up
                            //data: { Rowid: rowID ,SiteID: siteID,Month:month,Year:year },
@@ -242,8 +218,8 @@
                            cache: false,
                            //async: false,
                            success: function (data) {
-                   
-                               debugger
+
+                               //debugger
                                Rcount++;
 
                                if (Pcount <= 0) {
@@ -255,8 +231,8 @@
                                    var jcount = Pcount - Rcount;
                                    Pcount = jcount;
                                }
-                    
-                               
+
+
                                if (jcount > 0) {
                                    $("#ErrorCount").html(" <strong>Warning!</strong> there are " + jcount + " error record(s) in this Upload now.");
 
@@ -268,7 +244,7 @@
                                    $("#divexcellist").remove();
                                    $("#footerbtns").remove();
                                    $("#tooltip").remove();
-                        
+
                                }
 
 
@@ -277,13 +253,13 @@
                    }
             });
 
-               
-                
+
+
 
         });
-        
+
         @*$('.btnRemove').bind("click", function () {
-        //$("#errortable").on('click','.btnRemove',function() {           
+        //$("#errortable").on('click','.btnRemove',function() {
             var siteID = @Html.Raw(Json.Encode(Model.SiteID));
             var month =@Html.Raw(Json.Encode(Model.Month));
             var year = @Html.Raw(Json.Encode(Model.Year));
@@ -301,13 +277,13 @@
                     cache: false,
                     //async: false,
                     success: function (data) {
-                   
-                   
+
+
                         Rcount++;
 
                         var jcount = parseInt($("#ErrorCount").attr('value'), 10);
                         jcount = jcount - Rcount;
-                    
+
 
                         if (jcount > 0) {
                             $("#ErrorCount").html(" <strong>Warning!</strong> there are " + jcount + " error record(s) in this Upload now.");
@@ -320,7 +296,7 @@
                             $("#divexcellist").remove();
                             $("#footerbtns").remove();
                             $("#tooltip").remove();
-                        
+
                         }
 
 
@@ -329,10 +305,10 @@
             }
         });*@
 
-        $('#popm3').dialog({
+        $('#popSup').dialog({
             autoOpen: false,
             width: 600,
-            height: 300,
+            height: 350,
             resizable: false,
             title: 'Select Supplier',
             modal: true,
@@ -340,6 +316,6 @@
 
             }
         });
-      
+
     })
 </script>

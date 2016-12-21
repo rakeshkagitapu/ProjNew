@@ -43,11 +43,14 @@
                 @Html.LabelFor(model => model.Year, new { @class = "control-label col-md-3" })
                 <div class="input-group">
                     @Html.DropDownListFor(model => model.Year, ViewBag.Years as IEnumerable<SelectListItem>, new { @class = "form-control" })
-                    <span class="input-group-btn" title="Search" rel="tooltip">
+                  @if (!Model.ShowResult)
+                  {
+                      <span class="input-group-btn" title="Search" rel="tooltip">
                         <button type="submit" value="Search" name="action:Search" class="btn btn-warning" onclick="OnBeginPostBack_Search(this)">
                             <span class="glyphicon glyphicon-search" />
                         </button>
                     </span>
+                  }
                 </div>
 
             </div>
@@ -82,7 +85,8 @@
                     @if (Model.IsCurrentRatings)
                     {
                         <a href="@Url.Action("LoadAlertData", "Ratings", new { SiteID = Model.SiteID, Year = Model.Year, Month = Model.Month, isStaging = false, isLastmonth = false })" class="btn btn-success btn-smd">Yes - Overwrite existing data </a>
-                        <a href="@Url.Action("Index", "Ratings")" class="btn btn-danger btn-md">No - Clear Search criteria</a>
+                        <a href="@Url.Action("LoadUploadIndex", "ExcelUpload", new { SiteID = Model.SiteID, Year = Model.Year, Month = Model.Month})" class="btn btn-danger btn-md">No - Continue with Upload</a>
+                       
                     }
 
                 </div>
@@ -105,11 +109,13 @@
             <div class="form-group form-group-marginless">
                 <div class="col-md-6">
 
-                    <div class="col-md-5">
-                        <button type="submit" value="Upload" onclick="OnBeginPostBack_Upload(this)" name="action:Upload" class="btn btn-primary">
+                   
+                    <div class="col-md-10">
+                        <button type="submit" value="Cancel" onclick="OnBeginPostBack_Upload(this)" name="action:Upload" class="btn btn-primary">
                             <span class="glyphicon glyphicon-upload search"></span>
                             <span>Upload</span>
                         </button>
+                        <a href="@Url.Action("Index", "ExcelUpload", new { SiteID = Model.SiteID})" class="btn btn-danger">Cancel</a>
                     </div>
                 </div>
             </div>
@@ -119,7 +125,8 @@
     else
     {
         if (Model.EditMode)
-        {
+        {   
+            <hr/>
             <h2>Select location and month and click on search to show ratings </h2>
         }
         else

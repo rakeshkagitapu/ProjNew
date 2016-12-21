@@ -13,7 +13,6 @@
     @Html.AntiForgeryToken()
     @Html.HiddenFor(m => m.isUpload)
     @Html.Hidden("noOfRecords", @count)
-    @Html.HiddenFor(m => m.isUpload)
     @Html.HiddenFor(m => m.IsAlert)
     @Html.HiddenFor(m => m.IsStagingRatings)
     @Html.HiddenFor(m => m.IsCurrentRatings)   
@@ -75,7 +74,7 @@
                 <h3 class="panel-title">Please select</h3>
             </div>
             <div class="panel-body" id="Alertpanel">
-                @ViewBag.alertmsg
+                @Html.Raw(ViewBag.alertmsg)
 
                 <div class="btn-group pull-right">
                     @if (Model.IsPreviousStagingRatings)
@@ -188,17 +187,17 @@
 <script type="text/javascript">
     $(document).ready(function () {
 
-        $('#popSup').dialog({
-            autoOpen: false,
-            width: 470,
-            height: 440,
-            resizable: false,
-            title: 'Search Supplier',
-            modal: true,
-            open: function (event, ui) {
+        //$('#popSup').dialog({
+        //    autoOpen: false,
+        //    width: 470,
+        //    height: 440,
+        //    resizable: false,
+        //    title: 'Search Supplier',
+        //    modal: true,
+        //    open: function (event, ui) {
 
-            }
-        });
+        //    }
+        //});
 
 
      if('@Model.IsAlert'=='True')
@@ -289,53 +288,59 @@
         //    $('.btnOK').prop('disabled', true);
         //});
 
-        $('.btnOK').bind("click", function () {
-            debugger
+        //$('.btnOK').live("click", function ()
+        $('#popSup').on("click",".btnOK", function (e) {
+            
                 var selectedText = $("#selectSupplierID").find("option:selected").text();
                 var selectedValue = $("#selectSupplierID").val();
-          
-                var tableRow = $("#ratings tr td:nth-child(1)").filter(function () {
-                    return $(this).is(":contains('" + selectedValue + "')");
-                }).closest("tr");
-                if (tableRow.length > 0)
+                if (selectedValue != null) {
+                    var tableRow = $("#ratings tr td:nth-child(1)").filter(function () {
+                        return $(this).is(":contains('" + selectedValue + "')");
+                    }).closest("tr");
+                    
+                    if (tableRow.length > 0) {
+                        $("#ratings").find('tr').removeClass('active');
+                        var oldrec = $("#selectedCid").closest('tr').attr("id", "");
+                        $("#popSup").closest('.ui-dialog-content').dialog("close");
+
+                        ShowDialogBox('Warning', 'Supplier exists please check.', 'Ok', '', '', null);
+                        var row = tableRow.addClass('active');
+                        row.attr("id", "selectedCid");
+
+                        var container = $('tbody');
+                        var scrollTo = $('#selectedCid');
+
+                        container.animate({
+                            scrollTop: (scrollTo.offset().top - 30) - container.offset().top + container.scrollTop()
+                        });
+                    }
+                    else {
+                        $.ajax({
+                            url: '@Url.Action("AddRowReload", "Ratings")',
+                            //Passes the content of an input up
+                            data: { CID: selectedValue }, //,SiteID:siteId,count:cont
+                            contentType: "application/json; charset=utf-8",
+                            type: 'GET',
+                            cache: false,
+                            dataType: 'html',
+                            async: false,
+                            success: function (data) {
+                                var finaltext = selectedText + " Added to list";
+                                $("#selectSupplierID").find("option:selected").prop('selected', false);
+                                $('#output').children().remove();
+                                $('#output').html(data);
+                                $("#popSup").closest('.ui-dialog-content').dialog("close");
+                                $('#RatingSuppliers').selectpicker('refresh');
+                            },
+                            error: function (ts) { alert(ts.responseText) }
+                        });
+                    }
+                }
+                else
                 {
-                    $("#ratings").find('tr').removeClass('active');
-                    var oldrec = $("#selectedCid").closest('tr').attr("id", "");
-                    $("#popSup").closest('.ui-dialog-content').dialog("close");
-
-                    ShowDialogBox('Warning', 'Supplier exists please check.', 'Ok', '', '', null);
-                    var row = tableRow.addClass('active');
-                    row.attr("id", "selectedCid");
-
-                    var container = $('tbody');
-                    var scrollTo = $('#selectedCid');
-
-                    container.animate({
-                        scrollTop: (scrollTo.offset().top - 30) - container.offset().top + container.scrollTop()
-                    });
+                    ShowDialogBox('Alert', 'Supplier not selected!.', 'Ok', '', '', null);
+                    //alert("Select Supplier");
                 }
-                else {
-                    $.ajax({
-                        url: '@Url.Action("AddRowReload", "Ratings")',
-                        //Passes the content of an input up
-                        data: { CID: selectedValue }, //,SiteID:siteId,count:cont
-                        contentType: "application/json; charset=utf-8",
-                        type: 'GET',
-                        cache: false,
-                        dataType: 'html',
-                        async: false,
-                        success: function (data) {
-                            var finaltext = selectedText + " Added to list";
-                            $("#selectSupplierID").find("option:selected").prop('selected', false);
-                            $('#output').children().remove();
-                            $('#output').html(data);
-                            $("#popSup").closest('.ui-dialog-content').dialog("close");
-                            $('#RatingSuppliers').selectpicker('refresh');
-                        },
-                        error: function (ts) { alert(ts.responseText) }
-                    });
-                }
-
             });
 
         //$('#selectSupplierID').change(function () {
@@ -381,7 +386,7 @@ $('#RatingSuppliers').change(function () {
         $('#popSup').dialog({
             autoOpen: false,
             width: 600,
-            height: 300,
+            height: 350,
             resizable: false,
             title: 'Select Supplier',
             modal: true,

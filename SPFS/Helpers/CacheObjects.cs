@@ -11,7 +11,7 @@ namespace SPFS.Helpers
     public class CacheObjects
     {
         private static List<SupplierCacheViewModel> supplierCacheObj;
-
+        
         private static DateTime _cacheLastChecked;
 
         private static DateTime _cacheLastCheckedSup;

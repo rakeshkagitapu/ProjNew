@@ -110,7 +110,7 @@ namespace SPFS.Controllers
                         {
                             ratingModel.IsStagingRatings = true;
                             ratingModel.RatingRecords = StagingRecords;
-                            ViewBag.divmsg = "There are non submitted ratings for this period. Please submit them first";
+                            ViewBag.divmsg = "Data exists for this rating period that has <strong>Not</strong> been <strong>Submitted</strong>";
                             //There are existing records submitted for this month
                             //display data from staging
                             return LoadData(ratingModel,ratingModel.IsStagingRatings);
@@ -142,7 +142,7 @@ namespace SPFS.Controllers
                                         //No - Continue with current ratings
                                         ratingModel.IsAlert = true;
                                         ratingModel.IsPreviousStagingRatings = true;
-                                        ViewBag.alertmsg = "You havent submitted last months data. would you like to finish";
+                                        ViewBag.alertmsg = "Data exists for last ratings period which has <strong>Not</strong> been <strong>Submitted!</strong>";
                                         ratingModel.ShowResult = false;
                                         ratingModel.EditMode = false;
                                         CreateListViewBags();
@@ -172,7 +172,7 @@ namespace SPFS.Controllers
                         //data exists for you and any changes will overwrite existing data. Press clear to stop editing submittedratings
                         ratingModel.IsAlert = true;
                         ratingModel.IsCurrentRatings = true;
-                        ViewBag.alertmsg = "Data exists for you and any changes will overwrite existing data";
+                        ViewBag.alertmsg = "Data exists and has been <strong>Submitted</strong> for this rating period. Do you wish to <strong>Edit</strong> these previously <strong>Submitted</strong> ratings?";
                         ratingModel.ShowResult = false;
                         ratingModel.EditMode = false;
                         CreateListViewBags();
@@ -242,6 +242,13 @@ namespace SPFS.Controllers
             {
                 
                 UpdatedModel.RatingRecords = IncidentSpendOrder(ratingModel);
+                UpdatedModel.isUpload = false;
+                UpdatedModel.Month = ratingModel.Month;
+                UpdatedModel.Year = ratingModel.Year;
+                UpdatedModel.SiteID = ratingModel.SiteID;
+                SelectSiteGDIS gdis = selectGDIS.Where(g => g.SiteID.Equals(ratingModel.SiteID)).FirstOrDefault();
+
+                UpdatedModel.SiteName = gdis.Name;
                 var rateSuppliers = ratingModel.RatingRecords.Select(r => new SelectListItem { Text = r.SupplierName + " CID:" + r.CID, Value = r.CID.ToString() }).ToList();
                 LoadDropdowns(rateSuppliers);
             }
@@ -486,7 +493,7 @@ namespace SPFS.Controllers
         //public ActionResult AddRowReload(int CID, int SiteID, int count)
         public ActionResult AddRowReload(int CID)
         {
-
+            //TempData["SearchedResults"]
 
             //RatingsViewModel RatingModel = new RatingsViewModel();
 
@@ -590,6 +597,7 @@ namespace SPFS.Controllers
         public ActionResult LoadSuppliers()
         {
             RatingsViewModel RatingModel = (RatingsViewModel)TempData["SearchedResults"];
+            TempData.Keep("SearchedResults");
             if (RatingModel != null)
             {
                 var rateSuppliers = RatingModel.RatingRecords.Select(r => new SelectListItem { Text = r.SupplierName + " CID:" + r.CID, Value = r.CID.ToString() }).ToList();
@@ -619,6 +627,7 @@ namespace SPFS.Controllers
         public JsonResult GetSupplierbyName(string nameString)
         {
             RatingsViewModel RatingModel = (RatingsViewModel)TempData["SearchedResults"];
+            TempData.Keep("SearchedResults");
             List<SelectListItem> SupplierList;
             if (RatingModel!= null)
             {

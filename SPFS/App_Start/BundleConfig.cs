@@ -11,9 +11,9 @@ namespace SPFS
             bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
                         "~/Scripts/jquery-{version}.js"));
 
-            bundles.Add(new ScriptBundle("~/bundles/jqueryui").Include(
-                         "~/Scripts/jquery-ui.js"                        
-                      ));
+            //bundles.Add(new ScriptBundle("~/bundles/jqueryui").Include(
+            //             "~/Scripts/jquery-ui.js"                        
+            //          ));
 
 
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
@@ -34,6 +34,7 @@ namespace SPFS
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/themes/base/jquery-ui.css",
+                      "~/Content/themes/smoothness/jquery-ui-1.8.23.custom.css",
                       "~/Content/bootstrap-duallistbox.css",
                        "~/Content/bootstrap-select.css",
                       "~/Content/bootstrap.css",
