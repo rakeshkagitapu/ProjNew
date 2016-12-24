@@ -39,7 +39,7 @@ namespace SPFS.Models
     }
     public class ExcelRatingsViewModel : RatingsViewModel
     {
-       
+
 
         [Display(Name = "Upload File:")]
         public HttpPostedFileBase UploadFile { get; set; }
@@ -89,7 +89,7 @@ namespace SPFS.Models
         {
             get
             {
-                if (ErrorInformation!=null)
+                if (ErrorInformation != null)
                 {
                     var data = ErrorInformation.Select(hm => hm.ErrorMessage);
                     return string.Join("\r\n", data);
@@ -115,11 +115,11 @@ namespace SPFS.Models
         [Display(Name = "Reject Parts")]
         public int Reject_parts_count { get; set; }
 
-        public decimal PPM { get; set; }
+        public double PPM { get; set; }
 
-        public decimal IPM { get; set; }
+        public double IPM { get; set; }
 
-        public decimal PCT { get; set; }
+        public double PCT { get; set; }
 
         public Nullable<int> Gdis_org_Parent_ID { get; set; }
     }
