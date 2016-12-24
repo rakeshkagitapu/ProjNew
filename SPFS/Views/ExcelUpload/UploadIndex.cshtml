@@ -10,6 +10,7 @@
 @using (Html.BeginForm(null, null, FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
     @Html.AntiForgeryToken()
+    @*@Html.ValidationSummary()*@
     @Html.HiddenFor(m => m.isUpload)
     @Html.HiddenFor(m => m.SiteID)
     @Html.HiddenFor(m => m.Month)
@@ -49,7 +50,9 @@
     </div>
 
     <hr />
-
+    @*<div class="alert alert-warning alert-dismissible col-md-12" role="alert" style="padding-top: 1px;">
+            <span class="glyphicon  glyphicon-info-sign"></span><strong>Errors!</strong> @Html.ValidationSummary()
+        </div>*@
 
     if (count > 0)
     {
@@ -212,7 +215,7 @@
                             $("#selectSupplierID").find("option:selected").prop('selected', false);
                             $('#output').children().remove();
                             $('#output').html(data);
-                            $('.btnOK').prop('disabled', true);
+                            //  $('.btnOK').prop('disabled', true);
                             $("#popSup").closest('.ui-dialog-content').dialog("close");
                             $('#RatingSuppliers').selectpicker('refresh');
                         },
@@ -293,8 +296,7 @@
             }
         });
 
-        $('#container').on("input", ".calcrow", function ()
-         {
+        $('#container').on("input", ".calcrow", function () {
             var inbound = $(this).closest('tr').find('#Inbound').val();
             var otr = $(this).closest('tr').find('#OTR').val();
             var otd = $(this).closest('tr').find('#OTD').val();
@@ -302,17 +304,18 @@
             var ri = $(this).closest('tr').find('#RI').val();
             var rp = $(this).closest('tr').find('#RP').val();
 
-            var ppm = Math.round(((rp / inbound) * 1000000)* 100)/100;
-            var ipm = Math.round(((ri / inbound) * 1000000)* 100)/100;
-            var pct = Math.round(((otr / otd) * 100) * 100) / 100;
-           
+            var ppm = Math.round((rp / inbound) * 1000000);
+
+            var ipm = ((ri / inbound) * 1000000).toFixed(2);
+            var pct = Math.round((otr / otd) * 100);
+
             if (isFinite(ppm)) {
                 $(this).closest('tr').find('.Ppm').html(ppm);
             } else {
                 //$(this).closest('tr').find('.Ppm').html(ppm);
             }
             if (isFinite(ipm)) {
-                $(this).closest('tr').find('.ipm').html(ipm);
+                $(this).closest('tr').find('.Ipm').html(ipm);
             } else {
                 //$(this).closest('tr').find('.Ipm').html(ipm);
             }
@@ -321,11 +324,11 @@
             } else {
                 //$(this).closest('tr').find('.Pct').html(pct);
             }
-          
-           
+
+
         });
         $('#container').on("change", ".calcrow", function () {
-            debugger
+            //debugger
             var inbound = $(this).closest('tr').find('#Inbound').val();
             var otr = $(this).closest('tr').find('#OTR').val();
             var otd = $(this).closest('tr').find('#OTD').val();
@@ -333,29 +336,40 @@
             var ri = $(this).closest('tr').find('#RI').val();
             var rp = $(this).closest('tr').find('#RP').val();
             var rowid = $(this).closest('tr').first().attr('data-RowId');
-                     
+
+            var ppm = Math.round((rp / inbound) * 1000000);
+            var ipm = ((ri / inbound) * 1000000).toFixed(2);
+            var pct = Math.round((otr / otd) * 100);
+
+            if (isFinite(ppm)) {
+
+            } else {
+                ppm = 0;
+            }
+            if (isFinite(ipm)) {
+
+            } else {
+                ipm = 0.00;
+            }
+            if (isFinite(pct)) {
+            } else {
+                pct = 0;
+            }
 
             var cid = $('#RatingRecords_' + rowid + '__CID').val();
-            var
+            //  var
             // var cid = $
             $.ajax({
                 url: '@Url.Action("UpdateRating", "ExcelUpload")',
                 //Passes the content of an input up
-                data: { CID: selectedValue }, //,SiteID:siteId,count:cont
+                data: { CID: cid, Inbound: inbound, OTR: otr, OTD: otd, PFR: pfr, RI: ri, RP: rp, PPM: ppm, IPM: ipm, PCT: pct }, //,SiteID:siteId,count:cont
                 contentType: "application/json; charset=utf-8",
                 type: 'GET',
                 cache: false,
                 dataType: 'html',
                 async: false,
                 success: function (data) {
-                    var finaltext = selectedText + " Added to list";
 
-                    $("#selectSupplierID").find("option:selected").prop('selected', false);
-                    $('#output').children().remove();
-                    $('#output').html(data);
-                    $('.btnOK').prop('disabled', true);
-                    $("#popSup").closest('.ui-dialog-content').dialog("close");
-                    $('#RatingSuppliers').selectpicker('refresh');
                 },
                 error: function (ts) { alert(ts.responseText) }
             });
